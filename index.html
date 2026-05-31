@@ -3,528 +3,237 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Planificador Curricular</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,wght@0,300;0,600;0,700;1,300&display=swap" rel="stylesheet">
+<title>Pensum Planner</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,300;1,9..144,600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg:#0f0f13;--surface:#17171e;--surface2:#1f1f2a;--border:#2a2a38;
-    --text:#e8e6f0;--muted:#7a7890;--accent:#7c6af7;--accent2:#f7a26a;
-    --passed:#2d6a4f;--passed-bg:#1a3d2e;--passed-text:#74c69d;
-    --enrolled:#1e4a6e;--enrolled-bg:#0d2336;--enrolled-text:#60b8f0;
-    --failed:#8b3a3a;--failed-bg:#3d1a1a;--failed-text:#ff9f9f;
-    --available:#5a4e2a;--available-bg:#2a2410;--available-text:#e9c46a;
-    --locked-text:#5a5870;
+    --bg:#0a0a0f;--surface:#13131a;--surface2:#1a1a24;--border:#252535;
+    --text:#edeaf8;--muted:#6a6880;--accent:#7c6af7;--accent2:#f7a26a;
+    --grad1:#7c6af7;--grad2:#f7a26a;
   }
   *{margin:0;padding:0;box-sizing:border-box;}
-  body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font-size:13px;min-height:100vh;}
-  header{padding:28px 40px 20px;border-bottom:1px solid var(--border);display:flex;align-items:flex-end;gap:24px;background:linear-gradient(180deg,#13131a 0%,var(--bg) 100%);}
-  header h1{font-family:'Fraunces',serif;font-size:26px;font-weight:700;letter-spacing:-0.5px;}
-  header h1 span{color:var(--accent);font-style:italic;}
-  .sub{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:6px;}
-  .header-stats{display:flex;gap:20px;margin-left:auto;align-items:center;}
-  .stat{text-align:center;}
-  .stat-num{font-size:20px;font-weight:500;font-family:'Fraunces',serif;color:var(--accent);}
-  .stat-label{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:1px;}
-  .tabs{display:flex;gap:2px;padding:14px 40px 0;background:var(--surface);border-bottom:1px solid var(--border);}
-  .tab{padding:10px 20px;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;transition:all .2s;font-size:11px;text-transform:uppercase;letter-spacing:1px;}
-  .tab:hover{color:var(--text);}.tab.active{color:var(--accent);border-bottom-color:var(--accent);}
-  .panel{display:none;padding:28px 40px;}.panel.active{display:block;}
-  .legend{display:flex;gap:16px;margin-bottom:20px;flex-wrap:wrap;}
-  .legend-item{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--muted);}
-  .legend-dot{width:11px;height:11px;border-radius:3px;}
-  .semester-group{margin-bottom:28px;}
-  .semester-header{display:flex;align-items:center;gap:12px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);}
-  .semester-num{font-family:'Fraunces',serif;font-size:18px;font-weight:600;color:var(--accent);}
-  .semester-title{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:1px;}
-  .semester-opens{margin-left:auto;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:3px 10px;font-size:10px;color:var(--accent2);}
-  .open-group-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:500;letter-spacing:.8px;text-transform:uppercase;}
-  .og-a{background:#1e2a3d;color:#74a8d4;border:1px solid #2a3a5d;}
-  .og-b{background:#2a1e3d;color:#a87dd4;border:1px solid #3a2a5d;}
-  .og-c{background:#1e3d2a;color:#74d4a8;border:1px solid #2a5d3a;}
-  .courses-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:8px;}
-  .course-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:11px 13px;transition:all .15s;position:relative;overflow:hidden;}
-  .course-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;}
-  .course-card:hover{transform:translateY(-1px);filter:brightness(1.08);}
-  .course-card.passed{border-color:var(--passed);background:var(--passed-bg);}
-  .course-card.passed::before{background:var(--passed-text);}
-  .course-card.enrolled{border-color:var(--enrolled);background:var(--enrolled-bg);}
-  .course-card.enrolled::before{background:var(--enrolled-text);}
-  .course-card.failed{border-color:var(--failed);background:var(--failed-bg);}
-  .course-card.failed::before{background:var(--failed-text);}
-  .course-card.available{border-color:var(--available);background:var(--available-bg);}
-  .course-card.available::before{background:var(--available-text);}
-  .course-card.locked{opacity:.45;}
-  .course-card.locked::before{background:var(--locked-text);}
-  .course-code{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;}
-  .course-card.passed .course-code{color:var(--passed-text);}
-  .course-card.enrolled .course-code{color:var(--enrolled-text);}
-  .course-card.failed .course-code{color:var(--failed-text);}
-  .course-card.available .course-code{color:var(--available-text);}
-  .course-card.locked .course-code{color:var(--locked-text);}
-  .course-name{font-size:11.5px;color:var(--text);line-height:1.4;margin-bottom:8px;}
-  .course-card.failed .course-name{text-decoration:line-through;color:var(--muted);}
-  .course-meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
-  .badge{font-size:9px;padding:2px 6px;border-radius:3px;text-transform:uppercase;letter-spacing:.5px;font-weight:500;}
-  .badge-crs{background:var(--surface2);color:var(--muted);border:1px solid var(--border);}
-  .badge-prereq{background:#2a1f3d;color:#a78bfa;border:1px solid #4a3a6d;}
-  .badge-unlocks{background:#1f2a2a;color:#5eead4;border:1px solid #2a4a4a;}
-  .badge-failed{background:var(--failed-bg);color:var(--failed-text);border:1px solid var(--failed);}
-  .badge-enrolled{background:var(--enrolled-bg);color:var(--enrolled-text);border:1px solid var(--enrolled);}
-  .status-btn{margin-left:auto;background:none;border:1px solid var(--border);color:var(--muted);font-size:9px;padding:2px 8px;border-radius:3px;cursor:pointer;font-family:'DM Mono',monospace;transition:all .15s;white-space:nowrap;}
-  .status-btn:hover{border-color:var(--accent);color:var(--accent);}
-  .course-card.passed .status-btn{border-color:var(--passed-text);color:var(--passed-text);}
-  .course-card.enrolled .status-btn{border-color:var(--enrolled-text);color:var(--enrolled-text);}
-  .course-card.failed .status-btn{border-color:var(--failed-text);color:var(--failed-text);}
-  .schedule-container{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:18px;}
-  .schedule-sem{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
-  .schedule-sem-header{padding:12px 14px;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
-  .schedule-sem-num{font-family:'Fraunces',serif;font-size:22px;font-weight:700;color:var(--accent);}
-  .schedule-sem-info{flex:1;}
-  .schedule-sem-title{font-size:11px;color:var(--text);}
-  .schedule-sem-sub{font-size:10px;}
-  .schedule-credits{font-family:'Fraunces',serif;font-size:15px;color:var(--accent2);font-style:italic;}
-  .schedule-courses{padding:10px;display:flex;flex-direction:column;gap:5px;}
-  .schedule-course{padding:7px 9px;border-radius:5px;display:flex;align-items:center;gap:7px;font-size:11px;}
-  .schedule-course.sc-done{background:var(--passed-bg);color:var(--passed-text);opacity:.65;text-decoration:line-through;}
-  .schedule-course.sc-enrolled{background:var(--enrolled-bg);color:var(--enrolled-text);border:1px solid var(--enrolled);}
-  .schedule-course.sc-failed{background:var(--failed-bg);color:var(--failed-text);border:1px solid var(--failed);}
-  .schedule-course.sc-now{background:var(--available-bg);color:var(--available-text);border:1px solid var(--available);}
-  .schedule-course.sc-future{background:var(--surface2);color:var(--muted);}
-  .sched-code{font-weight:500;min-width:64px;font-size:10px;}
-  .sched-name{flex:1;}
-  .sched-crs{color:var(--muted);font-size:10px;}
-  #graph-container{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:auto;}
-  #graph-svg{display:block;}
-  .graph-controls{display:flex;gap:10px;margin-bottom:14px;align-items:center;flex-wrap:wrap;}
-  .graph-controls select,.graph-controls button{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:6px 12px;border-radius:6px;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;}
-  .graph-controls button:hover{border-color:var(--accent);color:var(--accent);}
-  .info-box{background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;padding:12px 16px;margin-bottom:18px;font-size:11px;color:var(--muted);line-height:1.7;}
-  .progress-bar-wrap{background:var(--surface2);border-radius:4px;height:6px;margin-top:8px;overflow:hidden;}
-  .progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px;transition:width .4s ease;}
+  html,body{min-height:100vh;}
+  body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font-size:13px;overflow-x:hidden;}
+
+  /* animated background */
+  .bg-orbs{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+  .orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:.18;animation:float 12s ease-in-out infinite;}
+  .orb1{width:600px;height:600px;background:var(--grad1);top:-200px;left:-200px;animation-delay:0s;}
+  .orb2{width:500px;height:500px;background:var(--grad2);bottom:-150px;right:-150px;animation-delay:-5s;}
+  .orb3{width:300px;height:300px;background:#e879f9;top:50%;left:50%;transform:translate(-50%,-50%);animation-delay:-8s;}
+  @keyframes float{0%,100%{transform:translate(0,0) scale(1);}33%{transform:translate(30px,-20px) scale(1.05);}66%{transform:translate(-20px,30px) scale(.95);}}
+
+  .page{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;}
+
+  /* NAV */
+  nav{padding:20px 48px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.05);}
+  .logo{font-family:'Fraunces',serif;font-size:18px;font-weight:700;letter-spacing:-0.5px;}
+  .logo span{color:var(--accent);font-style:italic;}
+  .nav-tag{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;}
+
+  /* HERO */
+  .hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 48px 40px;text-align:center;}
+  .hero-eyebrow{font-size:10px;color:var(--accent);text-transform:uppercase;letter-spacing:3px;margin-bottom:20px;opacity:.8;}
+  .hero-title{font-family:'Fraunces',serif;font-size:clamp(36px,6vw,72px);font-weight:700;line-height:1.05;letter-spacing:-2px;margin-bottom:16px;}
+  .hero-title em{font-style:italic;background:linear-gradient(135deg,var(--grad1),var(--grad2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+  .hero-sub{font-size:13px;color:var(--muted);max-width:480px;line-height:1.8;margin-bottom:52px;}
+
+  /* SELECTOR */
+  .selector-wrap{width:100%;max-width:680px;}
+  .selector-step{margin-bottom:28px;}
+  .step-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+  .step-num{width:18px;height:18px;background:var(--accent);border-radius:50%;font-size:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:500;}
+
+  .university-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;}
+  .uni-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;cursor:pointer;transition:all .2s;text-align:left;}
+  .uni-card:hover{border-color:var(--accent);background:var(--surface2);transform:translateY(-2px);}
+  .uni-card.selected{border-color:var(--accent);background:#1a1730;box-shadow:0 0 0 1px var(--accent);}
+  .uni-name{font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px;}
+  .uni-location{font-size:10px;color:var(--muted);}
+  .uni-count{font-size:9px;color:var(--accent);margin-top:6px;}
+
+  .career-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;}
+  .career-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;transition:all .2s;text-align:left;display:flex;flex-direction:column;gap:6px;}
+  .career-card:hover{border-color:var(--accent2);background:var(--surface2);transform:translateY(-2px);}
+  .career-card.selected{border-color:var(--accent2);background:#1e1a10;box-shadow:0 0 0 1px var(--accent2);}
+  .career-name{font-size:12px;color:var(--text);line-height:1.4;}
+  .career-meta{font-size:9px;color:var(--muted);display:flex;gap:10px;}
+  .career-badge{font-size:9px;padding:2px 7px;border-radius:3px;background:#1f1730;color:#a78bfa;border:1px solid #3a2a5d;align-self:flex-start;}
+
+  .go-btn{display:block;width:100%;padding:14px;background:linear-gradient(135deg,var(--grad1),#9f5af7);border:none;border-radius:10px;color:#fff;font-family:'DM Mono',monospace;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;letter-spacing:.5px;margin-top:8px;opacity:.4;pointer-events:none;}
+  .go-btn.ready{opacity:1;pointer-events:all;}
+  .go-btn.ready:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(124,106,247,.4);}
+
+  /* empty state */
+  .empty-careers{padding:20px;text-align:center;color:var(--muted);font-size:11px;border:1px dashed var(--border);border-radius:10px;}
+
+  /* FOOTER */
+  footer{padding:20px 48px;border-top:1px solid rgba(255,255,255,.05);display:flex;justify-content:space-between;align-items:center;}
+  .footer-text{font-size:10px;color:var(--muted);}
+  .footer-link{color:var(--accent);text-decoration:none;font-size:10px;}
+  .footer-link:hover{text-decoration:underline;}
+
+  /* SEARCH */
+  .search-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 14px;color:var(--text);font-family:'DM Mono',monospace;font-size:12px;margin-bottom:10px;transition:border-color .2s;outline:none;}
+  .search-input:focus{border-color:var(--accent);}
+  .search-input::placeholder{color:var(--muted);}
+
+  @media(max-width:600px){
+    nav,footer{padding:16px 20px;}
+    .hero{padding:40px 20px 30px;}
+    .university-grid{grid-template-columns:1fr 1fr;}
+    .career-grid{grid-template-columns:1fr;}
+  }
 </style>
 </head>
 <body>
-<header>
-  <div>
-    <div class="sub">Universidad Europea · Ingeniería en Tecnologías de la Información</div>
-    <h1>Planificador <span>Curricular</span></h1>
-  </div>
-  <div class="header-stats">
-    <div class="stat"><div class="stat-num" id="stat-total">0</div><div class="stat-label">Total</div></div>
-    <div class="stat"><div class="stat-num" id="stat-passed" style="color:var(--passed-text)">0</div><div class="stat-label">Aprobadas</div></div>
-    <div class="stat"><div class="stat-num" id="stat-enrolled" style="color:var(--enrolled-text)">0</div><div class="stat-label">Cursando</div></div>
-    <div class="stat"><div class="stat-num" id="stat-failed" style="color:var(--failed-text)">0</div><div class="stat-label">Reprobadas</div></div>
-    <div class="stat"><div class="stat-num" id="stat-available" style="color:var(--available-text)">0</div><div class="stat-label">Disponibles</div></div>
-    <div class="stat"><div class="stat-num" id="stat-credits" style="color:var(--accent2)">0</div><div class="stat-label">Créditos ✓</div></div>
-  </div>
-</header>
-<div class="tabs">
-  <div class="tab active" onclick="showTab('courses')">📚 Todas las Materias</div>
-  <div class="tab" onclick="showTab('schedule')">🗓 Plan Recomendado</div>
-  <div class="tab" onclick="showTab('graph')">🔗 Grafo de Prereqs</div>
+<div class="bg-orbs">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
 </div>
-<div class="panel active" id="panel-courses">
-  <div class="legend">
-    <div class="legend-item"><div class="legend-dot" style="background:var(--passed-text)"></div>Aprobada</div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--enrolled-text)"></div>Cursando actualmente</div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--failed-text)"></div>Reprobada / Pendiente</div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--available-text)"></div>Disponible ahora</div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--locked-text)"></div>Bloqueada</div>
-    <div class="legend-item" style="margin-left:auto;font-size:10px">Botón: Sin marcar → ✓ Aprobada → 📖 Cursando → ✗ Reprobada → …</div>
+
+<div class="page">
+  <nav>
+    <div class="logo">Pensum <span>Planner</span></div>
+    <div class="nav-tag">República Dominicana</div>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-eyebrow">Planificador de carrera universitaria</div>
+    <h1 class="hero-title">Planifica tu<br><em>pensum</em> académico</h1>
+    <p class="hero-sub">Selecciona tu universidad y carrera para ver todas tus materias, prerequisitos y el camino óptimo hacia tu graduación.</p>
+
+    <div class="selector-wrap">
+
+      <!-- STEP 1: University -->
+      <div class="selector-step">
+        <div class="step-label"><span class="step-num">1</span>Selecciona tu universidad</div>
+        <input class="search-input" id="uni-search" placeholder="Buscar universidad…" oninput="filterUniversities()" autocomplete="off">
+        <div class="university-grid" id="uni-grid"></div>
+      </div>
+
+      <!-- STEP 2: Career -->
+      <div class="selector-step" id="career-step" style="display:none;">
+        <div class="step-label"><span class="step-num">2</span>Selecciona tu carrera</div>
+        <div class="career-grid" id="career-grid"></div>
+      </div>
+
+      <!-- GO -->
+      <button class="go-btn" id="go-btn" onclick="goToPlanner()">Abrir planificador →</button>
+    </div>
   </div>
-  <div id="courses-by-sem"></div>
-</div>
-<div class="panel" id="panel-schedule">
-  <div class="info-box">
-    💡 Grupos de apertura: <strong style="color:#74a8d4">1·4·7·10</strong> &nbsp;·&nbsp; <strong style="color:#a87dd4">2·5·8·11</strong> &nbsp;·&nbsp; <strong style="color:#74d4a8">3·6·9·12</strong><br>
-    <span style="color:var(--enrolled-text)">📖 Azul = cursando actualmente</span> &nbsp;·&nbsp; Las materias reprobadas en rojo deben repetirse cuanto antes.
-    <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-fill" style="width:0%"></div></div>
-    <div style="margin-top:6px;font-size:10px" id="progress-text"></div>
-  </div>
-  <div class="schedule-container" id="schedule-container"></div>
-</div>
-<div class="panel" id="panel-graph">
-  <div class="graph-controls">
-    <select id="graph-filter" onchange="renderGraph()"><option value="all">Todos los semestres</option></select>
-    <button onclick="renderGraph()">↺ Refresh</button>
-    <span style="color:var(--muted);font-size:11px">Verde=aprobada · Azul=cursando · Rojo=reprobada · Gris=pendiente</span>
-  </div>
-  <div id="graph-container"><svg id="graph-svg" width="1200" height="800"></svg></div>
+
+  <footer>
+    <div class="footer-text">Pensum Planner · República Dominicana</div>
+    <a href="https://github.com/TheStrike-X/pensum-planner" class="footer-link" target="_blank">GitHub →</a>
+  </footer>
 </div>
 
 <script>
-const OPEN_GROUP={1:'A',2:'B',3:'C',4:'A',5:'B',6:'C',7:'A',8:'B',9:'C',10:'A',11:'B',12:'C'};
-
-// ─── COURSES — transcribed verbatim from official curriculum image ─────────────
-// prereq codes reference exact codes in this list
-// CRS 0 = language elective (0 credits, counts as pass/fail only)
-const COURSES = [
-
-  // ══ SEMESTRE 1 ══ Group A (opens with 1,4,7,10)
-  {code:'ADB-110', name:'Gestión Empresarial',                                         crs:3, sem:1,  prereqs:[]},
-  {code:'EGC-153', name:'Pre-Cálculo',                                                 crs:4, sem:1,  prereqs:[]},
-  {code:'EGC-160', name:'Química General I',                                           crs:4, sem:1,  prereqs:[]},
-  {code:'EGB-122', name:'Taller de Comunicación',                                      crs:2, sem:1,  prereqs:[]},
-  {code:'EGL-301', name:'Inglés I',                                                    crs:0, sem:1,  prereqs:[]},
-  {code:'EGS-111', name:'Procesos Históricos y Construcción del Colectivo Social',     crs:3, sem:1,  prereqs:[]},
-  {code:'EGV-130', name:'Taller Calidad de Vida',                                      crs:1, sem:1,  prereqs:[]},
-  {code:'TI3-120', name:'Introducción a la Ingeniería y Tecnologías Computacionales',  crs:2, sem:1,  prereqs:[]},
-  {code:'UNB-100', name:'Orientación Universitaria',                                   crs:2, sem:1,  prereqs:[]},
-
-  // ══ SEMESTRE 2 ══ Group B
-  {code:'EGC-154', name:'Cálculo I',                                                   crs:4, sem:2,  prereqs:['EGC-153']},
-  {code:'EGL-120', name:'Comunicación I',                                              crs:4, sem:2,  prereqs:[]},
-  {code:'EGL-302', name:'Inglés II',                                                   crs:0, sem:2,  prereqs:['EGL-301']},
-  {code:'EGS-112', name:'Análisis de la Realidad Dominicana en un Mundo Global',      crs:2, sem:2,  prereqs:[]},
-  {code:'EGS-131', name:'Ambiente y Sustentabilidad',                                  crs:3, sem:2,  prereqs:[]},
-  {code:'TI3-110', name:'Matemáticas Discretas',                                       crs:4, sem:2,  prereqs:['EGC-153']},
-  {code:'TI3-121', name:'Comunicación de Datos',                                       crs:3, sem:2,  prereqs:['TI3-120']},
-  {code:'UNB-101', name:'Pensamiento y Acción Emprendedora',                           crs:2, sem:2,  prereqs:[]},
-
-  // ══ SEMESTRE 3 ══ Group C
-  {code:'EGC-155', name:'Cálculo II',                                                  crs:4, sem:3,  prereqs:['EGC-154']},
-  {code:'EGC-156', name:'Álgebra Lineal y Matricial',                                  crs:3, sem:3,  prereqs:['EGC-153']},
-  {code:'EGS-170', name:'Física General I',                                            crs:4, sem:3,  prereqs:['EGC-154']},
-  {code:'EGL-121', name:'Comunicación II',                                             crs:4, sem:3,  prereqs:[]},
-  {code:'EGL-303', name:'Inglés III',                                                  crs:0, sem:3,  prereqs:['EGL-302']},
-  {code:'TI3-111', name:'Fundamentos de Programación',                                 crs:3, sem:3,  prereqs:['TI3-110']},
-  {code:'UNB-306', name:'Educación Constitucional',                                    crs:3, sem:3,  prereqs:['EGC-155','EGC-156']},
-
-  // ══ SEMESTRE 4 ══ Group A
-  {code:'EGC-252', name:'Cálculo Vectorial',                                           crs:4, sem:4,  prereqs:['EGS-170']},
-  {code:'EGS-270', name:'Física General II',                                           crs:4, sem:4,  prereqs:['EGS-170']},
-  {code:'EGL-304', name:'Inglés IV',                                                   crs:0, sem:4,  prereqs:['EGL-303']},
-  {code:'TI3-210', name:'Lógica Matemática',                                           crs:3, sem:4,  prereqs:['TI3-110']},
-  {code:'TI3-211', name:'Estructura de Datos',                                         crs:3, sem:4,  prereqs:['TI3-111']},
-  {code:'UNB-200', name:'Metodología de la Investigación',                             crs:4, sem:4,  prereqs:[]},
-  {code:'UNB-202', name:'Estadística',                                                 crs:3, sem:4,  prereqs:['EGC-252']},
-
-  // ══ SEMESTRE 5 ══ Group B
-  {code:'EGC-253', name:'Ecuaciones Diferenciales',                                    crs:4, sem:5,  prereqs:['UNB-202']},
-  {code:'EGC-255', name:'Inferencia Estadística',                                      crs:3, sem:5,  prereqs:['EGC-252','EGS-270']},
-  {code:'EGS-271', name:'Física General III',                                          crs:4, sem:5,  prereqs:[]},
-  {code:'EGL-220', name:'Electiva Comunicación, Lengua y Cultura',                    crs:2, sem:5,  prereqs:['TI3-211']},
-  {code:'TI3-212', name:'Análisis y Diseño de Algoritmos',                             crs:3, sem:5,  prereqs:['TI3-111','TI3-210']},
-  {code:'TI3-213', name:'Programación I',                                              crs:3, sem:5,  prereqs:['TI3-111','TI3-121']},
-  {code:'TI3-630', name:'Proyecto Integrador I',                                       crs:2, sem:5,  prereqs:['EGC-253']},
-
-  // ══ SEMESTRE 6 ══ Group C
-  {code:'EGC-254', name:'Métodos Matemáticos',                                         crs:3, sem:6,  prereqs:[]},
-  {code:'EGH-140', name:'Bloque de Artes y Humanidades',                               crs:4, sem:6,  prereqs:['EGC-154']},
-  {code:'IGI-330', name:'Ingeniería Económica',                                        crs:3, sem:6,  prereqs:['TI3-213']},
-  {code:'TI3-214', name:'Programación II',                                             crs:3, sem:6,  prereqs:['TI3-211','TI3-213']},
-  {code:'TI3-215', name:'Diseño y Administración de Bases de Datos',                  crs:3, sem:6,  prereqs:['EGS-271']},
-  {code:'TI3-220', name:'Electrónica',                                                 crs:3, sem:6,  prereqs:['TI3-630']},
-  {code:'TI3-600', name:'Práctica Estudiantil',                                        crs:2, sem:6,  prereqs:[]},
-  {code:'UNB-102', name:'Liderazgo y Acción Social',                                   crs:3, sem:6,  prereqs:['EGC-253','UNB-202']},
-
-  // ══ SEMESTRE 7 ══ Group A
-  {code:'II4-212', name:'Investigación de Operaciones I',                              crs:4, sem:7,  prereqs:['IGI-330']},
-  {code:'II4-440', name:'Formulación y Evaluación de Proyectos',                      crs:4, sem:7,  prereqs:['TI3-110']},
-  {code:'TI3-310', name:'Teoría de Autómatas y Compiladores',                         crs:3, sem:7,  prereqs:['TI3-213','TI3-215']},
-  {code:'TI3-311', name:'Análisis y Diseño de Sistemas',                               crs:4, sem:7,  prereqs:['TI3-220']},
-  {code:'TI3-320', name:'Circuitos Digitales',                                         crs:3, sem:7,  prereqs:['TI3-121']},
-  {code:'TI3-321', name:'Fundamentos de Ciberseguridad',                               crs:3, sem:7,  prereqs:['TI3-121']},
-  {code:'TI3-322', name:'Conmutación y Enrutamiento',                                  crs:3, sem:7,  prereqs:[]},
-
-  // ══ SEMESTRE 8 ══ Group B
-  {code:'ADB-120', name:'Taller de Creatividad e Innovación',                          crs:3, sem:8,  prereqs:[]},
-  {code:'ADB-130', name:'Contabilidad Financiera I',                                   crs:3, sem:8,  prereqs:[]},
-  {code:'TI3-312', name:'Aseguramiento de la Calidad del Software',                   crs:3, sem:8,  prereqs:['TI3-311']},
-  {code:'TI3-313', name:'Ingeniería de Software',                                      crs:4, sem:8,  prereqs:['TI3-311']},
-  {code:'TI3-314', name:'Inteligencia Artificial',                                     crs:3, sem:8,  prereqs:['TI3-110']},
-  {code:'TI3-323', name:'Arquitectura del Computador',                                 crs:3, sem:8,  prereqs:['TI3-220']},
-  {code:'TI3-324', name:'Leyes y Regulaciones de TI',                                  crs:2, sem:8,  prereqs:[]},
-
-  // ══ SEMESTRE 9 ══ Group C
-  {code:'TI3-315', name:'Arquitectura de Software',                                    crs:3, sem:9,  prereqs:['TI3-313']},
-  {code:'TI3-316', name:'Minería y Análisis de Datos',                                 crs:3, sem:9,  prereqs:['TI3-215']},
-  {code:'TI3-325', name:'Diseño y Planificación de Redes',                             crs:3, sem:9,  prereqs:['TI3-322']},
-  {code:'TI3-326', name:'Sistemas Operativos',                                         crs:3, sem:9,  prereqs:['TI3-323']},
-  {code:'TI3-631', name:'Proyecto Integrador II',                                      crs:2, sem:9,  prereqs:['TI3-312','TI3-322','TI3-324','TI3-630']},
-  {code:'TI3-700', name:'Electiva',                                                    crs:3, sem:9,  prereqs:[]},
-  {code:'TI3-710', name:'Electiva',                                                    crs:3, sem:9,  prereqs:[]},
-
-  // ══ SEMESTRE 10 ══ Group A
-  {code:'TI3-410', name:'Ingeniería de Factores Humanos (UX/UI)',                      crs:4, sem:10, prereqs:['TI3-313']},
-  {code:'TI3-420', name:'Infraestructura Tecnológica',                                 crs:3, sem:10, prereqs:['TI3-322']},
-  {code:'TI3-430', name:'Administración de Riesgos y Controles de TI',                crs:3, sem:10, prereqs:[]},
-  {code:'TI3-500', name:'Electiva Profesional',                                        crs:3, sem:10, prereqs:[]},
-  {code:'TI3-510', name:'Electiva Profesional',                                        crs:3, sem:10, prereqs:[]},
-  {code:'ADB-220', name:'Taller de Creatividad e Innovación para los Negocios',       crs:1, sem:10, prereqs:['ADB-120']},
-
-  // ══ SEMESTRE 11 ══ Group B
-  {code:'TI3-520', name:'Electiva Profesional',                                        crs:3, sem:11, prereqs:[]},
-  {code:'TI3-530', name:'Electiva Profesional',                                        crs:3, sem:11, prereqs:[]},
-  {code:'TI3-610', name:'Pasantía',                                                    crs:2, sem:11, prereqs:['TI3-600','TI3-631']},
-  {code:'TI3-620', name:'Proyecto Final I',                                            crs:3, sem:11, prereqs:['TI3-631']},
-  {code:'UNB-201', name:'Ética',                                                       crs:2, sem:11, prereqs:[]},
-
-  // ══ SEMESTRE 12 ══ Group C
-  {code:'TI3-431', name:'Negocios Electrónicos',                                       crs:3, sem:12, prereqs:[]},
-  {code:'TI3-432', name:'Gestión de Proyectos de TI',                                  crs:3, sem:12, prereqs:['II4-440']},
-  {code:'TI3-433', name:'Auditoría de TI',                                             crs:3, sem:12, prereqs:['TI3-430']},
-  {code:'TI3-621', name:'Proyecto Final II',                                           crs:3, sem:12, prereqs:['TI3-620']},
+// ─── UNIVERSITIES & CAREERS REGISTRY ─────────────────────────────────────────
+// To add a new university/career: add an entry here and add the JSON file to /pensums/
+const REGISTRY = [
+  {
+    id: 'itla',
+    name: 'ITLA',
+    fullName: 'Instituto Tecnológico de Las Américas',
+    location: 'Santo Domingo',
+    careers: [
+      {
+        id: 'itla-iti',
+        name: 'Ingeniería en Tecnologías de la Información',
+        short: 'ITI',
+        semesters: 12,
+        credits: 237,
+        file: 'pensums/itla-iti.json'
+      }
+    ]
+  }
+  // ── ADD MORE UNIVERSITIES BELOW ──
+  // {
+  //   id: 'unphu',
+  //   name: 'UNPHU',
+  //   fullName: 'Universidad Nacional Pedro Henríquez Ureña',
+  //   location: 'Santo Domingo',
+  //   careers: [
+  //     { id:'unphu-sistemas', name:'Ingeniería en Sistemas', short:'IS', semesters:10, credits:180, file:'pensums/unphu-sistemas.json' }
+  //   ]
+  // },
 ];
 
-// ─── STATE ────────────────────────────────────────────────────────────────────
-function loadState(){
-  try{const s=localStorage.getItem('cplan_v5');return s?JSON.parse(s):{};}catch(e){return {};}
-}
-function saveState(){localStorage.setItem('cplan_v5',JSON.stringify(courseStates));}
+// ─── STATE ─────────────────────────────────────────────────────────────────────
+let selectedUni = null;
+let selectedCareer = null;
 
-function initDefaults(st){
-  COURSES.forEach(c=>{
-    if(!(c.code in st)){
-      // sems 1-6 passed (green), sem 7 failed (pink/red), rest null
-      if(c.sem<=6) st[c.code]='passed';
-      else if(c.sem===7) st[c.code]='failed';
-      else st[c.code]=null;
-    }
-  });
-  return st;
-}
-let courseStates=initDefaults(loadState());
-
-// cycle: null → passed → enrolled → failed → null
-function cycleState(code){
-  const cur=courseStates[code];
-  courseStates[code]=cur===null?'passed':cur==='passed'?'enrolled':cur==='enrolled'?'failed':null;
-  saveState();refresh();
+// ─── RENDER UNIVERSITIES ───────────────────────────────────────────────────────
+function renderUniversities(filter=''){
+  const grid = document.getElementById('uni-grid');
+  const filtered = REGISTRY.filter(u =>
+    u.name.toLowerCase().includes(filter.toLowerCase()) ||
+    u.fullName.toLowerCase().includes(filter.toLowerCase())
+  );
+  grid.innerHTML = filtered.map(u => `
+    <div class="uni-card ${selectedUni===u.id?'selected':''}" onclick="selectUni('${u.id}')">
+      <div class="uni-name">${u.name}</div>
+      <div class="uni-location">${u.location}</div>
+      <div class="uni-count">${u.careers.length} carrera${u.careers.length!==1?'s':''}</div>
+    </div>
+  `).join('') || '<div class="empty-careers">No se encontraron universidades</div>';
 }
 
-function getEffectiveStatus(code){
-  const s=courseStates[code];
-  if(s==='passed')   return 'passed';
-  if(s==='enrolled') return 'enrolled';
-  if(s==='failed')   return 'failed';
-  const course=COURSES.find(c=>c.code===code);
-  if(!course) return 'locked';
-  // enrolled counts as satisfying prereqs for display purposes (in-progress)
-  return course.prereqs.every(p=>courseStates[p]==='passed'||courseStates[p]==='enrolled')?'available':'locked';
-}
-function getUnlockCount(code){return COURSES.filter(c=>c.prereqs.includes(code)).length;}
-
-// ─── TABS ─────────────────────────────────────────────────────────────────────
-function showTab(id){
-  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['courses','schedule','graph'][i]===id));
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  document.getElementById('panel-'+id).classList.add('active');
-  if(id==='graph') renderGraph();
-  if(id==='schedule') renderSchedule();
+function filterUniversities(){
+  renderUniversities(document.getElementById('uni-search').value);
 }
 
-// ─── STATS ────────────────────────────────────────────────────────────────────
-function updateStats(){
-  const passed  =COURSES.filter(c=>courseStates[c.code]==='passed');
-  const enrolled=COURSES.filter(c=>courseStates[c.code]==='enrolled');
-  const failed  =COURSES.filter(c=>courseStates[c.code]==='failed');
-  const avail   =COURSES.filter(c=>getEffectiveStatus(c.code)==='available').length;
-  document.getElementById('stat-total').textContent    =COURSES.length;
-  document.getElementById('stat-passed').textContent   =passed.length;
-  document.getElementById('stat-enrolled').textContent =enrolled.length;
-  document.getElementById('stat-failed').textContent   =failed.length;
-  document.getElementById('stat-available').textContent=avail;
-  document.getElementById('stat-credits').textContent  =passed.reduce((s,c)=>s+c.crs,0);
+function selectUni(id){
+  selectedUni = id;
+  selectedCareer = null;
+  renderUniversities(document.getElementById('uni-search').value);
+  renderCareers();
+  document.getElementById('career-step').style.display = 'block';
+  document.getElementById('career-step').scrollIntoView({behavior:'smooth', block:'nearest'});
+  updateGoBtn();
 }
 
-// ─── COURSES PANEL ────────────────────────────────────────────────────────────
-function renderCourses(){
-  const container=document.getElementById('courses-by-sem');
-  container.innerHTML='';
-  const groupLabels={A:'Abre con 1·4·7·10',B:'Abre con 2·5·8·11',C:'Abre con 3·6·9·12'};
-  const sems=[...new Set(COURSES.map(c=>c.sem))].sort((a,b)=>a-b);
-  sems.forEach(sem=>{
-    const semCourses=COURSES.filter(c=>c.sem===sem);
-    const group=OPEN_GROUP[sem];
-    const div=document.createElement('div');
-    div.className='semester-group';
-    div.innerHTML=`
-      <div class="semester-header">
-        <span class="semester-num">${sem}</span>
-        <span class="semester-title">Semestre ${sem}</span>
-        <span class="open-group-badge og-${group.toLowerCase()}">${groupLabels[group]}</span>
-        <span class="semester-opens">${semCourses.reduce((s,c)=>s+c.crs,0)} cr</span>
+// ─── RENDER CAREERS ────────────────────────────────────────────────────────────
+function renderCareers(){
+  const uni = REGISTRY.find(u=>u.id===selectedUni);
+  const grid = document.getElementById('career-grid');
+  if(!uni){ grid.innerHTML=''; return; }
+  grid.innerHTML = uni.careers.map(c => `
+    <div class="career-card ${selectedCareer===c.id?'selected':''}" onclick="selectCareer('${c.id}')">
+      <span class="career-badge">${c.short}</span>
+      <div class="career-name">${c.name}</div>
+      <div class="career-meta">
+        <span>${c.semesters} semestres</span>
+        <span>${c.credits} créditos</span>
       </div>
-      <div class="courses-grid" id="grid-sem-${sem}"></div>`;
-    container.appendChild(div);
-    const grid=div.querySelector(`#grid-sem-${sem}`);
-    semCourses.forEach(course=>{
-      const status=getEffectiveStatus(course.code);
-      const st=courseStates[course.code];
-      const unlocks=getUnlockCount(course.code);
-      const btnLabel=st==='passed'?'✓ Aprobada':st==='enrolled'?'📖 Cursando':st==='failed'?'✗ Reprobada':'Marcar…';
-      const card=document.createElement('div');
-      card.className=`course-card ${status}`;
-      card.innerHTML=`
-        <div class="course-code">${course.code}</div>
-        <div class="course-name">${course.name}</div>
-        <div class="course-meta">
-          <span class="badge badge-crs">${course.crs} CR</span>
-          ${course.prereqs.length?`<span class="badge badge-prereq">↑ ${course.prereqs.length} prereq</span>`:''}
-          ${unlocks?`<span class="badge badge-unlocks">↓ ${unlocks} unlock</span>`:''}
-          ${status==='failed'?'<span class="badge badge-failed">¡Repetir!</span>':''}
-          ${status==='enrolled'?'<span class="badge badge-enrolled">En curso</span>':''}
-          <button class="status-btn" onclick="cycleState('${course.code}')">${btnLabel}</button>
-        </div>`;
-      grid.appendChild(card);
-    });
-  });
+    </div>
+  `).join('');
 }
 
-// ─── SCHEDULE PANEL ───────────────────────────────────────────────────────────
-function renderSchedule(){
-  const container=document.getElementById('schedule-container');
-  container.innerHTML='';
-  const total=COURSES.reduce((s,c)=>s+c.crs,0);
-  const done =COURSES.filter(c=>courseStates[c.code]==='passed').reduce((s,c)=>s+c.crs,0);
-  const pct  =Math.round(done/total*100);
-  document.getElementById('progress-fill').style.width=pct+'%';
-  document.getElementById('progress-text').textContent=`${done} / ${total} créditos aprobados (${pct}%)`;
-  const sems=[...new Set(COURSES.map(c=>c.sem))].sort((a,b)=>a-b);
-  const gColor={A:'#74a8d4',B:'#a87dd4',C:'#74d4a8'};
-  sems.forEach(sem=>{
-    const semCourses=COURSES.filter(c=>c.sem===sem);
-    const group=OPEN_GROUP[sem];
-    const totalCrs =semCourses.reduce((s,c)=>s+c.crs,0);
-    const passedCrs=semCourses.filter(c=>courseStates[c.code]==='passed').reduce((s,c)=>s+c.crs,0);
-    const div=document.createElement('div');
-    div.className='schedule-sem';
-    div.innerHTML=`
-      <div class="schedule-sem-header">
-        <div class="schedule-sem-num">${sem}</div>
-        <div class="schedule-sem-info">
-          <div class="schedule-sem-title">Semestre ${sem}</div>
-          <div class="schedule-sem-sub" style="color:${gColor[group]}">Grupo ${group}</div>
-        </div>
-        <div class="schedule-credits">${passedCrs}/${totalCrs} cr</div>
-      </div>
-      <div class="schedule-courses" id="sched-sem-${sem}"></div>`;
-    container.appendChild(div);
-    const list=div.querySelector(`#sched-sem-${sem}`);
-    const sorted=[...semCourses].sort((a,b)=>{
-      const order={passed:0,enrolled:1,failed:2};
-      const sa=courseStates[a.code],sb=courseStates[b.code];
-      const oa=order[sa]??3, ob=order[sb]??3;
-      if(oa!==ob) return oa-ob;
-      return getUnlockCount(b.code)-getUnlockCount(a.code);
-    });
-    sorted.forEach(course=>{
-      const st=courseStates[course.code];
-      const prereqsMet=course.prereqs.every(p=>courseStates[p]==='passed'||courseStates[p]==='enrolled');
-      let cls=st==='passed'?'sc-done':st==='enrolled'?'sc-enrolled':st==='failed'?'sc-failed':prereqsMet?'sc-now':'sc-future';
-      const unlocks=getUnlockCount(course.code);
-      const row=document.createElement('div');
-      row.className=`schedule-course ${cls}`;
-      row.innerHTML=`
-        <span class="sched-code">${course.code}</span>
-        <span class="sched-name">${course.name}</span>
-        <span class="sched-crs">${course.crs}cr</span>
-        ${unlocks&&st!=='passed'&&st!=='enrolled'?`<span style="font-size:9px;color:var(--accent);margin-left:3px">→${unlocks}</span>`:''}
-        ${cls==='sc-enrolled'?'<span style="font-size:9px;margin-left:3px">📖 cursando</span>':''}
-        ${cls==='sc-failed'?'<span style="font-size:9px;margin-left:3px">⚠ repetir</span>':''}`;
-      list.appendChild(row);
-    });
-  });
+function selectCareer(id){
+  selectedCareer = id;
+  renderCareers();
+  updateGoBtn();
 }
 
-// ─── GRAPH ────────────────────────────────────────────────────────────────────
-function renderGraph(){
-  const svg=document.getElementById('graph-svg');
-  const fv=document.getElementById('graph-filter').value;
-  svg.innerHTML='';
-  const filtered=fv==='all'?COURSES:COURSES.filter(c=>c.sem===parseInt(fv));
-  const visCodes=new Set(filtered.map(c=>c.code));
-  const sems=[...new Set(filtered.map(c=>c.sem))].sort((a,b)=>a-b);
-  const colW=Math.max(148,Math.floor(1180/Math.max(sems.length,1)));
-  const nodeH=44,padY=56;
-  const pos={};
-  sems.forEach((sem,si)=>filtered.filter(c=>c.sem===sem).forEach((course,ci)=>{
-    pos[course.code]={x:si*colW+colW/2,y:padY+ci*(nodeH+9)};
-  }));
-  const maxY=Math.max(...Object.values(pos).map(p=>p.y))+nodeH+padY;
-  svg.setAttribute('height',Math.max(600,maxY));
-  svg.setAttribute('width',Math.max(1180,sems.length*colW+20));
-  // defs/arrows
-  const defs=document.createElementNS('http://www.w3.org/2000/svg','defs');
-  [['arr-pass','#2d6a4f'],['arr-enrl','#1e4a6e'],['arr-fail','#8b3a3a'],['arr-grey','#3a3a50']].forEach(([id,fill])=>{
-    const m=document.createElementNS('http://www.w3.org/2000/svg','marker');
-    m.setAttribute('id',id);m.setAttribute('markerWidth','7');m.setAttribute('markerHeight','7');
-    m.setAttribute('refX','6');m.setAttribute('refY','3');m.setAttribute('orient','auto');
-    const p=document.createElementNS('http://www.w3.org/2000/svg','path');
-    p.setAttribute('d','M0,0 L0,6 L8,3 z');p.setAttribute('fill',fill);m.appendChild(p);defs.appendChild(m);
-  });
-  svg.appendChild(defs);
-  // edges
-  COURSES.forEach(course=>{
-    if(!visCodes.has(course.code)) return;
-    course.prereqs.forEach(pre=>{
-      if(!visCodes.has(pre)) return;
-      const from=pos[pre],to=pos[course.code];
-      if(!from||!to) return;
-      const pst=courseStates[pre];
-      const color=pst==='passed'?'#2d6a4f':pst==='enrolled'?'#1e4a6e':pst==='failed'?'#8b3a3a':'#3a3a50';
-      const markId=pst==='passed'?'arr-pass':pst==='enrolled'?'arr-enrl':pst==='failed'?'arr-fail':'arr-grey';
-      const line=document.createElementNS('http://www.w3.org/2000/svg','line');
-      line.setAttribute('x1',from.x);line.setAttribute('y1',from.y+nodeH/2);
-      line.setAttribute('x2',to.x);  line.setAttribute('y2',to.y-nodeH/2+6);
-      line.setAttribute('stroke',color);line.setAttribute('stroke-width','1.5');
-      line.setAttribute('marker-end',`url(#${markId})`);svg.appendChild(line);
-    });
-  });
-  // col headers
-  const gC={A:'#74a8d4',B:'#a87dd4',C:'#74d4a8'};
-  sems.forEach((sem,si)=>{
-    const t=document.createElementNS('http://www.w3.org/2000/svg','text');
-    t.setAttribute('x',si*colW+colW/2);t.setAttribute('y',26);t.setAttribute('text-anchor','middle');
-    t.setAttribute('fill',gC[OPEN_GROUP[sem]]);t.setAttribute('font-size','11');
-    t.setAttribute('font-family','DM Mono,monospace');t.textContent=`SEM ${sem}`;svg.appendChild(t);
-  });
-  // nodes
-  const NC={
-    passed:  {fill:'#1a3d2e',stroke:'#2d6a4f',code:'#74c69d',name:'#aadfc0'},
-    enrolled:{fill:'#0d2336',stroke:'#1e4a6e',code:'#60b8f0',name:'#4090c0'},
-    failed:  {fill:'#3d1a1a',stroke:'#8b3a3a',code:'#ff9f9f',name:'#cc7070'},
-    available:{fill:'#2a2410',stroke:'#e9c46a',code:'#e9c46a',name:'#c8a84a'},
-    locked:  {fill:'#141418',stroke:'#2a2a38',code:'#3a3a50',name:'#2a2a40'},
-  };
-  filtered.forEach(course=>{
-    const {x,y}=pos[course.code];
-    const status=getEffectiveStatus(course.code);
-    const nc=NC[status]||NC.locked;
-    const g=document.createElementNS('http://www.w3.org/2000/svg','g');
-    g.style.cursor='pointer';
-    g.setAttribute('transform',`translate(${x-colW/2+6},${y})`);
-    const rect=document.createElementNS('http://www.w3.org/2000/svg','rect');
-    rect.setAttribute('width',colW-12);rect.setAttribute('height',nodeH-4);
-    rect.setAttribute('rx','5');rect.setAttribute('fill',nc.fill);rect.setAttribute('stroke',nc.stroke);
-    rect.setAttribute('stroke-width','1');
-    const mk=(txt,xx,yy,fill,size,anchor='start')=>{
-      const t=document.createElementNS('http://www.w3.org/2000/svg','text');
-      t.setAttribute('x',xx);t.setAttribute('y',yy);t.setAttribute('fill',fill);
-      t.setAttribute('font-size',size);t.setAttribute('font-family','DM Mono,monospace');
-      t.setAttribute('text-anchor',anchor);t.textContent=txt;return t;
-    };
-    const nm=course.name.length>26?course.name.slice(0,24)+'…':course.name;
-    g.appendChild(rect);
-    g.appendChild(mk(course.code,7,14,nc.code,'9'));
-    g.appendChild(mk(nm,7,27,nc.name,'8.5'));
-    g.appendChild(mk(course.crs+'cr',colW-18,14,nc.code,'8.5','end'));
-    if(status==='failed')   g.appendChild(mk('✗',colW-18,27,'#ff9f9f','9','end'));
-    if(status==='enrolled') g.appendChild(mk('📖',colW-18,27,'#60b8f0','9','end'));
-    svg.appendChild(g);
-  });
+// ─── GO BUTTON ─────────────────────────────────────────────────────────────────
+function updateGoBtn(){
+  const btn = document.getElementById('go-btn');
+  btn.classList.toggle('ready', !!(selectedUni && selectedCareer));
 }
 
-// ─── INIT ─────────────────────────────────────────────────────────────────────
-function populateFilter(){
-  const sel=document.getElementById('graph-filter');
-  [...new Set(COURSES.map(c=>c.sem))].sort((a,b)=>a-b).forEach(s=>{
-    const o=document.createElement('option');o.value=s;o.textContent=`Semestre ${s}`;sel.appendChild(o);
-  });
+function goToPlanner(){
+  if(!selectedCareer) return;
+  const uni = REGISTRY.find(u=>u.id===selectedUni);
+  const career = uni.careers.find(c=>c.id===selectedCareer);
+  window.location.href = `planner.html?pensum=${encodeURIComponent(career.file)}&id=${encodeURIComponent(career.id)}&name=${encodeURIComponent(career.name)}&uni=${encodeURIComponent(uni.name)}`;
 }
-function refresh(){updateStats();renderCourses();}
-populateFilter();refresh();renderSchedule();
+
+// ─── INIT ──────────────────────────────────────────────────────────────────────
+renderUniversities();
 </script>
 </body>
 </html>
