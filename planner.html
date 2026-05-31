@@ -333,7 +333,7 @@ function getEffectiveStatus(code){
   if(s==='failed')   return 'failed';
   const course=COURSES.find(c=>c.code===code);
   if(!course) return 'locked';
-  return course.prereqs.every(p=>courseStates[p]==='passed'||courseStates[p]==='enrolled')?'available':'locked';
+  return course.prereqs.every(p=>courseStates[p]==='passed')?'available':'locked';
 }
 
 function getUnlockCount(code){ return COURSES.filter(c=>c.prereqs.includes(code)).length; }
@@ -463,7 +463,7 @@ function renderSchedule(){
     });
     sorted.forEach(course=>{
       const st=courseStates[course.code];
-      const prereqsMet=course.prereqs.every(p=>courseStates[p]==='passed'||courseStates[p]==='enrolled');
+      const prereqsMet=course.prereqs.every(p=>courseStates[p]==='passed');
       let cls=st==='passed'?'sc-done':st==='enrolled'?'sc-enrolled':st==='failed'?'sc-failed':prereqsMet?'sc-now':'sc-future';
       const unlocks=getUnlockCount(course.code);
       const row=document.createElement('div');
