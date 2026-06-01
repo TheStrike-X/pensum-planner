@@ -1,0 +1,27 @@
+{
+  "id": "pucmm-educacion",
+  "university": "PUCMM",
+  "career": "Educación",
+  "shortName": "EDU",
+  "totalSemesters": 12,
+  "openGroups": [[1,4,7,10],[2,5,8,11],[3,6,9,12]],
+  "notes": "Pensum vigente · Facultad de Ciencias Económicas y Administrativas · PUCMM. Consulta el pensum completo con prerequisitos detallados en pucmm.edu.do. Pasantía requerida para graduarse.",
+  "courses": [
+    {"code":"MAT-101-T","name":"Matemática Universitaria I","crs":4,"sem":1,"prereqs":[]},
+    {"code":"FIL-121-T","name":"Introducción a la Filosofía","crs":3,"sem":1,"prereqs":[]},
+    {"code":"HG-101-T","name":"Historia de la Cultura Occidental","crs":3,"sem":1,"prereqs":[]},
+    {"code":"ILE-205-T","name":"Inglés Intermedio I","crs":3,"sem":1,"prereqs":[]},
+    {"code":"ORI-101-T","name":"Orientación Académica","crs":1,"sem":1,"prereqs":[]},
+    {"code":"ET-E01-T","name":"Electiva I Estudios Teológicos","crs":2,"sem":2,"prereqs":[]},
+    {"code":"HG-103-T","name":"Historia Dominicana y Global","crs":3,"sem":2,"prereqs":[]},
+    {"code":"ILE-206-T","name":"Inglés Intermedio II","crs":3,"sem":2,"prereqs":["ILE-205-T"]},
+    {"code":"ET-E02-T","name":"Electiva II Estudios Teológicos","crs":2,"sem":3,"prereqs":[]},
+    {"code":"COC-E01-T","name":"Electiva Cocurricular I","crs":1,"sem":4,"prereqs":[]},
+    {"code":"COC-E02-T","name":"Electiva Cocurricular II","crs":1,"sem":6,"prereqs":[]},
+    {"code":"FMI-301-T","name":"Metodología de la Investigación","crs":3,"sem":7,"prereqs":[]},
+    {"code":"FIL-363-T","name":"Ética y Ciudadanía Global","crs":3,"sem":9,"prereqs":[]},
+    {"code":"CN-112-T","name":"Cambio Climático y Gestión Ambiental","crs":3,"sem":10,"prereqs":[]},
+    {"code":"CN-114-T","name":"Innovación y Tecnología","crs":3,"sem":11,"prereqs":[]},
+    {"code":"EDU-599-T","name":"Pasantía Profesional EDU","crs":4,"sem":12,"prereqs":[]}
+  ]
+}

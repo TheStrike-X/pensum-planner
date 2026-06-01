@@ -1,0 +1,77 @@
+{
+  "id": "pucmm-arquitectura",
+  "university": "PUCMM",
+  "career": "Arquitectura",
+  "shortName": "ARQ",
+  "totalSemesters": 12,
+  "openGroups": [[1,4,7,10],[2,5,8,11],[3,6,9,12]],
+  "notes": "Pensum 2A · 215 créditos · Pasantía de 320 horas requerida para graduarse.",
+  "courses": [
+    {"code":"ARQ-111-T","name":"Fundamentos del Diseño I","crs":4,"sem":1,"prereqs":[]},
+    {"code":"ARQ-112-T","name":"Dibujo Arquitectónico I","crs":3,"sem":1,"prereqs":[]},
+    {"code":"FIL-121-T","name":"Introducción a la Filosofía","crs":3,"sem":1,"prereqs":[]},
+    {"code":"HG-101-T","name":"Historia de la Cultura Occidental","crs":3,"sem":1,"prereqs":[]},
+    {"code":"ILE-205-T","name":"Inglés Intermedio I","crs":3,"sem":1,"prereqs":[]},
+    {"code":"MAT-101-T","name":"Matemática Universitaria I","crs":4,"sem":1,"prereqs":[]},
+    {"code":"ORI-101-T","name":"Orientación Académica","crs":1,"sem":1,"prereqs":[]},
+
+    {"code":"ARQ-121-T","name":"Fundamentos del Diseño II","crs":4,"sem":2,"prereqs":["ARQ-111-T"]},
+    {"code":"ARQ-122-T","name":"Dibujo Arquitectónico II","crs":3,"sem":2,"prereqs":["ARQ-112-T"]},
+    {"code":"ARQ-123-T","name":"Geometría Descriptiva","crs":3,"sem":2,"prereqs":[]},
+    {"code":"FIS-111-T","name":"Física I","crs":3,"sem":2,"prereqs":["MAT-101-T"]},
+    {"code":"FIS-111-P","name":"Lab. Física I","crs":1,"sem":2,"prereqs":["MAT-101-T"]},
+    {"code":"HG-103-T","name":"Introducción Historia Dominicana","crs":3,"sem":2,"prereqs":[]},
+    {"code":"MAT-111-T","name":"Cálculo I","crs":4,"sem":2,"prereqs":["MAT-101-T"]},
+
+    {"code":"ARQ-211-T","name":"Diseño Arquitectónico I","crs":5,"sem":3,"prereqs":["ARQ-121-T"]},
+    {"code":"ARQ-212-T","name":"Historia Arquitectura I","crs":3,"sem":3,"prereqs":["HG-101-T"]},
+    {"code":"ARQ-213-T","name":"Representación Digital I","crs":3,"sem":3,"prereqs":["ARQ-122-T"]},
+    {"code":"ARQ-214-T","name":"Topografía","crs":3,"sem":3,"prereqs":[]},
+    {"code":"ET-E01-T","name":"Electiva I Estudios Teológicos","crs":2,"sem":3,"prereqs":[]},
+    {"code":"MAT-211-T","name":"Cálculo II","crs":4,"sem":3,"prereqs":["MAT-111-T"]},
+
+    {"code":"ARQ-221-T","name":"Diseño Arquitectónico II","crs":5,"sem":4,"prereqs":["ARQ-211-T"]},
+    {"code":"ARQ-222-T","name":"Historia Arquitectura II","crs":3,"sem":4,"prereqs":["ARQ-212-T"]},
+    {"code":"ARQ-223-T","name":"Sistemas Estructurales I","crs":3,"sem":4,"prereqs":["MAT-211-T"]},
+    {"code":"ARQ-224-T","name":"Representación Digital II","crs":3,"sem":4,"prereqs":["ARQ-213-T"]},
+    {"code":"ET-E02-T","name":"Electiva II Estudios Teológicos","crs":2,"sem":4,"prereqs":[]},
+    {"code":"COC-E01-T","name":"Electiva Cocurricular I","crs":1,"sem":4,"prereqs":[]},
+
+    {"code":"ARQ-311-T","name":"Diseño Arquitectónico III","crs":5,"sem":5,"prereqs":["ARQ-221-T"]},
+    {"code":"ARQ-312-T","name":"Historia Arquitectura III","crs":3,"sem":5,"prereqs":["ARQ-222-T"]},
+    {"code":"ARQ-313-T","name":"Sistemas Estructurales II","crs":3,"sem":5,"prereqs":["ARQ-223-T"]},
+    {"code":"ARQ-314-T","name":"Instalaciones I","crs":3,"sem":5,"prereqs":[]},
+    {"code":"ARQ-315-T","name":"Urbanismo I","crs":3,"sem":5,"prereqs":["ARQ-224-T"]},
+
+    {"code":"ARQ-321-T","name":"Diseño Arquitectónico IV","crs":5,"sem":6,"prereqs":["ARQ-311-T"]},
+    {"code":"ARQ-322-T","name":"Sistemas Estructurales III","crs":3,"sem":6,"prereqs":["ARQ-313-T"]},
+    {"code":"ARQ-323-T","name":"Instalaciones II","crs":3,"sem":6,"prereqs":["ARQ-314-T"]},
+    {"code":"ARQ-324-T","name":"Urbanismo II","crs":3,"sem":6,"prereqs":["ARQ-315-T"]},
+    {"code":"ARQ-325-T","name":"Materiales de Construcción","crs":3,"sem":6,"prereqs":[]},
+
+    {"code":"ARQ-411-T","name":"Diseño Arquitectónico V","crs":5,"sem":7,"prereqs":["ARQ-321-T"]},
+    {"code":"ARQ-412-T","name":"Planificación Urbana","crs":3,"sem":7,"prereqs":["ARQ-324-T"]},
+    {"code":"ARQ-413-T","name":"Procedimientos Constructivos I","crs":3,"sem":7,"prereqs":["ARQ-325-T"]},
+    {"code":"ARQ-414-T","name":"Tecnología de Edificaciones","crs":3,"sem":7,"prereqs":["ARQ-323-T"]},
+    {"code":"COC-E02-T","name":"Electiva Cocurricular II","crs":1,"sem":7,"prereqs":[]},
+
+    {"code":"ARQ-421-T","name":"Diseño Arquitectónico VI","crs":5,"sem":8,"prereqs":["ARQ-411-T"]},
+    {"code":"ARQ-422-T","name":"Procedimientos Constructivos II","crs":3,"sem":8,"prereqs":["ARQ-413-T"]},
+    {"code":"ARQ-423-T","name":"Gestión y Economía de la Construcción","crs":3,"sem":8,"prereqs":[]},
+    {"code":"ARQ-424-T","name":"Diseño Arquitectónico Sustentable","crs":3,"sem":8,"prereqs":["ARQ-414-T"]},
+
+    {"code":"ARQ-511-T","name":"Diseño Arquitectónico VII","crs":5,"sem":9,"prereqs":["ARQ-421-T"]},
+    {"code":"ARQ-512-T","name":"Legislación Arquitectónica","crs":3,"sem":9,"prereqs":[]},
+    {"code":"ARQ-513-T","name":"Anteproyecto de Grado","crs":3,"sem":9,"prereqs":["ARQ-422-T"]},
+    {"code":"ARQ-514-T","name":"Tendencias y Problemáticas ARQ Actual","crs":3,"sem":9,"prereqs":[]},
+
+    {"code":"ARQ-521-T","name":"Proyecto de Grado","crs":6,"sem":10,"prereqs":["ARQ-511-T","ARQ-513-T"]},
+    {"code":"ARQ-522-T","name":"Práctica Profesional Supervisada","crs":3,"sem":10,"prereqs":[]},
+    {"code":"DER-569-T","name":"Ética Profesional ARQ/ING","crs":3,"sem":10,"prereqs":[]},
+
+    {"code":"CN-112-T","name":"Cambio Climático y Gestión Ambiental","crs":3,"sem":11,"prereqs":[]},
+    {"code":"FIL-363-T","name":"Ética y Ciudadanía Global","crs":3,"sem":11,"prereqs":[]},
+
+    {"code":"ARQ-599-T","name":"Pasantía Profesional","crs":4,"sem":12,"prereqs":["ARQ-521-T"]}
+  ]
+}

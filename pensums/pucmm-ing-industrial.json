@@ -1,0 +1,32 @@
+{
+  "id": "pucmm-ing-industrial",
+  "university": "PUCMM",
+  "career": "Ingeniería Industrial y de Sistemas",
+  "shortName": "IIS",
+  "totalSemesters": 12,
+  "openGroups": [[1,4,7,10],[2,5,8,11],[3,6,9,12]],
+  "notes": "Pensum vigente · Facultad de Ciencias e Ingeniería · PUCMM. Pasantía profesional requerida para graduarse. Descarga el pensum oficial en pucmm.edu.do.",
+  "courses": [
+    {"code":"MAT-111-T","name":"Cálculo I","crs":4,"sem":1,"prereqs":[]},
+    {"code":"MAT-151-T","name":"Álgebra Lineal","crs":3,"sem":1,"prereqs":[]},
+    {"code":"FIS-111-T","name":"Física I","crs":3,"sem":1,"prereqs":[]},
+    {"code":"FIS-111-P","name":"Lab. Física I","crs":1,"sem":1,"prereqs":[]},
+    {"code":"FIL-121-T","name":"Introducción a la Filosofía","crs":3,"sem":1,"prereqs":[]},
+    {"code":"ORI-101-T","name":"Orientación Académica","crs":1,"sem":1,"prereqs":[]},
+    {"code":"HG-101-T","name":"Historia de la Cultura Occidental","crs":3,"sem":2,"prereqs":[]},
+    {"code":"MAT-211-T","name":"Cálculo II","crs":4,"sem":2,"prereqs":["MAT-111-T"]},
+    {"code":"FIS-211-T","name":"Física II","crs":3,"sem":2,"prereqs":["FIS-111-T"]},
+    {"code":"FIS-211-P","name":"Lab. Física II","crs":1,"sem":2,"prereqs":["FIS-111-T"]},
+    {"code":"MAT-311-T","name":"Ecuaciones Diferenciales","crs":4,"sem":3,"prereqs":["MAT-211-T"]},
+    {"code":"ET-E01-T","name":"Electiva I Estudios Teológicos","crs":2,"sem":3,"prereqs":[]},
+    {"code":"ET-E02-T","name":"Electiva II Estudios Teológicos","crs":2,"sem":4,"prereqs":[]},
+    {"code":"HG-103-T","name":"Historia Dominicana y Global","crs":3,"sem":5,"prereqs":[]},
+    {"code":"COC-E01-T","name":"Electiva Cocurricular I","crs":1,"sem":4,"prereqs":[]},
+    {"code":"COC-E02-T","name":"Electiva Cocurricular II","crs":1,"sem":6,"prereqs":[]},
+    {"code":"FIL-363-T","name":"Ética Profesional ARQ/ING","crs":3,"sem":9,"prereqs":[]},
+    {"code":"CN-112-T","name":"Cambio Climático y Gestión Ambiental","crs":3,"sem":10,"prereqs":[]},
+    {"code":"CN-114-T","name":"Innovación y Tecnología","crs":3,"sem":11,"prereqs":[]},
+    {"code":"FMI-301-T","name":"Metodología de la Investigación","crs":3,"sem":8,"prereqs":[]},
+    {"code":"IIS-599-T","name":"Pasantía Profesional IIS","crs":4,"sem":12,"prereqs":[]}
+  ]
+}

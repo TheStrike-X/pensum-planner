@@ -1,0 +1,73 @@
+{
+  "id": "pucmm-ing-civil",
+  "university": "PUCMM",
+  "career": "Ingeniería Civil",
+  "shortName": "ICV",
+  "totalSemesters": 12,
+  "openGroups": [[1,4,7,10],[2,5,8,11],[3,6,9,12]],
+  "notes": "Pensum vigente · Facultad de Ciencias e Ingeniería. Pasantía requerida.",
+  "courses": [
+    {"code":"MAT-111-T","name":"Cálculo I","crs":4,"sem":1,"prereqs":[]},
+    {"code":"MAT-151-T","name":"Álgebra Lineal","crs":3,"sem":1,"prereqs":[]},
+    {"code":"FIS-111-T","name":"Física I","crs":3,"sem":1,"prereqs":[]},
+    {"code":"FIS-111-P","name":"Lab. Física I","crs":1,"sem":1,"prereqs":[]},
+    {"code":"ICV-101-T","name":"Introducción a Ingeniería Civil","crs":2,"sem":1,"prereqs":[]},
+    {"code":"FIL-121-T","name":"Introducción a la Filosofía","crs":3,"sem":1,"prereqs":[]},
+    {"code":"ORI-101-T","name":"Orientación Académica","crs":1,"sem":1,"prereqs":[]},
+
+    {"code":"MAT-211-T","name":"Cálculo II","crs":4,"sem":2,"prereqs":["MAT-111-T"]},
+    {"code":"FIS-211-T","name":"Física II","crs":3,"sem":2,"prereqs":["FIS-111-T","MAT-111-T"]},
+    {"code":"FIS-211-P","name":"Lab. Física II","crs":1,"sem":2,"prereqs":["FIS-111-T"]},
+    {"code":"ICV-111-T","name":"Dibujo Técnico","crs":3,"sem":2,"prereqs":[]},
+    {"code":"HG-101-T","name":"Historia de la Cultura Occidental","crs":3,"sem":2,"prereqs":[]},
+    {"code":"QMA-101-T","name":"Química General","crs":3,"sem":2,"prereqs":[]},
+    {"code":"QMA-101-P","name":"Lab. Química General","crs":1,"sem":2,"prereqs":[]},
+
+    {"code":"MAT-311-T","name":"Ecuaciones Diferenciales","crs":4,"sem":3,"prereqs":["MAT-211-T"]},
+    {"code":"MAT-321-T","name":"Probabilidad y Estadística","crs":3,"sem":3,"prereqs":["MAT-211-T"]},
+    {"code":"ICV-201-T","name":"Estática","crs":3,"sem":3,"prereqs":["FIS-211-T","MAT-151-T"]},
+    {"code":"ICV-202-T","name":"Topografía","crs":3,"sem":3,"prereqs":[]},
+    {"code":"ICV-202-P","name":"Lab. Topografía","crs":1,"sem":3,"prereqs":[]},
+    {"code":"ET-E01-T","name":"Electiva I Estudios Teológicos","crs":2,"sem":3,"prereqs":[]},
+
+    {"code":"ICV-211-T","name":"Mecánica de Materiales","crs":4,"sem":4,"prereqs":["ICV-201-T"]},
+    {"code":"ICV-212-T","name":"Dinámica","crs":3,"sem":4,"prereqs":["ICV-201-T"]},
+    {"code":"ICV-213-T","name":"Mecánica de Suelos I","crs":3,"sem":4,"prereqs":["ICV-201-T"]},
+    {"code":"ICV-213-P","name":"Lab. Mecánica de Suelos I","crs":1,"sem":4,"prereqs":[]},
+    {"code":"ET-E02-T","name":"Electiva II Estudios Teológicos","crs":2,"sem":4,"prereqs":[]},
+    {"code":"COC-E01-T","name":"Electiva Cocurricular I","crs":1,"sem":4,"prereqs":[]},
+
+    {"code":"ICV-301-T","name":"Análisis Estructural I","crs":4,"sem":5,"prereqs":["ICV-211-T"]},
+    {"code":"ICV-302-T","name":"Mecánica de Suelos II","crs":3,"sem":5,"prereqs":["ICV-213-T"]},
+    {"code":"ICV-302-P","name":"Lab. Mecánica de Suelos II","crs":1,"sem":5,"prereqs":["ICV-213-T"]},
+    {"code":"ICV-303-T","name":"Hidráulica I","crs":3,"sem":5,"prereqs":["MAT-311-T","FIS-211-T"]},
+    {"code":"HG-103-T","name":"Historia Dominicana y Global","crs":3,"sem":5,"prereqs":[]},
+
+    {"code":"ICV-311-T","name":"Análisis Estructural II","crs":4,"sem":6,"prereqs":["ICV-301-T"]},
+    {"code":"ICV-312-T","name":"Fundaciones","crs":3,"sem":6,"prereqs":["ICV-302-T"]},
+    {"code":"ICV-313-T","name":"Hidráulica II","crs":3,"sem":6,"prereqs":["ICV-303-T"]},
+    {"code":"ICV-314-T","name":"Materiales de Construcción","crs":3,"sem":6,"prereqs":["QMA-101-T"]},
+    {"code":"COC-E02-T","name":"Electiva Cocurricular II","crs":1,"sem":6,"prereqs":[]},
+
+    {"code":"ICV-401-T","name":"Diseño de Estructuras de Concreto","crs":4,"sem":7,"prereqs":["ICV-311-T"]},
+    {"code":"ICV-402-T","name":"Ingeniería de Tránsito","crs":3,"sem":7,"prereqs":["MAT-321-T"]},
+    {"code":"ICV-403-T","name":"Ingeniería Ambiental","crs":3,"sem":7,"prereqs":["ICV-313-T"]},
+    {"code":"ICV-404-T","name":"Diseño de Pavimentos","crs":3,"sem":7,"prereqs":["ICV-302-T"]},
+
+    {"code":"ICV-411-T","name":"Diseño de Estructuras Metálicas","crs":4,"sem":8,"prereqs":["ICV-311-T"]},
+    {"code":"ICV-412-T","name":"Vías de Comunicación","crs":3,"sem":8,"prereqs":["ICV-402-T","ICV-404-T"]},
+    {"code":"ICV-413-T","name":"Abastecimiento de Agua","crs":3,"sem":8,"prereqs":["ICV-313-T"]},
+    {"code":"ICV-414-T","name":"Gerencia de Proyectos","crs":3,"sem":8,"prereqs":[]},
+
+    {"code":"ICV-501-T","name":"Diseño Sismo-Resistente","crs":3,"sem":9,"prereqs":["ICV-401-T"]},
+    {"code":"ICV-502-T","name":"Alcantarillado y Drenaje","crs":3,"sem":9,"prereqs":["ICV-413-T"]},
+    {"code":"ICV-503-T","name":"Anteproyecto de Grado Civil","crs":3,"sem":9,"prereqs":["ICV-414-T"]},
+    {"code":"FIL-363-T","name":"Ética Profesional ARQ/ING","crs":3,"sem":9,"prereqs":[]},
+
+    {"code":"ICV-511-T","name":"Proyecto de Grado Civil","crs":6,"sem":10,"prereqs":["ICV-501-T","ICV-503-T"]},
+    {"code":"CN-112-T","name":"Cambio Climático y Gestión Ambiental","crs":3,"sem":10,"prereqs":[]},
+
+    {"code":"ICV-599-T","name":"Pasantía Profesional","crs":4,"sem":11,"prereqs":["ICV-511-T"]},
+    {"code":"CN-114-T","name":"Innovación y Tecnología","crs":3,"sem":11,"prereqs":[]}
+  ]
+}

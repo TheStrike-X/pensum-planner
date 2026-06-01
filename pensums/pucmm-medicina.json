@@ -1,0 +1,88 @@
+{
+  "id": "pucmm-medicina",
+  "university": "PUCMM",
+  "career": "Medicina",
+  "shortName": "MED",
+  "totalSemesters": 18,
+  "openGroups": [[1,4,7,10,13,16],[2,5,8,11,14,17],[3,6,9,12,15,18]],
+  "notes": "Pensum 7A · 337 créditos · Título: Doctor en Medicina. Ciclo Premédica (sems 1-6), Ciencias Médicas Básicas (sems 7-12), Internado (sems 13-18). Moral Médica solo tras 40% créditos aprobados.",
+  "courses": [
+    {"code":"BIO-111-T","name":"Biología I","crs":3,"sem":1,"prereqs":[]},
+    {"code":"BIO-111-P","name":"Lab. Biología I","crs":1,"sem":1,"prereqs":[]},
+    {"code":"FIL-121-T","name":"Introducción a la Filosofía","crs":3,"sem":1,"prereqs":[]},
+    {"code":"HG-101-T","name":"Historia de la Cultura Occidental","crs":3,"sem":1,"prereqs":[]},
+    {"code":"ILE-205-T","name":"Inglés Intermedio I","crs":3,"sem":1,"prereqs":[]},
+    {"code":"MAT-101-T","name":"Matemática Universitaria I","crs":4,"sem":1,"prereqs":[]},
+    {"code":"ORI-101-T","name":"Orientación Académica","crs":1,"sem":1,"prereqs":[]},
+
+    {"code":"BIO-112-T","name":"Biología II","crs":3,"sem":2,"prereqs":["BIO-111-T"]},
+    {"code":"BIO-112-P","name":"Lab. Biología II","crs":1,"sem":2,"prereqs":["BIO-111-T"]},
+    {"code":"ET-E01-T","name":"Electiva I Estudios Teológicos","crs":2,"sem":2,"prereqs":[]},
+    {"code":"FIS-201-T","name":"Física Médica I","crs":3,"sem":2,"prereqs":["MAT-101-T"]},
+    {"code":"FIS-201-P","name":"Lab. Física Médica I","crs":1,"sem":2,"prereqs":[]},
+    {"code":"HG-103-T","name":"Historia Dominicana y Global","crs":3,"sem":2,"prereqs":[]},
+    {"code":"QMA-110-T","name":"Química General","crs":3,"sem":2,"prereqs":[]},
+    {"code":"QMA-110-P","name":"Lab. Química General","crs":1,"sem":2,"prereqs":[]},
+
+    {"code":"BIO-211-T","name":"Bioquímica I","crs":3,"sem":3,"prereqs":["BIO-112-T","QMA-110-T"]},
+    {"code":"BIO-211-P","name":"Lab. Bioquímica I","crs":1,"sem":3,"prereqs":[]},
+    {"code":"ET-E02-T","name":"Electiva II Estudios Teológicos","crs":2,"sem":3,"prereqs":[]},
+    {"code":"FIS-202-T","name":"Física Médica II","crs":3,"sem":3,"prereqs":["FIS-201-T"]},
+    {"code":"FIS-202-P","name":"Lab. Física Médica II","crs":1,"sem":3,"prereqs":[]},
+    {"code":"QMA-111-T","name":"Química Orgánica I","crs":3,"sem":3,"prereqs":["QMA-110-T"]},
+    {"code":"QMA-111-P","name":"Lab. Química Orgánica I","crs":1,"sem":3,"prereqs":[]},
+
+    {"code":"BIO-231-T","name":"Bioquímica II","crs":3,"sem":4,"prereqs":["BIO-211-T"]},
+    {"code":"BIO-231-P","name":"Lab. Bioquímica II","crs":1,"sem":4,"prereqs":[]},
+    {"code":"CN-E01-T","name":"Electiva Ciencias Básicas","crs":3,"sem":4,"prereqs":[]},
+    {"code":"FMI-101-T","name":"Fund. Metodología de Investigación","crs":3,"sem":4,"prereqs":[]},
+    {"code":"QMA-211-T","name":"Química Orgánica II","crs":3,"sem":4,"prereqs":["QMA-111-T"]},
+    {"code":"QMA-211-P","name":"Lab. Química Orgánica II","crs":1,"sem":4,"prereqs":[]},
+    {"code":"QMA-212-T","name":"Bioquímica Clínica","crs":3,"sem":4,"prereqs":["QMA-111-T"]},
+    {"code":"QMA-212-P","name":"Lab. Bioquímica Clínica","crs":1,"sem":4,"prereqs":[]},
+
+    {"code":"CN-112-T","name":"Cambio Climático y Gestión Ambiental","crs":3,"sem":5,"prereqs":[]},
+    {"code":"CN-114-T","name":"Innovación y Tecnología","crs":3,"sem":5,"prereqs":[]},
+    {"code":"HM-E01-T","name":"Electiva Historia y Sociedad Mundial","crs":3,"sem":5,"prereqs":[]},
+    {"code":"MED-101-T","name":"Anatomía Humana I","crs":4,"sem":5,"prereqs":["BIO-231-T"]},
+    {"code":"MED-102-T","name":"Histología y Embriología","crs":3,"sem":5,"prereqs":["BIO-112-T"]},
+
+    {"code":"MED-111-T","name":"Anatomía Humana II","crs":4,"sem":6,"prereqs":["MED-101-T"]},
+    {"code":"MED-112-T","name":"Fisiología I","crs":4,"sem":6,"prereqs":["MED-102-T","BIO-231-T"]},
+    {"code":"MED-113-T","name":"Microbiología y Parasitología I","crs":3,"sem":6,"prereqs":["BIO-211-T"]},
+
+    {"code":"MED-201-T","name":"Ciencias Médicas Básicas Integradas I","crs":6,"sem":7,"prereqs":["MED-111-T","MED-112-T"]},
+    {"code":"MED-202-T","name":"Fisiología II","crs":4,"sem":7,"prereqs":["MED-112-T"]},
+    {"code":"MED-203-T","name":"Microbiología y Parasitología II","crs":3,"sem":7,"prereqs":["MED-113-T"]},
+    {"code":"MED-204-T","name":"Inmunología","crs":3,"sem":7,"prereqs":["MED-113-T"]},
+
+    {"code":"MED-211-T","name":"Ciencias Médicas Básicas Integradas II","crs":6,"sem":8,"prereqs":["MED-201-T"]},
+    {"code":"MED-212-T","name":"Patología General","crs":4,"sem":8,"prereqs":["MED-202-T","MED-204-T"]},
+    {"code":"MED-213-T","name":"Farmacología I","crs":3,"sem":8,"prereqs":["MED-202-T"]},
+
+    {"code":"MED-301-T","name":"Semiología Médica","crs":4,"sem":9,"prereqs":["MED-211-T"]},
+    {"code":"MED-302-T","name":"Farmacología II","crs":3,"sem":9,"prereqs":["MED-213-T"]},
+    {"code":"MED-303-T","name":"Patología Especial","crs":4,"sem":9,"prereqs":["MED-212-T"]},
+    {"code":"ET-217-T","name":"Moral Médica","crs":3,"sem":9,"prereqs":[]},
+
+    {"code":"MED-311-T","name":"Medicina Interna I","crs":5,"sem":10,"prereqs":["MED-301-T","MED-303-T"]},
+    {"code":"MED-312-T","name":"Cirugía General I","crs":4,"sem":10,"prereqs":["MED-301-T"]},
+    {"code":"MED-313-T","name":"Ginecología y Obstetricia I","crs":4,"sem":10,"prereqs":["MED-301-T"]},
+
+    {"code":"MED-401-T","name":"Medicina Interna II","crs":5,"sem":11,"prereqs":["MED-311-T"]},
+    {"code":"MED-402-T","name":"Cirugía General II","crs":4,"sem":11,"prereqs":["MED-312-T"]},
+    {"code":"MED-403-T","name":"Pediatría I","crs":4,"sem":11,"prereqs":["MED-311-T"]},
+    {"code":"MED-404-T","name":"Ginecología y Obstetricia II","crs":4,"sem":11,"prereqs":["MED-313-T"]},
+
+    {"code":"MED-411-T","name":"Medicina Preventiva y Salud Pública","crs":4,"sem":12,"prereqs":["MED-401-T"]},
+    {"code":"MED-412-T","name":"Psiquiatría","crs":3,"sem":12,"prereqs":["MED-401-T"]},
+    {"code":"MED-413-T","name":"Pediatría II","crs":4,"sem":12,"prereqs":["MED-403-T"]},
+
+    {"code":"MED-501-P","name":"Internado Medicina Interna","crs":6,"sem":13,"prereqs":["MED-411-T"]},
+    {"code":"MED-502-P","name":"Internado Cirugía","crs":6,"sem":14,"prereqs":["MED-402-T"]},
+    {"code":"MED-503-P","name":"Internado Ginecología y Obstetricia","crs":6,"sem":15,"prereqs":["MED-404-T"]},
+    {"code":"MED-504-P","name":"Internado Pediatría","crs":6,"sem":16,"prereqs":["MED-413-T"]},
+    {"code":"MED-505-P","name":"Internado Emergencias","crs":6,"sem":17,"prereqs":["MED-501-P"]},
+    {"code":"MED-681-P","name":"Internado Medicina Social, Comunit. y Familiar","crs":6,"sem":18,"prereqs":["MED-505-P"]}
+  ]
+}

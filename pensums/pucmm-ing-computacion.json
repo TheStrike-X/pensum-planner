@@ -1,0 +1,73 @@
+{
+  "id": "pucmm-ing-computacion",
+  "university": "PUCMM",
+  "career": "Ingeniería en Ciencias de la Computación",
+  "shortName": "ICC",
+  "totalSemesters": 12,
+  "openGroups": [[1,4,7,10],[2,5,8,11],[3,6,9,12]],
+  "notes": "Pensum vigente · 4 años · Incluye electivas de IA, plataformas y desarrollo de software. Pasantía requerida.",
+  "courses": [
+    {"code":"MAT-111-T","name":"Cálculo I","crs":4,"sem":1,"prereqs":[]},
+    {"code":"MAT-151-T","name":"Álgebra Lineal","crs":3,"sem":1,"prereqs":[]},
+    {"code":"ICC-101-T","name":"Programación I","crs":3,"sem":1,"prereqs":[]},
+    {"code":"ICC-101-P","name":"Lab. Programación I","crs":1,"sem":1,"prereqs":[]},
+    {"code":"ICC-102-T","name":"Fundamentos de Ciencias de la Computación","crs":3,"sem":1,"prereqs":[]},
+    {"code":"FIL-121-T","name":"Introducción a la Filosofía","crs":3,"sem":1,"prereqs":[]},
+    {"code":"ORI-101-T","name":"Orientación Académica","crs":1,"sem":1,"prereqs":[]},
+
+    {"code":"MAT-211-T","name":"Cálculo II","crs":4,"sem":2,"prereqs":["MAT-111-T"]},
+    {"code":"MAT-231-T","name":"Matemáticas Discretas","crs":3,"sem":2,"prereqs":["MAT-151-T"]},
+    {"code":"ICC-111-T","name":"Programación II","crs":3,"sem":2,"prereqs":["ICC-101-T"]},
+    {"code":"ICC-111-P","name":"Lab. Programación II","crs":1,"sem":2,"prereqs":["ICC-101-T"]},
+    {"code":"ICC-112-T","name":"Arquitectura de Computadoras","crs":3,"sem":2,"prereqs":["ICC-102-T"]},
+    {"code":"HG-101-T","name":"Historia de la Cultura Occidental","crs":3,"sem":2,"prereqs":[]},
+
+    {"code":"MAT-311-T","name":"Probabilidad y Estadística","crs":3,"sem":3,"prereqs":["MAT-211-T"]},
+    {"code":"ICC-201-T","name":"Estructuras de Datos","crs":3,"sem":3,"prereqs":["ICC-111-T"]},
+    {"code":"ICC-201-P","name":"Lab. Estructuras de Datos","crs":1,"sem":3,"prereqs":["ICC-111-T"]},
+    {"code":"ICC-202-T","name":"Sistemas Operativos","crs":3,"sem":3,"prereqs":["ICC-112-T"]},
+    {"code":"ICC-203-T","name":"Base de Datos I","crs":3,"sem":3,"prereqs":["ICC-111-T"]},
+    {"code":"ET-E01-T","name":"Electiva I Estudios Teológicos","crs":2,"sem":3,"prereqs":[]},
+
+    {"code":"ICC-211-T","name":"Análisis de Algoritmos","crs":3,"sem":4,"prereqs":["ICC-201-T","MAT-231-T"]},
+    {"code":"ICC-212-T","name":"Redes de Computadoras","crs":3,"sem":4,"prereqs":["ICC-202-T"]},
+    {"code":"ICC-213-T","name":"Base de Datos II","crs":3,"sem":4,"prereqs":["ICC-203-T"]},
+    {"code":"ICC-214-T","name":"Ingeniería de Software I","crs":3,"sem":4,"prereqs":["ICC-201-T"]},
+    {"code":"ET-E02-T","name":"Electiva II Estudios Teológicos","crs":2,"sem":4,"prereqs":[]},
+    {"code":"COC-E01-T","name":"Electiva Cocurricular I","crs":1,"sem":4,"prereqs":[]},
+
+    {"code":"ICC-301-T","name":"Inteligencia Artificial","crs":3,"sem":5,"prereqs":["ICC-211-T","MAT-311-T"]},
+    {"code":"ICC-301-P","name":"Lab. Inteligencia Artificial","crs":1,"sem":5,"prereqs":["ICC-211-T"]},
+    {"code":"ICC-302-T","name":"Ingeniería de Software II","crs":3,"sem":5,"prereqs":["ICC-214-T"]},
+    {"code":"ICC-303-T","name":"Seguridad Informática","crs":3,"sem":5,"prereqs":["ICC-212-T"]},
+    {"code":"HG-103-T","name":"Historia Dominicana y Global","crs":3,"sem":5,"prereqs":[]},
+
+    {"code":"ICC-311-T","name":"Programación Paralela y Concurrente","crs":3,"sem":6,"prereqs":["ICC-301-T"]},
+    {"code":"ICC-311-P","name":"Lab. Prog. Paralela y Concurrente","crs":1,"sem":6,"prereqs":["ICC-301-T"]},
+    {"code":"ICC-312-E","name":"Electiva de Inteligencia Artificial","crs":3,"sem":6,"prereqs":["ICC-301-T"]},
+    {"code":"ICC-312-P","name":"Lab. Electiva IA","crs":1,"sem":6,"prereqs":["ICC-301-T"]},
+    {"code":"ICC-313-T","name":"Proyecto Integrador de Software","crs":3,"sem":6,"prereqs":["ICC-302-T"]},
+    {"code":"ICC-313-P","name":"Lab. Proyecto Integrador","crs":1,"sem":6,"prereqs":["ICC-302-T"]},
+    {"code":"FMI-301-T","name":"Metodología de la Investigación","crs":3,"sem":6,"prereqs":[]},
+
+    {"code":"ICC-401-T","name":"Gestión de Proyectos","crs":4,"sem":7,"prereqs":["ICC-313-T"]},
+    {"code":"ICC-402-T","name":"Desarrollo de Aplicaciones Móviles","crs":3,"sem":7,"prereqs":["ICC-312-E"]},
+    {"code":"ICC-402-P","name":"Lab. Apps Móviles","crs":1,"sem":7,"prereqs":["ICC-312-E"]},
+    {"code":"ICC-E01-T","name":"Electiva I de ICC","crs":3,"sem":7,"prereqs":["ICC-311-T"]},
+    {"code":"ICC-E01-P","name":"Lab. Electiva I ICC","crs":1,"sem":7,"prereqs":["ICC-311-T"]},
+
+    {"code":"ICC-411-T","name":"Anteproyecto de Grado ICC","crs":2,"sem":8,"prereqs":["ICC-401-T","FMI-301-T"]},
+    {"code":"ICC-412-T","name":"Emprendimiento de Base Tecnológica","crs":3,"sem":8,"prereqs":[]},
+    {"code":"ICC-E02-T","name":"Electiva de Desarrollo Basado en Plataformas","crs":3,"sem":8,"prereqs":["ICC-402-T"]},
+    {"code":"ICC-E02-P","name":"Lab. Electiva Plataformas","crs":1,"sem":8,"prereqs":["ICC-402-T"]},
+    {"code":"ICC-E03-T","name":"Electiva II de ICC","crs":3,"sem":8,"prereqs":["ICC-E01-T"]},
+    {"code":"ICC-E03-P","name":"Lab. Electiva II ICC","crs":1,"sem":8,"prereqs":["ICC-E01-T"]},
+
+    {"code":"ICC-501-T","name":"Proyecto de Grado ICC","crs":6,"sem":9,"prereqs":["ICC-411-T"]},
+    {"code":"FIL-363-T","name":"Ética Profesional ARQ/ING","crs":3,"sem":9,"prereqs":[]},
+    {"code":"CN-112-T","name":"Cambio Climático y Gestión Ambiental","crs":3,"sem":9,"prereqs":[]},
+
+    {"code":"ICC-599-T","name":"Pasantía Profesional","crs":4,"sem":10,"prereqs":["ICC-501-T"]},
+    {"code":"CN-114-T","name":"Innovación y Tecnología","crs":3,"sem":10,"prereqs":[]}
+  ]
+}
