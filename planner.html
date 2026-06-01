@@ -199,8 +199,41 @@
       <div class="stat"><div class="stat-num" id="stat-available" style="color:var(--available-text)">0</div><div class="stat-label">Disponibles</div></div>
       <div class="stat"><div class="stat-num" id="stat-credits" style="color:var(--accent2)">0</div><div class="stat-label">Créditos ✓</div></div>
       <button class="reset-btn" onclick="openResetModal()">↺ Reiniciar</button>
+    <button id="auth-btn" class="auth-login-btn" onclick="openAuthModal('login')" style="background:none;border:1px solid var(--border);color:var(--muted);font-size:10px;padding:5px 12px;border-radius:6px;cursor:pointer;font-family:'DM Mono',monospace;white-space:nowrap;">⚙ Cuenta</button>
+    <div id="user-info" style="display:none;align-items:center;gap:8px;">
+      <span class="user-name" style="font-size:11px;color:var(--muted);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+      <button class="reset-btn" onclick="doLogout()" style="border-color:#2a3a2a;color:#5a805a;">Salir</button>
+    </div>
     </div>
   </header>
+
+<!-- ── AUTH MODAL ─────────────────────────────────────────────────────────── -->
+<div id="auth-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;align-items:center;justify-content:center;">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:32px;width:340px;max-width:90vw;display:flex;flex-direction:column;gap:16px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <span style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;">Pensum <span style="color:var(--accent);font-style:italic;">Planner</span></span>
+      <button onclick="closeAuthModal()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;line-height:1;">×</button>
+    </div>
+    <div style="display:flex;gap:4px;background:var(--surface2);border-radius:8px;padding:3px;">
+      <button id="tab-login"    onclick="switchTab('login')"    style="flex:1;padding:6px;border:none;border-radius:6px;cursor:pointer;font-family:'DM Mono',monospace;font-size:11px;transition:all .15s;" class="tab-active-login">Iniciar sesión</button>
+      <button id="tab-register" onclick="switchTab('register')" style="flex:1;padding:6px;border:none;border-radius:6px;cursor:pointer;font-family:'DM Mono',monospace;font-size:11px;transition:all .15s;" class="tab-inactive">Crear cuenta</button>
+    </div>
+    <div id="auth-error" style="color:var(--failed-text);font-size:11px;min-height:14px;text-align:center;"></div>
+    <div id="form-login" style="display:flex;flex-direction:column;gap:10px;">
+      <input id="login-email"    type="email"    placeholder="Correo electrónico" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:8px;font-family:'DM Mono',monospace;font-size:12px;outline:none;">
+      <input id="login-password" type="password" placeholder="Contraseña"         style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:8px;font-family:'DM Mono',monospace;font-size:12px;outline:none;">
+      <button id="login-btn" onclick="doLogin()" style="background:var(--accent);border:none;color:#fff;padding:10px;border-radius:8px;cursor:pointer;font-family:'DM Mono',monospace;font-size:12px;font-weight:500;">Entrar</button>
+      <p style="font-size:10px;color:var(--muted);text-align:center;">¿No tienes cuenta? <a onclick="switchTab('register')" style="color:var(--accent);cursor:pointer;text-decoration:underline;">Regístrate</a></p>
+    </div>
+    <div id="form-register" style="display:none;flex-direction:column;gap:10px;">
+      <input id="reg-name"     type="text"     placeholder="Nombre (opcional)"   style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:8px;font-family:'DM Mono',monospace;font-size:12px;outline:none;">
+      <input id="reg-email"    type="email"    placeholder="Correo electrónico"   style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:8px;font-family:'DM Mono',monospace;font-size:12px;outline:none;">
+      <input id="reg-password" type="password" placeholder="Contraseña (mín. 6)" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:8px;font-family:'DM Mono',monospace;font-size:12px;outline:none;">
+      <button id="register-btn" onclick="doRegister()" style="background:var(--accent);border:none;color:#fff;padding:10px;border-radius:8px;cursor:pointer;font-family:'DM Mono',monospace;font-size:12px;font-weight:500;">Crear cuenta</button>
+      <p style="font-size:10px;color:var(--muted);text-align:center;">¿Ya tienes cuenta? <a onclick="switchTab('login')" style="color:var(--accent);cursor:pointer;text-decoration:underline;">Inicia sesión</a></p>
+    </div>
+  </div>
+</div>
 
   <div class="tabs">
     <div class="tab active" onclick="showTab('courses')">📚 Todas las Materias</div>
@@ -258,6 +291,8 @@ let OPEN_GROUP = {};
 async function loadPensum(){
   try {
     document.getElementById('loading-text').textContent = 'Cargando ' + (params.get('name')||'pensum') + '…';
+    await restoreSession();
+    updateUserUI();
     const resp = await fetch(PENSUM_FILE);
     if(!resp.ok) throw new Error('HTTP ' + resp.status);
     const data = await resp.json();
@@ -305,19 +340,125 @@ function showError(msg){
   document.getElementById('error-screen').classList.add('show');
 }
 
-// ─── STATE ────────────────────────────────────────────────────────────────────
+// ─── AUTH & STATE ─────────────────────────────────────────────────────────────
 const STATE_KEY = 'cplan_' + PENSUM_ID;
+const API = '/api';
 
-function loadState(){
-  try{ const s=localStorage.getItem(STATE_KEY); return s?JSON.parse(s):{}; }catch(e){return {};}
-}
-function saveState(){ localStorage.setItem(STATE_KEY, JSON.stringify(courseStates)); }
+let authToken = localStorage.getItem('pp_token') || null;
+let authUser  = null;
+let saveTimer = null;
 
 function initDefaults(st){
   COURSES.forEach(c=>{ if(!(c.code in st)) st[c.code]=null; });
   return st;
 }
 let courseStates = {};
+
+// ── API helpers ──────────────────────────────────────────────────────────────
+async function apiCall(method, path, body){
+  const opts = { method, headers: { 'Content-Type': 'application/json' } };
+  if (authToken) opts.headers['Authorization'] = 'Bearer ' + authToken;
+  if (body) opts.body = JSON.stringify(body);
+  const r = await fetch(API + path, opts);
+  return { ok: r.ok, status: r.status, data: await r.json() };
+}
+
+// ── Load / Save progress ─────────────────────────────────────────────────────
+async function loadState(){
+  if (authToken) {
+    try {
+      const { ok, data } = await apiCall('GET', '/progress/' + PENSUM_ID);
+      if (ok && data.data && Object.keys(data.data).length) return data.data;
+    } catch(e) {}
+  }
+  try { const s=localStorage.getItem(STATE_KEY); return s?JSON.parse(s):{}; } catch(e){ return {}; }
+}
+
+function saveState(){
+  localStorage.setItem(STATE_KEY, JSON.stringify(courseStates));
+  if (authToken) {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(async () => {
+      try { await apiCall('POST', '/progress/' + PENSUM_ID, { data: courseStates }); } catch(e) {}
+    }, 800);
+  }
+}
+
+// ── Auth modal helpers ───────────────────────────────────────────────────────
+function updateUserUI(){
+  const btn = document.getElementById('auth-btn');
+  const info = document.getElementById('user-info');
+  if (!btn) return;
+  if (authUser) {
+    btn.style.display = 'none';
+    if (info) { info.style.display = 'flex'; info.querySelector('.user-name').textContent = authUser.name; }
+  } else {
+    btn.style.display = 'inline-flex';
+    if (info) info.style.display = 'none';
+  }
+}
+
+function openAuthModal(tab){ document.getElementById('auth-modal').style.display='flex'; switchTab(tab||'login'); document.getElementById('auth-error').textContent=''; }
+function closeAuthModal(){ document.getElementById('auth-modal').style.display='none'; }
+function switchTab(tab){
+  const tl=document.getElementById('tab-login'), tr=document.getElementById('tab-register');
+  const active='background:var(--surface);color:var(--text);', inactive='background:none;color:var(--muted);';
+  tl.style.cssText+=(tab==='login'?active:inactive);
+  tr.style.cssText+=(tab==='register'?active:inactive);
+  document.getElementById('form-login').style.display=tab==='login'?'flex':'none';
+  document.getElementById('form-register').style.display=tab==='register'?'flex':'none';
+  document.getElementById('auth-error').textContent='';
+}
+
+async function doLogin(){
+  const email=document.getElementById('login-email').value.trim();
+  const password=document.getElementById('login-password').value;
+  const errEl=document.getElementById('auth-error');
+  if(!email||!password){errEl.textContent='Completa todos los campos.';return;}
+  const btn=document.getElementById('login-btn');
+  btn.disabled=true;btn.textContent='Entrando…';
+  const {ok,data}=await apiCall('POST','/login',{email,password});
+  btn.disabled=false;btn.textContent='Entrar';
+  if(!ok){errEl.textContent=data.error||'Error al iniciar sesión.';return;}
+  authToken=data.token; authUser=data.user;
+  localStorage.setItem('pp_token',authToken);
+  closeAuthModal(); updateUserUI();
+  const {ok:ok2,data:d2}=await apiCall('GET','/progress/'+PENSUM_ID);
+  if(ok2&&d2.data&&Object.keys(d2.data).length){ courseStates=initDefaults(d2.data); refresh(); }
+}
+
+async function doRegister(){
+  const name=document.getElementById('reg-name').value.trim();
+  const email=document.getElementById('reg-email').value.trim();
+  const password=document.getElementById('reg-password').value;
+  const errEl=document.getElementById('auth-error');
+  if(!email||!password){errEl.textContent='Email y contraseña son requeridos.';return;}
+  if(password.length<6){errEl.textContent='La contraseña debe tener al menos 6 caracteres.';return;}
+  const btn=document.getElementById('register-btn');
+  btn.disabled=true;btn.textContent='Creando cuenta…';
+  const {ok,data}=await apiCall('POST','/register',{name,email,password});
+  btn.disabled=false;btn.textContent='Crear cuenta';
+  if(!ok){errEl.textContent=data.error||'Error al registrarse.';return;}
+  authToken=data.token; authUser=data.user;
+  localStorage.setItem('pp_token',authToken);
+  if(Object.values(courseStates).some(v=>v!==null)){
+    await apiCall('POST','/progress/'+PENSUM_ID,{data:courseStates});
+  }
+  closeAuthModal(); updateUserUI();
+}
+
+async function doLogout(){
+  await apiCall('POST','/logout');
+  authToken=null; authUser=null;
+  localStorage.removeItem('pp_token');
+  updateUserUI();
+}
+
+async function restoreSession(){
+  if(!authToken) return;
+  const {ok,data}=await apiCall('GET','/me');
+  if(ok){authUser=data.user;}else{authToken=null;localStorage.removeItem('pp_token');}
+}
 
 function cycleState(code){
   if(getEffectiveStatus(code)==='locked') return;
@@ -573,7 +714,9 @@ function openResetModal(){ document.getElementById('reset-modal').classList.add(
 function closeResetModal(){ document.getElementById('reset-modal').classList.remove('open'); }
 function confirmReset(){
   COURSES.forEach(c=>{ courseStates[c.code]=null; });
-  saveState(); closeResetModal(); refresh();
+  saveState();
+  if(authToken){ try{ await apiCall('DELETE','/progress/'+PENSUM_ID); }catch(e){} }
+  closeResetModal(); refresh();
 }
 
 // ─── FILTER & INIT ────────────────────────────────────────────────────────────

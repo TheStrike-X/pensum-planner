@@ -10,5 +10,12 @@
   },
   "compatibility_flags": [
     "nodejs_compat"
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "pensum-planner-db",
+      "database_id": "PLACEHOLDER_WILL_BE_REPLACED"
+    }
   ]
 }
