@@ -125,11 +125,14 @@
   .sched-name{flex:1;}
   .sched-crs{color:var(--muted);font-size:10px;}
 
-  #graph-container{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:auto;}
+  #graph-container{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:auto;min-height:500px;}
   #graph-svg{display:block;}
   .graph-controls{display:flex;gap:10px;margin-bottom:14px;align-items:center;flex-wrap:wrap;}
-  .graph-controls select,.graph-controls button{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:6px 12px;border-radius:6px;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;}
+  .graph-controls button{background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:6px 12px;border-radius:6px;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;}
   .graph-controls button:hover{border-color:var(--accent);color:var(--accent);}
+  .fc-node{cursor:pointer;transition:all .15s;}
+  .fc-node:hover rect{filter:brightness(1.3);}
+  .fc-node.expanded rect{stroke-width:2;}
 
   .info-box{background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;padding:12px 16px;margin-bottom:18px;font-size:11px;color:var(--muted);line-height:1.7;}
   .progress-bar-wrap{background:var(--surface2);border-radius:4px;height:6px;margin-top:8px;overflow:hidden;}
@@ -263,8 +266,8 @@
 
   <div class="panel" id="panel-graph">
     <div class="graph-controls">
-      <select id="graph-filter" onchange="renderGraph()"><option value="all">Todos los semestres</option></select>
-      <button onclick="renderGraph()">↺ Refresh</button>
+      <button onclick="resetFlowChart()">↺ Reiniciar vista</button>
+      <span style="font-size:10px;color:var(--muted)">Haz clic en una materia para ver qué desbloquea</span>
       <span style="color:var(--muted);font-size:11px">Verde=aprobada · Azul=cursando · Rojo=reprobada · Gris=pendiente</span>
     </div>
     <div id="graph-container"><svg id="graph-svg" width="1200" height="800"></svg></div>
@@ -640,87 +643,203 @@ function renderSchedule(){
 const groupColors={A:'#74a8d4',B:'#a87dd4',C:'#74d4a8',D:'#f4a261'};
 
 // ─── GRAPH ────────────────────────────────────────────────────────────────────
+// ─── FLOWCHART ────────────────────────────────────────────────────────────────
+let fcExpanded = new Set(); // set of expanded node codes
+let fcRoot = null; // currently focused root (null = show sem 1)
+
+function resetFlowChart(){
+  fcExpanded.clear();
+  fcRoot = null;
+  renderGraph();
+}
+
 function renderGraph(){
   if(!COURSES.length) return;
-  const svg=document.getElementById('graph-svg');
-  const fv=document.getElementById('graph-filter').value;
-  svg.innerHTML='';
-  const filtered=fv==='all'?COURSES:COURSES.filter(c=>c.sem===parseInt(fv));
-  const visCodes=new Set(filtered.map(c=>c.code));
-  const sems=[...new Set(filtered.map(c=>c.sem))].sort((a,b)=>a-b);
-  const colW=Math.max(148,Math.floor(1180/Math.max(sems.length,1)));
-  const nodeH=44,padY=56;
-  const pos={};
-  sems.forEach((sem,si)=>filtered.filter(c=>c.sem===sem).forEach((course,ci)=>{
-    pos[course.code]={x:si*colW+colW/2,y:padY+ci*(nodeH+9)};
-  }));
-  const maxY=Math.max(...Object.values(pos).map(p=>p.y))+nodeH+padY;
-  svg.setAttribute('height',Math.max(600,maxY));
-  svg.setAttribute('width',Math.max(1180,sems.length*colW+20));
-  const defs=document.createElementNS('http://www.w3.org/2000/svg','defs');
-  [['arr-pass','#2d6a4f'],['arr-enrl','#1e4a6e'],['arr-fail','#8b3a3a'],['arr-grey','#3a3a50']].forEach(([id,fill])=>{
-    const m=document.createElementNS('http://www.w3.org/2000/svg','marker');
-    m.setAttribute('id',id);m.setAttribute('markerWidth','7');m.setAttribute('markerHeight','7');
-    m.setAttribute('refX','6');m.setAttribute('refY','3');m.setAttribute('orient','auto');
-    const p=document.createElementNS('http://www.w3.org/2000/svg','path');
-    p.setAttribute('d','M0,0 L0,6 L8,3 z');p.setAttribute('fill',fill);m.appendChild(p);defs.appendChild(m);
+  const svg = document.getElementById('graph-svg');
+  svg.innerHTML = '';
+
+  // Build unlocks map: code -> [codes it unlocks]
+  const unlocks = {};
+  COURSES.forEach(c => { unlocks[c.code] = []; });
+  COURSES.forEach(c => {
+    c.prereqs.forEach(p => { if(unlocks[p]) unlocks[p].push(c.code); });
   });
-  svg.appendChild(defs);
-  COURSES.forEach(course=>{
-    if(!visCodes.has(course.code)) return;
-    course.prereqs.forEach(pre=>{
-      if(!visCodes.has(pre)) return;
-      const from=pos[pre],to=pos[course.code];
-      if(!from||!to) return;
-      const pst=courseStates[pre];
-      const color=pst==='passed'?'#2d6a4f':pst==='enrolled'?'#1e4a6e':pst==='failed'?'#8b3a3a':'#3a3a50';
-      const markId=pst==='passed'?'arr-pass':pst==='enrolled'?'arr-enrl':pst==='failed'?'arr-fail':'arr-grey';
-      const line=document.createElementNS('http://www.w3.org/2000/svg','line');
-      line.setAttribute('x1',from.x);line.setAttribute('y1',from.y+nodeH/2);
-      line.setAttribute('x2',to.x);  line.setAttribute('y2',to.y-nodeH/2+6);
-      line.setAttribute('stroke',color);line.setAttribute('stroke-width','1.5');
-      line.setAttribute('marker-end',`url(#${markId})`);svg.appendChild(line);
+
+  // Determine which nodes to show
+  // Start: semester 1 courses (no prereqs shown, or prereqs from earlier sems)
+  // When a node is expanded, show its unlocks as children
+
+  // Build visible tree
+  // Visible nodes = sem1 roots + anything reachable via expanded nodes
+  const sem1 = COURSES.filter(c => c.sem === 1);
+  
+  // Layout: column-based tree
+  // Each node occupies a position {col, row}
+  const nodeW = 160, nodeH = 48, hGap = 30, vGap = 16;
+  const positions = {}; // code -> {x, y}
+  const visible = new Set();
+  const edges = []; // {from, to}
+
+  // BFS layout from sem1 roots
+  // col = depth level, rows packed per column
+  const colNodes = {}; // col -> [code]
+  
+  function addNode(code, col) {
+    if(visible.has(code)) return;
+    visible.add(code);
+    if(!colNodes[col]) colNodes[col] = [];
+    colNodes[col].push(code);
+    // If this node is expanded, add its unlocks
+    if(fcExpanded.has(code)) {
+      unlocks[code].forEach(u => {
+        edges.push({from: code, to: u});
+        addNode(u, col + 1);
+      });
+    }
+  }
+
+  sem1.forEach(c => addNode(c.code, 0));
+
+  // Calculate positions
+  const cols = Object.keys(colNodes).map(Number).sort((a,b)=>a-b);
+  const totalCols = cols.length;
+  const maxRows = Math.max(...cols.map(c => colNodes[c].length));
+  
+  cols.forEach(col => {
+    const nodes = colNodes[col];
+    const totalHeight = nodes.length * (nodeH + vGap) - vGap;
+    const startY = 40;
+    nodes.forEach((code, i) => {
+      positions[code] = {
+        x: col * (nodeW + hGap) + 10,
+        y: startY + i * (nodeH + vGap)
+      };
     });
   });
-  const gC={A:'#74a8d4',B:'#a87dd4',C:'#74d4a8',D:'#f4a261'};
-  sems.forEach((sem,si)=>{
-    const t=document.createElementNS('http://www.w3.org/2000/svg','text');
-    t.setAttribute('x',si*colW+colW/2);t.setAttribute('y',26);t.setAttribute('text-anchor','middle');
-    t.setAttribute('fill',gC[OPEN_GROUP[sem]]||'var(--accent)');t.setAttribute('font-size','11');
-    t.setAttribute('font-family','DM Mono,monospace');t.textContent=`SEM ${sem}`;svg.appendChild(t);
+
+  const svgW = Math.max(900, totalCols * (nodeW + hGap) + 20);
+  const svgH = Math.max(500, maxRows * (nodeH + vGap) + 80);
+  svg.setAttribute('width', svgW);
+  svg.setAttribute('height', svgH);
+
+  const NS = 'http://www.w3.org/2000/svg';
+
+  // Draw edges (curved lines, no arrows)
+  edges.forEach(({from, to}) => {
+    if(!positions[from] || !positions[to]) return;
+    const fx = positions[from].x + nodeW;
+    const fy = positions[from].y + nodeH/2;
+    const tx = positions[to].x;
+    const ty = positions[to].y + nodeH/2;
+    const mx = (fx + tx) / 2;
+    const path = document.createElementNS(NS, 'path');
+    const pst = courseStates[from];
+    const color = pst==='passed'?'#2d6a4f':pst==='enrolled'?'#1e4a6e':'#3a3a50';
+    path.setAttribute('d', `M${fx},${fy} C${mx},${fy} ${mx},${ty} ${tx},${ty}`);
+    path.setAttribute('fill', 'none');
+    path.setAttribute('stroke', color);
+    path.setAttribute('stroke-width', '1.5');
+    path.setAttribute('opacity', '0.7');
+    svg.appendChild(path);
   });
-  const NC={
-    passed:  {fill:'#1a3d2e',stroke:'#2d6a4f',code:'#74c69d',name:'#aadfc0'},
-    enrolled:{fill:'#0d2336',stroke:'#1e4a6e',code:'#60b8f0',name:'#4090c0'},
-    failed:  {fill:'#3d1a1a',stroke:'#8b3a3a',code:'#ff9f9f',name:'#cc7070'},
-    available:{fill:'#2a2410',stroke:'#e9c46a',code:'#e9c46a',name:'#c8a84a'},
-    locked:  {fill:'#141418',stroke:'#2a2a38',code:'#3a3a50',name:'#2a2a40'},
+
+  // Node colors
+  const NC = {
+    passed:   {fill:'#1a3d2e', stroke:'#2d6a4f', code:'#74c69d', name:'#aadfc0'},
+    enrolled: {fill:'#0d2336', stroke:'#1e4a6e', code:'#60b8f0', name:'#4090c0'},
+    failed:   {fill:'#3d1a1a', stroke:'#8b3a3a', code:'#ff9f9f', name:'#cc7070'},
+    available:{fill:'#2a2410', stroke:'#e9c46a', code:'#e9c46a', name:'#c8a84a'},
+    locked:   {fill:'#141418', stroke:'#2a2a38', code:'#5a5870', name:'#3a3a50'},
   };
-  filtered.forEach(course=>{
-    const {x,y}=pos[course.code];
-    const status=getEffectiveStatus(course.code);
-    const nc=NC[status]||NC.locked;
-    const g=document.createElementNS('http://www.w3.org/2000/svg','g');
-    g.style.cursor='pointer';
-    g.setAttribute('transform',`translate(${x-colW/2+6},${y})`);
-    const rect=document.createElementNS('http://www.w3.org/2000/svg','rect');
-    rect.setAttribute('width',colW-12);rect.setAttribute('height',nodeH-4);
-    rect.setAttribute('rx','5');rect.setAttribute('fill',nc.fill);rect.setAttribute('stroke',nc.stroke);
-    rect.setAttribute('stroke-width','1');
-    const mk=(txt,xx,yy,fill,size,anchor='start')=>{
-      const t=document.createElementNS('http://www.w3.org/2000/svg','text');
-      t.setAttribute('x',xx);t.setAttribute('y',yy);t.setAttribute('fill',fill);
-      t.setAttribute('font-size',size);t.setAttribute('font-family','DM Mono,monospace');
-      t.setAttribute('text-anchor',anchor);t.textContent=txt;return t;
-    };
-    const nm=course.name.length>26?course.name.slice(0,24)+'…':course.name;
+
+  // Draw nodes
+  [...visible].forEach(code => {
+    const course = COURSES.find(c => c.code === code);
+    if(!course || !positions[code]) return;
+    const {x, y} = positions[code];
+    const status = getEffectiveStatus(code);
+    const nc = NC[status] || NC.locked;
+    const isExpanded = fcExpanded.has(code);
+    const hasUnlocks = unlocks[code].length > 0;
+
+    const g = document.createElementNS(NS, 'g');
+    g.setAttribute('class', 'fc-node' + (isExpanded ? ' expanded' : ''));
+    g.setAttribute('transform', `translate(${x},${y})`);
+    g.style.cursor = hasUnlocks ? 'pointer' : 'default';
+
+    // Background rect
+    const rect = document.createElementNS(NS, 'rect');
+    rect.setAttribute('width', nodeW);
+    rect.setAttribute('height', nodeH);
+    rect.setAttribute('rx', '6');
+    rect.setAttribute('fill', nc.fill);
+    rect.setAttribute('stroke', isExpanded ? nc.code : nc.stroke);
+    rect.setAttribute('stroke-width', isExpanded ? '2' : '1');
     g.appendChild(rect);
-    g.appendChild(mk(course.code,7,14,nc.code,'9'));
-    g.appendChild(mk(nm,7,27,nc.name,'8.5'));
-    g.appendChild(mk(course.crs+'cr',colW-18,14,nc.code,'8.5','end'));
-    if(status==='failed')   g.appendChild(mk('✗',colW-18,27,'#ff9f9f','9','end'));
-    if(status==='enrolled') g.appendChild(mk('📖',colW-18,27,'#60b8f0','9','end'));
+
+    // Course code
+    const mk = (txt, xx, yy, fill, size, anchor='start') => {
+      const t = document.createElementNS(NS, 'text');
+      t.setAttribute('x', xx); t.setAttribute('y', yy);
+      t.setAttribute('fill', fill); t.setAttribute('font-size', size);
+      t.setAttribute('font-family', 'DM Mono,monospace');
+      t.setAttribute('text-anchor', anchor);
+      t.textContent = txt; return t;
+    };
+
+    const nm = course.name.length > 22 ? course.name.slice(0,20)+'…' : course.name;
+    g.appendChild(mk(course.code, 8, 16, nc.code, '9'));
+    g.appendChild(mk(nm, 8, 30, nc.name, '8.5'));
+    g.appendChild(mk(course.crs+'cr', nodeW-8, 16, nc.code, '8.5', 'end'));
+
+    // Expand indicator
+    if(hasUnlocks) {
+      const badge = document.createElementNS(NS, 'text');
+      badge.setAttribute('x', nodeW-8);
+      badge.setAttribute('y', 30);
+      badge.setAttribute('fill', isExpanded ? nc.code : '#5a5870');
+      badge.setAttribute('font-size', '10');
+      badge.setAttribute('font-family', 'DM Mono,monospace');
+      badge.setAttribute('text-anchor', 'end');
+      badge.textContent = isExpanded ? '▾ ' + unlocks[code].length : '▸ ' + unlocks[code].length;
+      g.appendChild(badge);
+    }
+
+    // Sem badge (small, top-right corner)
+    const semBadge = document.createElementNS(NS, 'rect');
+    semBadge.setAttribute('x', nodeW-28); semBadge.setAttribute('y', -8);
+    semBadge.setAttribute('width', 28); semBadge.setAttribute('height', 14);
+    semBadge.setAttribute('rx', '4');
+    semBadge.setAttribute('fill', 'var(--surface2)');
+    g.appendChild(semBadge);
+    g.appendChild(mk('S'+course.sem, nodeW-14, 2, '#5a5870', '8', 'middle'));
+
+    // Click handler
+    if(hasUnlocks) {
+      g.addEventListener('click', () => {
+        if(fcExpanded.has(code)) fcExpanded.delete(code);
+        else fcExpanded.add(code);
+        renderGraph();
+      });
+    }
+
     svg.appendChild(g);
+  });
+
+  // Column headers
+  cols.forEach(col => {
+    const firstCode = colNodes[col][0];
+    const course = COURSES.find(c => c.code === firstCode);
+    if(!course) return;
+    const x = col * (nodeW + hGap) + 10 + nodeW/2;
+    const t = document.createElementNS(NS, 'text');
+    t.setAttribute('x', x); t.setAttribute('y', 18);
+    t.setAttribute('text-anchor', 'middle');
+    t.setAttribute('fill', '#5a5870');
+    t.setAttribute('font-size', '9');
+    t.setAttribute('font-family', 'DM Mono,monospace');
+    t.textContent = col === 0 ? 'SEM 1 — Click para expandir' : '';
+    svg.appendChild(t);
   });
 }
 
@@ -735,13 +854,7 @@ async function confirmReset(){
 }
 
 // ─── FILTER & INIT ────────────────────────────────────────────────────────────
-function populateFilter(){
-  const sel=document.getElementById('graph-filter');
-  sel.innerHTML='<option value="all">Todos los semestres</option>';
-  [...new Set(COURSES.map(c=>c.sem))].sort((a,b)=>a-b).forEach(s=>{
-    const o=document.createElement('option');o.value=s;o.textContent=`Semestre ${s}`;sel.appendChild(o);
-  });
-}
+function populateFilter(){ /* no-op: filter removed in flowchart mode */ }
 
 function refresh(){ updateStats(); renderCourses(); }
 
