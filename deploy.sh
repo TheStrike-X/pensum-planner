@@ -39,7 +39,7 @@ fi
 echo "✅ Database ID: $DB_ID"
 
 # Update wrangler.jsonc with real DB ID
-sed -i "s/PLACEHOLDER_WILL_BE_REPLACED/$DB_ID/" wrangler.jsonc
+sed -i.bak "s/PLACEHOLDER_WILL_BE_REPLACED/$DB_ID/" wrangler.jsonc && rm -f wrangler.jsonc.bak
 echo "✅ wrangler.jsonc updated"
 
 echo "🏗️  Running database schema..."
