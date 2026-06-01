@@ -1,0 +1,63 @@
+{
+  "id": "unibe-estudios-liberales",
+  "university": "UNIBE",
+  "career": "Licenciatura en Estudios Liberales",
+  "shortName": "EL",
+  "totalSemesters": 10,
+  "openGroups": [[1,3,5,7,9],[2,4,6,8,10]],
+  "courses": [
+    {"code":"EGC-150","name":"Razonamiento Matemático I","crs":4,"sem":1,"prereqs":[]},
+    {"code":"EL1-100","name":"Introducción a la Apreciación de las Bellas Artes","crs":3,"sem":1,"prereqs":[]},
+    {"code":"EL1-400","name":"Comunicación I","crs":4,"sem":1,"prereqs":[]},
+    {"code":"UNB-100","name":"Orientación Universitaria","crs":2,"sem":1,"prereqs":[]},
+
+    {"code":"EGH-140","name":"Bloque de Artes y Humanidades","crs":4,"sem":2,"prereqs":[]},
+    {"code":"EGV-132","name":"Bloque Sustentabilidad y Calidad de Vida","crs":4,"sem":2,"prereqs":[]},
+    {"code":"EL1-101","name":"Filosofía General","crs":3,"sem":2,"prereqs":[]},
+    {"code":"EL1-401","name":"Análisis de la Realidad Dominicana en un Mundo Global","crs":3,"sem":2,"prereqs":[]},
+
+    {"code":"EGV-131","name":"Ambiente y Sustentabilidad","crs":3,"sem":3,"prereqs":[]},
+    {"code":"EL1-102","name":"Comunicación Intercultural","crs":2,"sem":3,"prereqs":[]},
+    {"code":"UNB-102","name":"Liderazgo y Acción Social","crs":3,"sem":3,"prereqs":[]},
+    {"code":"UNB-200","name":"Metodología de la Investigación","crs":4,"sem":3,"prereqs":[]},
+    {"code":"UNB-306","name":"Educación Constitucional","crs":3,"sem":3,"prereqs":[]},
+
+    {"code":"EGS-110","name":"Procesos Históricos y Construcción del Colectivo Social","crs":3,"sem":4,"prereqs":[]},
+    {"code":"EGS-210","name":"Electiva Sujeto y Colectividad","crs":2,"sem":4,"prereqs":[]},
+    {"code":"EL1-402","name":"Pensamiento y Acción Emprendedora","crs":3,"sem":4,"prereqs":[]},
+    {"code":"EL1-500","name":"Electivas Ciclo de Formación Especializada","crs":3,"sem":4,"prereqs":[]},
+    {"code":"EL1-505","name":"Electivas Ciclo de Formación Especializada","crs":3,"sem":4,"prereqs":[]},
+
+    {"code":"EGS-211","name":"Electiva Sujeto y Colectividad","crs":2,"sem":5,"prereqs":[]},
+    {"code":"EL1-140","name":"Electiva de Idioma","crs":3,"sem":5,"prereqs":[]},
+    {"code":"EL1-510","name":"Electivas Ciclo de Formación Especializada","crs":4,"sem":5,"prereqs":[]},
+    {"code":"EL1-515","name":"Electivas Ciclo de Formación Especializada","crs":4,"sem":5,"prereqs":[]},
+    {"code":"UNB-202","name":"Estadística","crs":3,"sem":5,"prereqs":[]},
+
+    {"code":"EL1-103","name":"Taller de Creatividad e Innovación","crs":1,"sem":6,"prereqs":[]},
+    {"code":"EL1-141","name":"Electiva de Idioma","crs":3,"sem":6,"prereqs":[]},
+    {"code":"EL1-520","name":"Electivas Ciclo de Formación Especializada","crs":4,"sem":6,"prereqs":[]},
+    {"code":"EL1-525","name":"Electivas Ciclo de Formación Especializada","crs":4,"sem":6,"prereqs":[]},
+    {"code":"EL1-530","name":"Electivas Ciclo de Formación Especializada","crs":4,"sem":6,"prereqs":[]},
+
+    {"code":"EL1-104","name":"Lenguaje Fotográfico","crs":3,"sem":7,"prereqs":[]},
+    {"code":"EL1-142","name":"Electiva de Idioma","crs":3,"sem":7,"prereqs":[]},
+    {"code":"EL1-535","name":"Electivas Ciclo de Formación Especializada","crs":3,"sem":7,"prereqs":[]},
+    {"code":"EL1-540","name":"Electivas Ciclo de Formación Especializada","crs":3,"sem":7,"prereqs":[]},
+    {"code":"EL1-545","name":"Electivas Ciclo de Formación Especializada","crs":3,"sem":7,"prereqs":[]},
+
+    {"code":"EL1-105","name":"Competencias Ciudadanas y Responsabilidad Social","crs":3,"sem":8,"prereqs":[]},
+    {"code":"EL1-300","name":"Ética","crs":3,"sem":8,"prereqs":[]},
+    {"code":"EL1-550","name":"Electivas Ciclo de Formación Especializada","crs":3,"sem":8,"prereqs":[]},
+    {"code":"EL1-555","name":"Electivas Ciclo de Formación Especializada","crs":4,"sem":8,"prereqs":[]},
+
+    {"code":"EL1-403","name":"Emprendimiento para la Creación de Nuevos Negocios","crs":3,"sem":9,"prereqs":["EL1-402"]},
+    {"code":"EL1-560","name":"Electivas Ciclo de Formación Especializada","crs":3,"sem":9,"prereqs":[]},
+    {"code":"EL1-565","name":"Electivas Ciclo de Formación Especializada","crs":3,"sem":9,"prereqs":[]},
+    {"code":"EL1-600","name":"Práctica Profesional","crs":4,"sem":9,"prereqs":[]},
+
+    {"code":"EL1-570","name":"Electivas Ciclo de Formación Especializada","crs":4,"sem":10,"prereqs":[]},
+    {"code":"EL1-575","name":"Electivas Ciclo de Formación Especializada","crs":4,"sem":10,"prereqs":[]},
+    {"code":"EL1-610","name":"Proyecto de Grado","crs":5,"sem":10,"prereqs":["EL1-600"]}
+  ]
+}
