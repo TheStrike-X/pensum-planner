@@ -727,7 +727,7 @@ function renderGraph(){
 // ─── RESET ────────────────────────────────────────────────────────────────────
 function openResetModal(){ document.getElementById('reset-modal').classList.add('open'); }
 function closeResetModal(){ document.getElementById('reset-modal').classList.remove('open'); }
-function confirmReset(){
+async function confirmReset(){
   COURSES.forEach(c=>{ courseStates[c.code]=null; });
   saveState();
   if(authToken){ try{ await apiCall('DELETE','/progress/'+PENSUM_ID); }catch(e){} }
