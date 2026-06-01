@@ -291,7 +291,10 @@ let OPEN_GROUP = {};
 async function loadPensum(){
   try {
     document.getElementById('loading-text').textContent = 'Cargando ' + (params.get('name')||'pensum') + '…';
-    const resp = await fetch(PENSUM_FILE);
+    const fetchController = new AbortController();
+    const fetchTimeout = setTimeout(() => fetchController.abort(), 10000);
+    const resp = await fetch(PENSUM_FILE, { signal: fetchController.signal });
+    clearTimeout(fetchTimeout);
     if(!resp.ok) throw new Error('HTTP ' + resp.status);
     const data = await resp.json();
 
