@@ -100,11 +100,11 @@
   .badge-unlocks{background:#1f2a2a;color:#5eead4;border:1px solid #2a4a4a;}
   .badge-failed{background:var(--failed-bg);color:var(--failed-text);border:1px solid var(--failed);}
   .badge-enrolled{background:var(--enrolled-bg);color:var(--enrolled-text);border:1px solid var(--enrolled);}
-  .status-btn{margin-left:auto;background:none;border:1px solid var(--border);color:var(--muted);font-size:9px;padding:2px 8px;border-radius:3px;cursor:pointer;font-family:'DM Mono',monospace;transition:all .15s;white-space:nowrap;}
-  .status-btn:hover{border-color:var(--accent);color:var(--accent);}
+  .status-btn{margin-left:auto;background:none;border:1px solid var(--border);color:var(--muted);font-size:9px;padding:2px 8px;border-radius:3px;font-family:'DM Mono',monospace;white-space:nowrap;pointer-events:none;}
   .course-card.passed .status-btn{border-color:var(--passed-text);color:var(--passed-text);}
   .course-card.enrolled .status-btn{border-color:var(--enrolled-text);color:var(--enrolled-text);}
   .course-card.failed .status-btn{border-color:var(--failed-text);color:var(--failed-text);}
+  .course-card.available .status-btn{border-color:var(--available-text);color:var(--available-text);}
 
   .schedule-container{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
   .schedule-sem{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
@@ -215,7 +215,7 @@
       <div class="legend-item"><div class="legend-dot" style="background:var(--failed-text)"></div>Reprobada</div>
       <div class="legend-item"><div class="legend-dot" style="background:var(--available-text)"></div>Disponible</div>
       <div class="legend-item"><div class="legend-dot" style="background:var(--locked-text)"></div>Bloqueada</div>
-      <div class="legend-item" style="margin-left:auto;font-size:10px">Botón: Sin marcar → ✓ → 📖 → ✗ → …</div>
+      <div class="legend-item" style="margin-left:auto;font-size:10px">Clic en la tarjeta: Sin marcar → ✓ → 📖 → ✗ → …</div>
     </div>
     <div id="courses-by-sem"></div>
   </div>
@@ -390,6 +390,8 @@ function renderCourses(){
       const btnLabel=st==='passed'?'✓ Aprobada':st==='enrolled'?'📖 Cursando':st==='failed'?'✗ Reprobada':'Marcar…';
       const card=document.createElement('div');
       card.className=`course-card ${status}`;
+      if(!isLocked) card.onclick = ()=>cycleState(course.code);
+      if(!isLocked) card.style.cursor='pointer';
       card.innerHTML=`
         <div class="course-code">${course.code}</div>
         <div class="course-name">${course.name}</div>
@@ -401,7 +403,7 @@ function renderCourses(){
           ${status==='enrolled'?'<span class="badge badge-enrolled">En curso</span>':''}
           ${isLocked
             ?`<span class="status-btn" style="margin-left:auto;opacity:.4;cursor:not-allowed">🔒 Bloqueada</span>`
-            :`<button class="status-btn" onclick="cycleState('${course.code}')">${btnLabel}</button>`}
+            :`<span class="status-btn">${btnLabel}</span>`}
         </div>`;
       grid.appendChild(card);
     });
