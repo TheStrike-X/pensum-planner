@@ -456,8 +456,20 @@ async function doLogout(){
 
 async function restoreSession(){
   if(!authToken) return;
-  const {ok,data}=await apiCall('GET','/me');
-  if(ok){authUser=data.user;}else{authToken=null;localStorage.removeItem('pp_token');}
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 3000);
+    const r = await fetch('/api/me', {
+      headers: {'Authorization': 'Bearer ' + authToken},
+      signal: controller.signal
+    });
+    clearTimeout(timeout);
+    if(r.ok){ const d = await r.json(); authUser = d.user; }
+    else { authToken=null; localStorage.removeItem('pp_token'); }
+  } catch(e) {
+    // API unavailable or timeout — continue as guest
+    authToken=null; localStorage.removeItem('pp_token');
+  }
 }
 
 function cycleState(code){
