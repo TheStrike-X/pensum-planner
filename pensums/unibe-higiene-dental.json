@@ -1,0 +1,58 @@
+{
+  "id": "unibe-higiene-dental",
+  "university": "UNIBE",
+  "career": "Técnico Superior en Higiene Dental",
+  "shortName": "HD",
+  "totalSemesters": 6,
+  "openGroups": [[1,3,5],[2,4,6]],
+  "courses": [
+    {"code":"CGB-110","name":"Biología I","crs":4,"sem":1,"prereqs":[]},
+    {"code":"EGC-141","name":"Razonamiento Matemático","crs":4,"sem":1,"prereqs":[]},
+    {"code":"EGL-120","name":"Comunicación I","crs":4,"sem":1,"prereqs":[]},
+    {"code":"EGL-301","name":"Inglés I","crs":0,"sem":1,"prereqs":[]},
+    {"code":"EGV-130","name":"Taller Calidad de Vida","crs":1,"sem":1,"prereqs":[]},
+    {"code":"HD1-110","name":"Introducción a la Odontología","crs":2,"sem":1,"prereqs":[]},
+    {"code":"UNB-100","name":"Orientación Universitaria","crs":2,"sem":1,"prereqs":[]},
+
+    {"code":"CGS-140","name":"Análisis de la Realidad Dom. Actual","crs":2,"sem":2,"prereqs":[]},
+    {"code":"EGL-302","name":"Inglés II","crs":0,"sem":2,"prereqs":["EGL-301"]},
+    {"code":"EGQ-100","name":"Química Básica","crs":4,"sem":2,"prereqs":[]},
+    {"code":"EGV-131","name":"Ambiente y Sustentabilidad","crs":3,"sem":2,"prereqs":[]},
+    {"code":"HD1-111","name":"Microbiología Bucal","crs":3,"sem":2,"prereqs":[]},
+    {"code":"HD1-120","name":"Odontología Preventiva","crs":2,"sem":2,"prereqs":["HD1-110"]},
+    {"code":"SI3-110","name":"Psicología General","crs":3,"sem":2,"prereqs":[]},
+    {"code":"UNB-101","name":"Pensamiento y Acción Emprendedora","crs":2,"sem":2,"prereqs":[]},
+
+    {"code":"EGL-303","name":"Inglés III","crs":0,"sem":3,"prereqs":["EGL-302"]},
+    {"code":"HD1-112","name":"Introducción a la Bioquímica","crs":3,"sem":3,"prereqs":["EGQ-100"]},
+    {"code":"HD1-113","name":"Introducción a la Anatomía y Fisiología de Cabeza y Cuello","crs":3,"sem":3,"prereqs":["CGB-110"]},
+    {"code":"HD1-114","name":"Ergonomía y Bioseguridad","crs":2,"sem":3,"prereqs":["HD1-111"]},
+    {"code":"HD1-121","name":"Odontología Comunitaria I","crs":2,"sem":3,"prereqs":["HD1-120"]},
+    {"code":"HD1-122","name":"Salud Pública y Epidemiología Bucal","crs":2,"sem":3,"prereqs":["HD1-120"]},
+    {"code":"HD1-130","name":"Biomateriales Dentales","crs":3,"sem":3,"prereqs":["EGQ-100"]},
+    {"code":"HD1-131","name":"Fotografía en Odontología","crs":2,"sem":3,"prereqs":["HD1-110"]},
+
+    {"code":"EGL-304","name":"Inglés IV","crs":0,"sem":4,"prereqs":["EGL-303"]},
+    {"code":"HD1-210","name":"Anatomía Dental","crs":4,"sem":4,"prereqs":["HD1-110"]},
+    {"code":"HD1-211","name":"Bioética","crs":2,"sem":4,"prereqs":[]},
+    {"code":"HD1-220","name":"Odontología Comunitaria II","crs":2,"sem":4,"prereqs":["HD1-121"]},
+    {"code":"HD1-230","name":"Diagnóstico Clínico en Odontología","crs":2,"sem":4,"prereqs":["HD1-113"]},
+    {"code":"HD1-231","name":"Introducción a la Periodoncia","crs":2,"sem":4,"prereqs":[]},
+    {"code":"HD1-232","name":"Introducción a la Odontología Restauradora","crs":2,"sem":4,"prereqs":["HD1-114","HD1-130"]},
+    {"code":"HD1-600","name":"Práctica Profesional I","crs":4,"sem":4,"prereqs":["HD1-114","HD1-130"]},
+
+    {"code":"HD1-212","name":"Farmacología Odontológica","crs":2,"sem":5,"prereqs":["HD1-113"]},
+    {"code":"HD1-233","name":"Radiología e Imagenología Bucodental","crs":3,"sem":5,"prereqs":["HD1-210"]},
+    {"code":"HD1-234","name":"Oclusión","crs":2,"sem":5,"prereqs":["HD1-210"]},
+    {"code":"HD1-235","name":"Introducción a la Cirugía Bucal","crs":2,"sem":5,"prereqs":["HD1-113","HD1-114"]},
+    {"code":"HD1-236","name":"Manejo del Paciente Médicamente Comprometido","crs":2,"sem":5,"prereqs":["HD1-230"]},
+    {"code":"HD1-237","name":"Atención Odontológica del Paciente Pediátrico","crs":2,"sem":5,"prereqs":["HD1-232"]},
+    {"code":"HD1-601","name":"Práctica Profesional II","crs":6,"sem":5,"prereqs":["HD1-231","HD1-232","HD1-600"]},
+
+    {"code":"HD1-221","name":"Gestión Administrativa en Odontología","crs":2,"sem":6,"prereqs":[]},
+    {"code":"HD1-238","name":"Odontología Digital","crs":2,"sem":6,"prereqs":["HD1-233"]},
+    {"code":"HD1-239","name":"Odontología Multidisciplinaria","crs":2,"sem":6,"prereqs":["HD1-601"]},
+    {"code":"HD1-602","name":"Práctica Profesional III","crs":6,"sem":6,"prereqs":["HD1-601"]},
+    {"code":"HD1-620","name":"Proyecto Final","crs":3,"sem":6,"prereqs":["HD1-601"]}
+  ]
+}

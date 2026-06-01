@@ -1,0 +1,75 @@
+{
+  "id": "unibe-bba",
+  "university": "UNIBE",
+  "career": "Bachelor of Business Administration (BBA)",
+  "shortName": "BBA",
+  "totalSemesters": 10,
+  "openGroups": [[1,3,5,7,9],[2,4,6,8,10]],
+  "courses": [
+    {"code":"BBA2-100","name":"Pre Math","crs":3,"sem":1,"prereqs":[]},
+    {"code":"BBA2-101","name":"Business Management","crs":3,"sem":1,"prereqs":[]},
+    {"code":"BBA2-110","name":"Introduction to IT","crs":3,"sem":1,"prereqs":[]},
+    {"code":"EGL-120","name":"Communication I","crs":4,"sem":1,"prereqs":[]},
+    {"code":"EGV-130","name":"Workshop: Life Quality","crs":1,"sem":1,"prereqs":[]},
+    {"code":"UNB-100","name":"College Orientation","crs":2,"sem":1,"prereqs":[]},
+    {"code":"UNB-306","name":"Constitutional Education","crs":3,"sem":1,"prereqs":[]},
+
+    {"code":"BBA2-102","name":"Human Resource Management","crs":3,"sem":2,"prereqs":["BBA2-101"]},
+    {"code":"BBA2-104","name":"Analysis of Dominican Reality in a Global World","crs":3,"sem":2,"prereqs":[]},
+    {"code":"BBA2-112","name":"Writing and Rhetoric I","crs":3,"sem":2,"prereqs":[]},
+    {"code":"BBA2-120","name":"Financial Accounting I","crs":4,"sem":2,"prereqs":[]},
+    {"code":"BBA2-130","name":"Mathematical Reasoning I","crs":4,"sem":2,"prereqs":["BBA2-100"]},
+    {"code":"BBA2-103","name":"Marketing","crs":3,"sem":2,"prereqs":[]},
+    {"code":"BBA2-113","name":"Writing and Rhetoric II","crs":3,"sem":3,"prereqs":["BBA2-112"]},
+
+    {"code":"BBA2-121","name":"Financial Accounting II","crs":4,"sem":3,"prereqs":["BBA2-120"]},
+    {"code":"BBA2-131","name":"Mathematical Reasoning II","crs":4,"sem":3,"prereqs":["BBA2-130"]},
+    {"code":"BBA2-132","name":"Principles of Microeconomics","crs":3,"sem":3,"prereqs":[]},
+    {"code":"UNB-102","name":"Leadership and Social Action","crs":3,"sem":3,"prereqs":[]},
+
+    {"code":"BBA2-133","name":"Statistics I","crs":3,"sem":4,"prereqs":["BBA2-131"]},
+    {"code":"BBA2-135","name":"Differential Calculus","crs":4,"sem":4,"prereqs":["BBA2-131"]},
+    {"code":"BBA2-201","name":"Consumer Behavior","crs":3,"sem":4,"prereqs":["BBA2-103"]},
+    {"code":"BBA2-230","name":"Principles of Macroeconomics","crs":3,"sem":4,"prereqs":["BBA2-132"]},
+    {"code":"BBA2-231","name":"Organization and Methods","crs":3,"sem":4,"prereqs":["BBA2-102"]},
+    {"code":"EGH-140","name":"Arts Elective","crs":4,"sem":4,"prereqs":[]},
+
+    {"code":"BBA2-111","name":"Ethics","crs":3,"sem":5,"prereqs":[]},
+    {"code":"BBA2-134","name":"Statistics II","crs":3,"sem":5,"prereqs":["BBA2-133"]},
+    {"code":"BBA2-202","name":"Digital Marketing","crs":3,"sem":5,"prereqs":["BBA2-201"]},
+    {"code":"BBA2-211","name":"Management Information Systems","crs":3,"sem":5,"prereqs":["BBA2-110"]},
+    {"code":"BBA2-222","name":"Cost Accounting","crs":3,"sem":5,"prereqs":["BBA2-121"]},
+    {"code":"BBA2-235","name":"Financial Math","crs":3,"sem":5,"prereqs":["BBA2-131","BBA2-133"]},
+
+    {"code":"BBA2-223","name":"Managerial Accounting","crs":3,"sem":6,"prereqs":["BBA2-222"]},
+    {"code":"BBA2-224","name":"Financial Statements and Analysis","crs":3,"sem":6,"prereqs":["BBA2-222","BBA2-235"]},
+    {"code":"BBA2-232","name":"Elective Professional Track","crs":3,"sem":6,"prereqs":["BBA2-134","BBA2-231"]},
+    {"code":"BBA2-233","name":"Operations Management","crs":3,"sem":6,"prereqs":["BBA2-202"]},
+    {"code":"BBA2-234","name":"Natural Science Elective","crs":3,"sem":6,"prereqs":[]},
+    {"code":"BBA2-240","name":"Entrepreneurship New Business Development","crs":3,"sem":6,"prereqs":[]},
+
+    {"code":"BBA2-302","name":"Elective: Professional Track","crs":3,"sem":7,"prereqs":[]},
+    {"code":"BBA2-305","name":"Marketing Yourself","crs":3,"sem":7,"prereqs":["BBA2-202"]},
+    {"code":"BBA2-310","name":"International Business","crs":3,"sem":7,"prereqs":[]},
+    {"code":"BBA2-311","name":"Family Owned and Small Business Management","crs":3,"sem":7,"prereqs":[]},
+    {"code":"BBA2-321","name":"Financial Management","crs":3,"sem":7,"prereqs":["BBA2-223","BBA2-235"]},
+    {"code":"BBA2-332","name":"Business Practice","crs":2,"sem":7,"prereqs":[]},
+
+    {"code":"BBA2-303","name":"Elective Professional Track","crs":3,"sem":8,"prereqs":[]},
+    {"code":"BBA2-320","name":"Writing the Business Plan","crs":3,"sem":8,"prereqs":["BBA2-310"]},
+    {"code":"BBA2-333","name":"Corporate Communication","crs":3,"sem":8,"prereqs":["BBA2-201"]},
+    {"code":"EGV-131","name":"Environment and Sustainability","crs":3,"sem":8,"prereqs":[]},
+    {"code":"BBA2-306","name":"Legal Environment of Business","crs":3,"sem":8,"prereqs":[]},
+
+    {"code":"BBA2-401","name":"Professional Elective","crs":3,"sem":9,"prereqs":[]},
+    {"code":"BBA2-402","name":"Professional Elective","crs":3,"sem":9,"prereqs":[]},
+    {"code":"BBA2-403","name":"Professional Elective","crs":3,"sem":9,"prereqs":[]},
+    {"code":"BBA2-404","name":"Professional Elective","crs":3,"sem":9,"prereqs":[]},
+    {"code":"BBA2-405","name":"Professional Elective","crs":3,"sem":9,"prereqs":[]},
+
+    {"code":"BBA2-406","name":"Professional Elective","crs":3,"sem":10,"prereqs":[]},
+    {"code":"BBA2-407","name":"Professional Elective","crs":3,"sem":10,"prereqs":[]},
+    {"code":"BBA2-408","name":"Professional Elective","crs":3,"sem":10,"prereqs":[]},
+    {"code":"BBA2-409","name":"Professional Elective","crs":3,"sem":10,"prereqs":[]}
+  ]
+}

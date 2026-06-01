@@ -1,0 +1,76 @@
+{
+  "id": "unibe-cine",
+  "university": "UNIBE",
+  "career": "Licenciatura en Producción de Cine y Multimedia",
+  "shortName": "CINE",
+  "totalSemesters": 10,
+  "openGroups": [[1,3,5,7,9],[2,4,6,8,10]],
+  "courses": [
+    {"code":"CM1-110","name":"Historia y Apreciación del Cine y Audiovisuales","crs":3,"sem":1,"prereqs":[]},
+    {"code":"CO1-121","name":"Lenguaje del Diseño Gráfico","crs":3,"sem":1,"prereqs":[]},
+    {"code":"CO1-130","name":"Tecnología para la Producción Gráfica","crs":3,"sem":1,"prereqs":[]},
+    {"code":"EGL-120","name":"Comunicación I","crs":4,"sem":1,"prereqs":[]},
+    {"code":"EGV-130","name":"Taller Calidad de Vida","crs":1,"sem":1,"prereqs":[]},
+    {"code":"UNB-100","name":"Orientación Universitaria","crs":2,"sem":1,"prereqs":[]},
+    {"code":"EGS-110","name":"Procesos Históricos y Construcción del Colectivo Social","crs":3,"sem":1,"prereqs":[]},
+    {"code":"UNB-101","name":"Pensamiento y Acción Emprendedora","crs":2,"sem":1,"prereqs":[]},
+
+    {"code":"CM1-120","name":"Expresión Escrita y Narrativa Audiovisual","crs":3,"sem":2,"prereqs":[]},
+    {"code":"CO1-131","name":"Tecnología para la Producción Multimedia","crs":3,"sem":2,"prereqs":["CO1-130"]},
+    {"code":"EGC-150","name":"Razonamiento Matemático I","crs":4,"sem":2,"prereqs":[]},
+    {"code":"EGH-140","name":"Bloque de Artes y Humanidades","crs":4,"sem":2,"prereqs":[]},
+    {"code":"EGH-121","name":"Comunicación II","crs":4,"sem":2,"prereqs":["EGL-120"]},
+    {"code":"EGL-301","name":"Inglés I","crs":0,"sem":2,"prereqs":[]},
+
+    {"code":"CM1-111","name":"Bloque Aspectos Legales de la Producción","crs":4,"sem":3,"prereqs":[]},
+    {"code":"CM1-121","name":"Análisis de Contenido Audiovisual y Multimedia","crs":3,"sem":3,"prereqs":[]},
+    {"code":"DI2-231","name":"Panorama Artístico del Siglo XX","crs":2,"sem":3,"prereqs":[]},
+    {"code":"EGL-302","name":"Inglés II","crs":0,"sem":3,"prereqs":["EGL-301"]},
+    {"code":"EGS-210","name":"Electiva Sujeto y Colectividad","crs":2,"sem":3,"prereqs":[]},
+    {"code":"EGV-131","name":"Ambiente y Sustentabilidad","crs":3,"sem":3,"prereqs":[]},
+    {"code":"UNB-306","name":"Educación Constitucional","crs":3,"sem":3,"prereqs":[]},
+
+    {"code":"CM1-222","name":"Guion Cinematográfico","crs":3,"sem":4,"prereqs":["CM1-120"]},
+    {"code":"CM1-223","name":"Lenguaje Audiovisual","crs":3,"sem":4,"prereqs":[]},
+    {"code":"CO1-120","name":"Dibujo","crs":2,"sem":4,"prereqs":[]},
+    {"code":"EGL-122","name":"Taller de Comunicación","crs":2,"sem":4,"prereqs":[]},
+    {"code":"EGL-220","name":"Electiva Comunicación, Lengua y Cultura","crs":2,"sem":4,"prereqs":[]},
+    {"code":"EGL-303","name":"Inglés III","crs":0,"sem":4,"prereqs":["EGL-302"]},
+    {"code":"UNB-102","name":"Liderazgo y Acción Social","crs":3,"sem":4,"prereqs":[]},
+    {"code":"UNB-200","name":"Metodología de la Investigación","crs":4,"sem":4,"prereqs":[]},
+
+    {"code":"CM1-212","name":"Bloque Desarrollo de Proyectos","crs":4,"sem":5,"prereqs":["CM1-223"]},
+    {"code":"CM1-230","name":"Pre Producción Audiovisual","crs":3,"sem":5,"prereqs":["CM1-223"]},
+    {"code":"CM1-231","name":"Dirección de Arte","crs":3,"sem":5,"prereqs":[]},
+    {"code":"CM1-232","name":"Fotografía Fija","crs":3,"sem":5,"prereqs":[]},
+    {"code":"EGL-304","name":"Inglés IV","crs":0,"sem":5,"prereqs":["EGL-303"]},
+    {"code":"EGS-111","name":"Análisis de la Realidad Dominicana en un Mundo Global","crs":2,"sem":5,"prereqs":[]},
+
+    {"code":"CM1-224","name":"Diseño de Identidad Visual","crs":2,"sem":6,"prereqs":[]},
+    {"code":"CM1-233","name":"Captura de Sonido","crs":3,"sem":6,"prereqs":[]},
+    {"code":"CM1-234","name":"Producción Audiovisual","crs":3,"sem":6,"prereqs":["CM1-230"]},
+    {"code":"CO1-410","name":"Dirección de Cine","crs":2,"sem":6,"prereqs":[]},
+    {"code":"CO1-600","name":"Práctica Estudiantil","crs":2,"sem":6,"prereqs":[]},
+    {"code":"UNB-202","name":"Estadística","crs":3,"sem":6,"prereqs":[]},
+
+    {"code":"CM1-324","name":"Dirección de Fotografía","crs":3,"sem":7,"prereqs":[]},
+    {"code":"CM1-334","name":"Bloque de Post Producción Audiovisual","crs":3,"sem":7,"prereqs":["CM1-234"]},
+    {"code":"CM1-610","name":"Pasantía","crs":3,"sem":7,"prereqs":["CO1-600"]},
+    {"code":"UNB-201","name":"Ética","crs":4,"sem":7,"prereqs":[]},
+
+    {"code":"CM1-500","name":"Electiva Profesional","crs":3,"sem":8,"prereqs":[]},
+    {"code":"CM1-510","name":"Electiva Profesional","crs":3,"sem":8,"prereqs":[]},
+    {"code":"CM1-630","name":"Proyecto Social","crs":4,"sem":8,"prereqs":[]},
+    {"code":"EGV-132","name":"Bloque Sustentabilidad y Calidad de Vida","crs":3,"sem":8,"prereqs":[]},
+
+    {"code":"CM1-520","name":"Electiva Profesional","crs":3,"sem":9,"prereqs":[]},
+    {"code":"CM1-530","name":"Electiva Profesional","crs":3,"sem":9,"prereqs":[]},
+    {"code":"CM1-540","name":"Electiva Profesional","crs":3,"sem":9,"prereqs":[]},
+    {"code":"CM1-620","name":"Proyecto Final I","crs":4,"sem":9,"prereqs":[]},
+
+    {"code":"CM1-550","name":"Electiva Profesional","crs":3,"sem":10,"prereqs":[]},
+    {"code":"CM1-560","name":"Electiva Profesional","crs":3,"sem":10,"prereqs":[]},
+    {"code":"CM1-570","name":"Electiva Profesional","crs":3,"sem":10,"prereqs":[]},
+    {"code":"CM1-621","name":"Proyecto Final II","crs":4,"sem":10,"prereqs":["CM1-620"]}
+  ]
+}
