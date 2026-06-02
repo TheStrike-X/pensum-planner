@@ -1,0 +1,33 @@
+{
+  "id": "unibe-psicologia",
+  "university": "UNIBE",
+  "career": "Licenciatura en Psicología",
+  "shortName": "PSI",
+  "totalSemesters": 10,
+  "openGroups": [[1,4,7,10],[2,5,8],[3,6,9]],
+  "notes": "Pensum vigente · 175 créditos · 10 semestres · UNIBE. Descarga el pensum completo en unibe.edu.do.",
+  "courses": [
+    {"code":"EGL-120","name":"Comunicación I","crs":4,"sem":1,"prereqs":[]},
+    {"code":"EGS-110","name":"Procesos Históricos y Construcción del Colectivo Social","crs":3,"sem":1,"prereqs":[]},
+    {"code":"EGV-130","name":"Taller Calidad de Vida","crs":1,"sem":1,"prereqs":[]},
+    {"code":"UNB-100","name":"Orientación Universitaria","crs":1,"sem":1,"prereqs":[]},
+    {"code":"UNB-101","name":"Pensamiento y Acción Emprendedora","crs":2,"sem":2,"prereqs":[]},
+    {"code":"EGL-121","name":"Comunicación II","crs":4,"sem":2,"prereqs":[]},
+    {"code":"EGL-301","name":"Inglés I","crs":0,"sem":2,"prereqs":[]},
+    {"code":"EGH-140","name":"Bloque de Artes y Humanidades","crs":4,"sem":3,"prereqs":[]},
+    {"code":"EGL-302","name":"Inglés II","crs":0,"sem":3,"prereqs":["EGL-301"]},
+    {"code":"EGS-210","name":"Electiva Sujeto y Colectividad","crs":2,"sem":3,"prereqs":[]},
+    {"code":"EGV-131","name":"Ambiente y Sustentabilidad","crs":3,"sem":4,"prereqs":[]},
+    {"code":"EGL-303","name":"Inglés III","crs":0,"sem":4,"prereqs":["EGL-302"]},
+    {"code":"EGS-111","name":"Análisis de la Realidad Dominicana en un Mundo Global","crs":2,"sem":5,"prereqs":[]},
+    {"code":"EGS-211","name":"Electiva Sujeto y Colectividad","crs":2,"sem":5,"prereqs":[]},
+    {"code":"EGL-304","name":"Inglés IV","crs":0,"sem":5,"prereqs":["EGL-303"]},
+    {"code":"UNB-200","name":"Metodología de la Investigación","crs":4,"sem":6,"prereqs":[]},
+    {"code":"UNB-201","name":"Ética","crs":2,"sem":7,"prereqs":[]},
+    {"code":"EGL-220","name":"Electiva Comunicación, Lengua y Cultura","crs":2,"sem":7,"prereqs":[]},
+    {"code":"EGV-132","name":"Bloque Sustentabilidad y Calidad de Vida","crs":4,"sem":8,"prereqs":[]},
+    {"code":"UNB-103","name":"Taller Libre","crs":1,"sem":8,"prereqs":[]},
+    {"code":"UNB-202","name":"Estadística","crs":3,"sem":9,"prereqs":[]},
+    {"code":"PSI-599","name":"Pasantía / Proyecto Final","crs":4,"sem":10,"prereqs":[]}
+  ]
+}
