@@ -19,6 +19,40 @@
     --rule:#e2e8f0;--ink:#020617;
     --focus-ring:0 0 0 3px rgba(59,130,246,.5);
   }
+  /* Dark mode card + panel overrides */
+  [data-theme="dark"] .panel{background:var(--bg);}
+  [data-theme="dark"] .course-card{background:#181b23;border-color:#2d3348;}
+  [data-theme="dark"] .course-card:hover{border-color:#64748b;box-shadow:0 2px 8px rgba(0,0,0,.3);}
+  [data-theme="dark"] .course-name{color:#e2e8f0;}
+  [data-theme="dark"] .course-card.available{background:#1c1600;border-color:#ca8a04;}
+  [data-theme="dark"] .course-card.available .course-name{color:#fde68a;}
+  [data-theme="dark"] .course-card.passed{background:#052e16;border-color:#166534;}
+  [data-theme="dark"] .course-card.passed .course-name{color:#bbf7d0;}
+  [data-theme="dark"] .course-card.enrolled{background:#0c1a3d;border-color:#1e3a8a;}
+  [data-theme="dark"] .course-card.enrolled .course-name{color:#bfdbfe;}
+  [data-theme="dark"] .course-card.failed{background:#2d0a0a;border-color:#991b1b;}
+  [data-theme="dark"] .course-card.failed .course-name{color:#fecaca;}
+  [data-theme="dark"] .course-card.locked{background:#111318;border-color:#1e2230;opacity:.5;}
+  [data-theme="dark"] .course-card.locked .course-name{color:#475569;}
+  [data-theme="dark"] .badge-crs{background:#1e293b;color:#64748b;border-color:#2d3348;}
+  [data-theme="dark"] .semester-header{border-bottom-color:#2d3348;}
+  [data-theme="dark"] .semester-num{color:#e2e8f0;}
+  [data-theme="dark"] .semester-title{color:#64748b;}
+  [data-theme="dark"] .legend-item{color:#64748b;}
+  [data-theme="dark"] .info-box{color:rgba(255,255,255,.4);}
+  [data-theme="dark"] .tabs{background:#181b23;border-bottom-color:#2d3348;}
+  [data-theme="dark"] .tab{color:#475569;}
+  [data-theme="dark"] .tab.active{color:#e2e8f0;border-bottom-color:var(--gold);}
+  [data-theme="dark"] .action-picker{background:#181b23;border-color:#2d3348;}
+  [data-theme="dark"] .action-picker-item{color:#e2e8f0;border-bottom-color:#2d3348;}
+  [data-theme="dark"] .action-picker-item:hover{background:#1e2230;}
+  [data-theme="dark"] .modal{background:#181b23;}
+  [data-theme="dark"] .modal-body p{color:#94a3b8;}
+  [data-theme="dark"] .modal-body .btn-cancel{background:#1e293b;color:#94a3b8;border-color:#2d3348;}
+  [data-theme="dark"] .grade-box{background:#181b23;}
+  [data-theme="dark"] .grade-body{background:#181b23;}
+  [data-theme="dark"] .grade-input{background:#1e293b;border-color:#2d3348;color:#e2e8f0;}
+  [data-theme="dark"] .grade-btn-cancel{background:#1e293b;color:#94a3b8;border-color:#2d3348;}
   [data-theme="dark"] {
     --bg:#0f1117;--surface:#181b23;--surface2:#1e2230;--border:#2d3348;
     --text:#e2e8f0;--muted:#64748b;--accent:#e2e8f0;--accent2:#eab308;
@@ -26,7 +60,8 @@
     --enrolled:#1e3a8a;--enrolled-bg:#0c1a3d;--enrolled-text:#60a5fa;
     --failed:#991b1b;--failed-bg:#2d0a0a;--failed-text:#f87171;
     --available:#713f12;--available-bg:#1c1100;--available-text:#fbbf24;
-    --locked-text:#334155;
+    --locked-text:#475569;
+    --available:#ca8a04;--available-bg:#1a1400;--available-text:#fbbf24;
     --navy:#e2e8f0;--gold:#eab308;--gold2:#fde047;--cream:#181b23;
     --rule:#2d3348;--ink:#e2e8f0;
   }
@@ -274,6 +309,31 @@
   .info-box{background:var(--navy);border-left:3px solid var(--gold);border-radius:2px;padding:12px 16px;margin-bottom:18px;font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,.5);line-height:1.7;letter-spacing:.05em;}
   .progress-bar-wrap{background:var(--surface2);border-radius:2px;height:5px;margin-top:8px;overflow:hidden;}
   .progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--navy),var(--gold));border-radius:2px;transition:width .4s ease;}
+
+  /* ACTION PICKER */
+  .action-picker{
+    position:fixed;z-index:300;
+    background:var(--surface);border:1px solid var(--rule);
+    border-radius:4px;box-shadow:0 8px 24px rgba(0,0,0,.15);
+    overflow:hidden;min-width:180px;
+    animation:fadeIn .1s ease;
+  }
+  @keyframes fadeIn{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:translateY(0);}}
+  .action-picker-header{
+    padding:8px 12px;background:var(--navy);
+    font-family:'JetBrains Mono',monospace;font-size:9px;
+    color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.1em;
+    border-bottom:2px solid var(--gold);
+  }
+  .action-picker-item{
+    display:flex;align-items:center;gap:10px;
+    padding:10px 14px;cursor:pointer;
+    font-family:'JetBrains Mono',monospace;font-size:11px;
+    transition:background .1s;border-bottom:1px solid var(--rule);
+  }
+  .action-picker-item:last-child{border-bottom:none;}
+  .action-picker-item:hover{background:var(--surface2);}
+  .action-picker-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
 
   /* GRADE MODAL */
   .grade-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:200;align-items:center;justify-content:center;}
@@ -739,7 +799,7 @@ function gradeToLetter(g){
   return 'F';
 }
 
-function openGradeModal(code){
+function openGradeModal(code, hint){
   const course = COURSES.find(c=>c.code===code);
   if(!course) return;
   _gradePendingCode = code;
@@ -892,22 +952,82 @@ function loadGrades(){
 }
 
 // ─── CYCLE STATE ──────────────────────────────────────────────────────────────
-function cycleState(code){
+// ─── ACTION PICKER ───────────────────────────────────────────────────────────
+let _pickerEl = null;
+
+function closeActionPicker(){
+  if(_pickerEl){ _pickerEl.remove(); _pickerEl=null; }
+  document.removeEventListener('click', _pickerClose);
+}
+function _pickerClose(e){
+  if(_pickerEl && !_pickerEl.contains(e.target)) closeActionPicker();
+}
+
+function showActionPicker(code, event){
+  closeActionPicker();
+  event.stopPropagation();
+
+  const picker = document.createElement('div');
+  picker.className = 'action-picker';
+
+  const course = COURSES.find(c=>c.code===code);
+  picker.innerHTML = `
+    <div class="action-picker-header">${course ? course.code : code}</div>
+    <div class="action-picker-item" onclick="pickEnrolled('${code}')">
+      <div class="action-picker-dot" style="background:var(--enrolled-text)"></div>
+      Cursando
+    </div>
+    <div class="action-picker-item" onclick="pickGrade('${code}','passed')">
+      <div class="action-picker-dot" style="background:var(--passed-text)"></div>
+      Aprobada — ingresar nota
+    </div>
+    <div class="action-picker-item" onclick="pickGrade('${code}','failed')">
+      <div class="action-picker-dot" style="background:var(--failed-text)"></div>
+      Reprobada — ingresar nota
+    </div>
+  `;
+
+  // Position near click
+  const x = Math.min(event.clientX, window.innerWidth - 200);
+  const y = Math.min(event.clientY + 8, window.innerHeight - 160);
+  picker.style.left = x + 'px';
+  picker.style.top  = y + 'px';
+
+  document.body.appendChild(picker);
+  _pickerEl = picker;
+  setTimeout(() => document.addEventListener('click', _pickerClose), 10);
+}
+
+function pickEnrolled(code){
+  closeActionPicker();
+  courseStates[code] = 'enrolled';
+  saveState(); refresh();
+}
+
+function pickGrade(code, hint){
+  closeActionPicker();
+  openGradeModal(code, hint);
+}
+
+function cycleState(code, event){
   if(getEffectiveStatus(code)==='locked') return;
-  const cur=courseStates[code];
-  if(cur===null){
-    // null → open grade modal (which sets passed or failed)
-    openGradeModal(code);
+  const cur = courseStates[code];
+
+  if(cur === null){
+    // Show action picker: Cursando / Aprobada / Reprobada
+    if(event) showActionPicker(code, event);
     return;
   }
-  if(cur==='passed'){
-    courseStates[code]='enrolled';
+  if(cur === 'passed'){
+    courseStates[code] = 'enrolled';
     if(window._grades) delete window._grades[code];
     localStorage.setItem('pp_grades_'+PENSUM_ID, JSON.stringify(window._grades||{}));
-  } else if(cur==='enrolled'){
-    courseStates[code]='failed';
-  } else {
-    courseStates[code]=null;
+  } else if(cur === 'enrolled'){
+    // enrolled → ask for grade (pass or fail)
+    if(event) showActionPicker(code, event);
+    return;
+  } else if(cur === 'failed'){
+    courseStates[code] = null;
     if(window._grades) delete window._grades[code];
     localStorage.setItem('pp_grades_'+PENSUM_ID, JSON.stringify(window._grades||{}));
   }
