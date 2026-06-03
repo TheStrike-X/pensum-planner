@@ -179,14 +179,30 @@
   .reset-btn:hover{border-color:var(--gold);color:var(--gold);}
   .dark-toggle{
     margin:auto 0;
-    background:none;border:1px solid rgba(255,255,255,.15);
-    color:rgba(255,255,255,.5);font-size:14px;
-    width:36px;height:32px;
-    border-radius:3px;cursor:pointer;
-    transition:all .15s;display:flex;align-items:center;justify-content:center;
+    background:rgba(255,255,255,.1);
+    border:1px solid rgba(255,255,255,.15);
+    border-radius:20px;
+    width:52px;height:28px;
+    cursor:pointer;
+    position:relative;
     flex-shrink:0;
+    transition:background .3s;
+    padding:0;
   }
-  .dark-toggle:hover{border-color:var(--gold);color:var(--gold);}
+  .dark-toggle:hover{background:rgba(255,255,255,.18);}
+  .dark-toggle-thumb{
+    position:absolute;
+    top:3px;left:3px;
+    width:20px;height:20px;
+    border-radius:50%;
+    background:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-size:11px;line-height:1;
+    transition:transform .3s cubic-bezier(.4,0,.2,1), background .3s;
+    box-shadow:0 1px 3px rgba(0,0,0,.3);
+  }
+  [data-theme="dark"] .dark-toggle{background:rgba(202,138,4,.25);border-color:rgba(202,138,4,.4);}
+  [data-theme="dark"] .dark-toggle-thumb{transform:translateX(24px);background:#eab308;}
 
   .tabs{
     display:flex;gap:0;padding:0 48px;
@@ -545,7 +561,9 @@
       <span class="user-name" style="font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,.4);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:.08em;"></span>
       <button class="reset-btn" onclick="doLogout()" style="border-color:rgba(255,255,255,.15);color:rgba(255,255,255,.4);">Salir</button>
     </div>
-    <button class="dark-toggle" id="dark-toggle-btn" onclick="toggleDark()" title="Cambiar modo oscuro/claro" aria-label="Alternar modo oscuro">☀</button>
+    <button class="dark-toggle" id="dark-toggle-btn" onclick="toggleDark()" title="Cambiar modo oscuro/claro" aria-label="Alternar modo oscuro">
+      <div class="dark-toggle-thumb" id="dark-toggle-thumb">☀</div>
+    </button>
     </div>
   </header>
 
@@ -1138,19 +1156,27 @@ function applyImport(){
 // ─── DARK MODE ────────────────────────────────────────────────────────────────
 function toggleDark(){
   const isDark = document.documentElement.getAttribute('data-theme')==='dark';
-  document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
-  localStorage.setItem('pp_theme', isDark ? 'light' : 'dark');
-  document.getElementById('dark-toggle-btn').textContent = isDark ? '☀' : '☾';
+  const next = isDark ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('pp_theme', next);
+  const thumb = document.getElementById('dark-toggle-thumb');
+  if(thumb){
+    thumb.textContent = next === 'dark' ? '☾' : '☀';
+    thumb.style.transform = next === 'dark' ? 'translateX(24px)' : 'translateX(0)';
+    thumb.style.background = next === 'dark' ? '#eab308' : '#fff';
+  }
 }
 (function initTheme(){
   const saved = localStorage.getItem('pp_theme');
   const prefersDark = window.matchMedia('(prefers-color-scheme:dark)').matches;
   const theme = saved || (prefersDark ? 'dark' : 'light');
   document.documentElement.setAttribute('data-theme', theme);
-  // Button update happens after DOM is ready
   window.addEventListener('DOMContentLoaded', () => {
-    const btn = document.getElementById('dark-toggle-btn');
-    if(btn) btn.textContent = theme === 'dark' ? '☾' : '☀';
+    const thumb = document.getElementById('dark-toggle-thumb');
+    if(thumb){
+      thumb.textContent = theme === 'dark' ? '☾' : '☀';
+      if(theme === 'dark'){ thumb.style.transform = 'translateX(24px)'; thumb.style.background = '#eab308'; }
+    }
   });
 })();
 

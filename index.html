@@ -529,7 +529,9 @@ footer{
     </div>
     <div class="masthead-right">
       <div class="masthead-tag"><div class="masthead-dot"></div>República Dominicana</div>
-      <button onclick="toggleDark()" id="idx-dark-btn" aria-label="Alternar modo oscuro" style="background:none;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.4);width:34px;height:34px;border-radius:3px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s;">☀</button>
+      <button onclick="toggleDark()" id="idx-dark-btn" aria-label="Alternar modo oscuro" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:20px;width:52px;height:28px;cursor:pointer;position:relative;padding:0;transition:background .3s;flex-shrink:0;">
+        <div id="idx-dark-thumb" style="position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;line-height:1;transition:transform .3s cubic-bezier(.4,0,.2,1),background .3s;box-shadow:0 1px 3px rgba(0,0,0,.3);">☀</div>
+      </button>
     </div>
   </header>
 
@@ -884,10 +886,15 @@ function updateBannerStats() {
 // ── Dark mode ────────────────────────────────────────────────────────────────
 function toggleDark(){
   const isDark = document.documentElement.getAttribute('data-theme')==='dark';
-  document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
-  localStorage.setItem('pp_theme', isDark ? 'light' : 'dark');
-  const btn = document.getElementById('idx-dark-btn');
-  if(btn) btn.textContent = isDark ? '☀' : '☾';
+  const next = isDark ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('pp_theme', next);
+  const thumb = document.getElementById('idx-dark-thumb');
+  if(thumb){
+    thumb.textContent = next === 'dark' ? '☾' : '☀';
+    thumb.style.transform = next === 'dark' ? 'translateX(24px)' : 'translateX(0)';
+    thumb.style.background = next === 'dark' ? '#eab308' : '#fff';
+  }
 }
 (function(){
   const saved = localStorage.getItem('pp_theme');
@@ -895,8 +902,12 @@ function toggleDark(){
   const theme = saved || (prefersDark ? 'dark' : 'light');
   document.documentElement.setAttribute('data-theme', theme);
   window.addEventListener('DOMContentLoaded',()=>{
-    const btn = document.getElementById('idx-dark-btn');
-    if(btn) btn.textContent = theme==='dark' ? '☾' : '☀';
+    const thumb = document.getElementById('idx-dark-thumb');
+    if(thumb){
+      thumb.textContent = theme==='dark' ? '☾' : '☀';
+      thumb.style.transform = theme==='dark' ? 'translateX(24px)' : 'translateX(0)';
+      thumb.style.background = theme==='dark' ? '#eab308' : '#fff';
+    }
   });
 })();
 
