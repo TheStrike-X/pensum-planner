@@ -15,6 +15,7 @@
     --failed:#991b1b;--failed-bg:#fef2f2;--failed-text:#dc2626;
     --available:#713f12;--available-bg:#fefce8;--available-text:#a16207;
     --locked-text:#94a3b8;
+    --exonerated:#4a1d96;--exonerated-bg:#f5f3ff;--exonerated-text:#7c3aed;
     --navy:#0f172a;--gold:#ca8a04;--gold2:#eab308;--cream:#f8fafc;
     --rule:#e2e8f0;--ink:#020617;
     --focus-ring:0 0 0 3px rgba(59,130,246,.5);
@@ -51,6 +52,7 @@
     --failed:#991b1b;--failed-bg:#2d0a0a;--failed-text:#f87171;
     --available:#713f12;--available-bg:#1c1100;--available-text:#fbbf24;
     --locked-text:#475569;
+    --exonerated:#7c3aed;--exonerated-bg:#1e1040;--exonerated-text:#a78bfa;
     --available:#ca8a04;--available-bg:#1a1400;--available-text:#fbbf24;
     --navy:#e2e8f0;--gold:#eab308;--gold2:#fde047;--cream:#181b23;
     --rule:#2d3348;--ink:#e2e8f0;
@@ -236,6 +238,10 @@
   .course-card.failed::before{background:var(--failed);}
   .course-card.available{border-color:#e0d090;background:var(--available-bg);}
   .course-card.available::before{background:var(--gold);}
+  .course-card.exonerated{border-color:#a78bfa;background:var(--exonerated-bg);}
+  .course-card.exonerated::before{background:var(--exonerated-text);}
+  .course-card.exonerated .course-code{color:var(--exonerated-text);}
+  .course-card.exonerated .status-btn{border-color:#c4b5fd;color:var(--exonerated-text);}
   .course-card.locked{opacity:.5;}
   .course-card.locked::before{background:var(--locked-text);}
   .course-card.locked:hover{transform:none;box-shadow:none;cursor:default;}
@@ -629,6 +635,7 @@
   <div class="panel active" id="panel-courses">
     <div class="legend">
       <div class="legend-item"><div class="legend-dot" style="background:var(--passed-text)"></div>Aprobada</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--exonerated-text)"></div>Exonerada</div>
       <div class="legend-item"><div class="legend-dot" style="background:var(--enrolled-text)"></div>Cursando</div>
       <div class="legend-item"><div class="legend-dot" style="background:var(--failed-text)"></div>Reprobada</div>
       <div class="legend-item"><div class="legend-dot" style="background:var(--available-text)"></div>Disponible</div>
@@ -1063,7 +1070,7 @@ function renderImportResults(found, notFound){
   const container = document.getElementById('import-results');
   container.style.display = 'block';
 
-  const passed = found.filter(r=>r.data.status==='passed').length;
+  const passed = found.filter(r=>r.data.status==='passed'||r.data.status==='exonerated').length;
   const failed = found.filter(r=>r.data.status==='failed').length;
   const enrolled = found.filter(r=>r.data.status==='enrolled').length;
 
@@ -1098,7 +1105,7 @@ function applyImport(){
   const { found } = _importParsed;
 
   found.forEach(({ course, data }) => {
-    courseStates[course.code] = data.status;
+    courseStates[course.code] = data.status; // 'passed', 'failed', 'enrolled', 'exonerated'
     if(data.score !== null && data.status !== 'enrolled'){
       if(!window._grades) window._grades = {};
       const threshold = getPassThreshold();
@@ -1341,9 +1348,10 @@ function showActionPicker(code, event){
   const course = COURSES.find(c=>c.code===code);
 
   const items = [
-    { label:'Aprobada — ingresar nota',    color:'var(--passed-text)', action:() => { closeActionPicker(); openGradeModal(code,'passed'); } },
-    { label:'Reprobada — ingresar nota',   color:'var(--failed-text)', action:() => { closeActionPicker(); openGradeModal(code,'failed'); } },
-    { label:'Desmarcar (quitar cursando)', color:'var(--muted)',        action:() => { closeActionPicker(); courseStates[code]=null; if(window._grades) delete window._grades[code]; localStorage.setItem('pp_grades_'+PENSUM_ID, JSON.stringify(window._grades||{})); saveState(); refresh(); } },
+    { label:'Aprobada — ingresar nota',    color:'var(--passed-text)',     action:() => { closeActionPicker(); openGradeModal(code,'passed'); } },
+    { label:'Exonerada (S = 100)',         color:'var(--exonerated-text)', action:() => { closeActionPicker(); markExonerated(code); } },
+    { label:'Reprobada — ingresar nota',   color:'var(--failed-text)',     action:() => { closeActionPicker(); openGradeModal(code,'failed'); } },
+    { label:'Desmarcar (quitar cursando)', color:'var(--muted)',           action:() => { closeActionPicker(); courseStates[code]=null; if(window._grades) delete window._grades[code]; localStorage.setItem('pp_grades_'+PENSUM_ID, JSON.stringify(window._grades||{})); saveState(); refresh(); } },
   ];
 
   const header = document.createElement('div');
@@ -1374,6 +1382,14 @@ function showActionPicker(code, event){
 
 
 
+function markExonerated(code){
+  courseStates[code] = 'exonerated';
+  if(!window._grades) window._grades = {};
+  window._grades[code] = { score: 100, letter: 'S', passes: true };
+  localStorage.setItem('pp_grades_'+PENSUM_ID, JSON.stringify(window._grades));
+  saveState(); refresh();
+}
+
 function cycleState(code, event){
   if(getEffectiveStatus(code)==='locked') return;
   const cur = courseStates[code];
@@ -1389,6 +1405,10 @@ function cycleState(code, event){
     courseStates[code] = null;
     if(window._grades) delete window._grades[code];
     localStorage.setItem('pp_grades_'+PENSUM_ID, JSON.stringify(window._grades||{}));
+  } else if(cur === 'exonerated'){
+    courseStates[code] = null;
+    if(window._grades) delete window._grades[code];
+    localStorage.setItem('pp_grades_'+PENSUM_ID, JSON.stringify(window._grades||{}));
   } else if(cur === 'failed'){
     courseStates[code] = null;
     if(window._grades) delete window._grades[code];
@@ -1399,12 +1419,14 @@ function cycleState(code, event){
 
 function getEffectiveStatus(code){
   const s=courseStates[code];
-  if(s==='passed')   return 'passed';
-  if(s==='enrolled') return 'enrolled';
-  if(s==='failed')   return 'failed';
+  if(s==='passed')     return 'passed';
+  if(s==='exonerated') return 'exonerated';
+  if(s==='enrolled')   return 'enrolled';
+  if(s==='failed')     return 'failed';
   const course=COURSES.find(c=>c.code===code);
   if(!course) return 'locked';
-  return course.prereqs.every(p=>courseStates[p]==='passed')?'available':'locked';
+  // exonerated counts as passed for prerequisite checks
+  return course.prereqs.every(p=>courseStates[p]==='passed'||courseStates[p]==='exonerated')?'available':'locked';
 }
 
 function getUnlockCount(code){ return COURSES.filter(c=>c.prereqs.includes(code)).length; }
@@ -1461,7 +1483,7 @@ function renderCourses(){
       const isLocked=status==='locked';
       const grade = window._grades && window._grades[course.code];
       const gradeSuffix = grade ? ` · ${grade.score} (${grade.letter})` : '';
-      const btnLabel=st==='passed'?`✓ Aprobada${gradeSuffix}`:st==='enrolled'?'Cursando':st==='failed'?`✗ Reprobada${gradeSuffix}`:'Marcar…';
+      const btnLabel=st==='passed'?`✓ Aprobada${gradeSuffix}`:st==='exonerated'?'S Exonerada':st==='enrolled'?'Cursando':st==='failed'?`✗ Reprobada${gradeSuffix}`:'Marcar…';
       const card=document.createElement('div');
       card.className=`course-card ${status}`;
       if(!isLocked) card.onclick = (e)=>cycleState(course.code, e);
@@ -1823,7 +1845,7 @@ function renderGPA(){
   if(!container) return;
   const cfg = getGPAConfig();
   const grades = window._grades || {};
-  const graded = COURSES.filter(c=>grades[c.code] && courseStates[c.code]!=='enrolled');
+  const graded = COURSES.filter(c=>grades[c.code] && courseStates[c.code]!=='enrolled' && courseStates[c.code]!==null);
 
   if(!graded.length){
     container.innerHTML='<div class="gpa-empty">Aún no has calificado ninguna materia.<br><small style="font-size:12px;">Marca tus materias como aprobadas o reprobadas e ingresa tus notas para ver tu índice.</small></div>';
