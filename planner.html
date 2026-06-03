@@ -959,10 +959,6 @@ function showActionPicker(code, event){
   const course = COURSES.find(c=>c.code===code);
   picker.innerHTML = `
     <div class="action-picker-header">${course ? course.code : code}</div>
-    <div class="action-picker-item" onclick="pickEnrolled('${code}')">
-      <div class="action-picker-dot" style="background:var(--enrolled-text)"></div>
-      Cursando
-    </div>
     <div class="action-picker-item" onclick="pickGrade('${code}','passed')">
       <div class="action-picker-dot" style="background:var(--passed-text)"></div>
       Aprobada — ingresar nota
@@ -970,6 +966,10 @@ function showActionPicker(code, event){
     <div class="action-picker-item" onclick="pickGrade('${code}','failed')">
       <div class="action-picker-dot" style="background:var(--failed-text)"></div>
       Reprobada — ingresar nota
+    </div>
+    <div class="action-picker-item" onclick="pickCancel('${code}')">
+      <div class="action-picker-dot" style="background:var(--muted)"></div>
+      Desmarcar (quitar cursando)
     </div>
   `;
 
@@ -990,6 +990,14 @@ function pickEnrolled(code){
   saveState(); refresh();
 }
 
+function pickCancel(code){
+  closeActionPicker();
+  courseStates[code] = null;
+  if(window._grades) delete window._grades[code];
+  localStorage.setItem('pp_grades_'+PENSUM_ID, JSON.stringify(window._grades||{}));
+  saveState(); refresh();
+}
+
 function pickGrade(code, hint){
   closeActionPicker();
   openGradeModal(code, hint);
@@ -1000,18 +1008,16 @@ function cycleState(code, event){
   const cur = courseStates[code];
 
   if(cur === null){
-    // Show action picker: Cursando / Aprobada / Reprobada
+    // null → enrolled (first step: enroll in class)
+    courseStates[code] = 'enrolled';
+  } else if(cur === 'enrolled'){
+    // enrolled → pick pass or fail (grade modal)
     if(event) showActionPicker(code, event);
     return;
-  }
-  if(cur === 'passed'){
-    courseStates[code] = 'enrolled';
+  } else if(cur === 'passed'){
+    courseStates[code] = null;
     if(window._grades) delete window._grades[code];
     localStorage.setItem('pp_grades_'+PENSUM_ID, JSON.stringify(window._grades||{}));
-  } else if(cur === 'enrolled'){
-    // enrolled → ask for grade (pass or fail)
-    if(event) showActionPicker(code, event);
-    return;
   } else if(cur === 'failed'){
     courseStates[code] = null;
     if(window._grades) delete window._grades[code];
