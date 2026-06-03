@@ -208,6 +208,8 @@
   .panel{display:none;padding:28px 48px;}.panel.active{display:block;position:relative;z-index:1;}
   .legend{display:flex;gap:16px;margin-bottom:22px;flex-wrap:wrap;padding-bottom:16px;border-bottom:1px solid var(--rule);}
   .legend-item{display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.05em;text-transform:uppercase;}
+  .legend-action-btn{background:none;border:1px solid var(--rule);color:var(--muted);padding:5px 12px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:10px;cursor:pointer;transition:all .15s;letter-spacing:.05em;white-space:nowrap;}
+  .legend-action-btn:hover{border-color:var(--gold);color:var(--gold);}
   .legend-dot{width:8px;height:8px;border-radius:2px;}
 
   .semester-group{margin-bottom:32px;}
@@ -538,8 +540,6 @@
       <div class="stat"><div class="stat-num" id="stat-failed" style="color:var(--failed-text)">0</div><div class="stat-label">Reprobadas</div></div>
       <div class="stat"><div class="stat-num" id="stat-available" style="color:var(--available-text)">0</div><div class="stat-label">Disponibles</div></div>
       <div class="stat"><div class="stat-num" id="stat-credits" style="color:var(--accent2)">0</div><div class="stat-label">Créditos ✓</div></div>
-      <button class="reset-btn" onclick="openResetModal()">↺ Reiniciar</button>
-    <button class="reset-btn" onclick="openImportModal()" style="border-color:rgba(255,255,255,.25);color:rgba(255,255,255,.5);">⬆ Importar récord</button>
     <button id="auth-btn" class="reset-btn" onclick="openAuthModal('login')" style="border-color:rgba(255,255,255,.15);color:rgba(255,255,255,.4);">⚙ Cuenta</button>
     <div id="user-info" style="display:none;align-items:center;gap:8px;">
       <span class="user-name" style="font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,.4);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:.08em;"></span>
@@ -642,7 +642,10 @@
       <div class="legend-item"><div class="legend-dot" style="background:var(--failed-text)"></div>Reprobada</div>
       <div class="legend-item"><div class="legend-dot" style="background:var(--available-text)"></div>Disponible</div>
       <div class="legend-item"><div class="legend-dot" style="background:var(--locked-text)"></div>Bloqueada</div>
-      <div class="legend-item" style="margin-left:auto;font-size:10px">Clic en la tarjeta: Sin marcar → ✓ → 📖 → ✗ → …</div>
+      <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
+        <button class="legend-action-btn" onclick="openImportModal()">⬆ Importar récord</button>
+        <button class="legend-action-btn" onclick="openResetModal()">↺ Reiniciar</button>
+      </div>
     </div>
     <div id="courses-by-sem"></div>
   </div>
