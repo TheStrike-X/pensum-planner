@@ -4,28 +4,34 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Planificador — Pensum Planner</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,700;0,800;1,400;1,700&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg:#f5f1ea;--surface:#faf7f2;--surface2:#f0ebe0;--border:#ddd5c4;
-    --text:#1a1410;--muted:#8a7f72;--accent:#0d1b2e;--accent2:#c9a84c;
-    --passed:#1a4a2e;--passed-bg:#e8f4ed;--passed-text:#1a5c36;
-    --enrolled:#0d2a4a;--enrolled-bg:#e8f0f8;--enrolled-text:#1a3d6a;
-    --failed:#6a1a1a;--failed-bg:#faeaea;--failed-text:#8b2020;
-    --available:#5a4200;--available-bg:#fdf6e3;--available-text:#7a5800;
-    --locked-text:#b0a898;
-    --navy:#0d1b2e;--gold:#c9a84c;--gold2:#e8c97a;--cream:#faf7f2;
-    --rule:#ddd5c4;--ink:#1a1410;
+    /* Skill-recommended: B2B Professional + Academic/Archival */
+    --bg:#f8fafc;--surface:#ffffff;--surface2:#f1f5f9;--border:#e2e8f0;
+    --text:#020617;--muted:#475569;--accent:#0f172a;--accent2:#ca8a04;
+    --passed:#14532d;--passed-bg:#f0fdf4;--passed-text:#15803d;
+    --enrolled:#1e3a5f;--enrolled-bg:#eff6ff;--enrolled-text:#1d4ed8;
+    --failed:#991b1b;--failed-bg:#fef2f2;--failed-text:#dc2626;
+    --available:#713f12;--available-bg:#fefce8;--available-text:#a16207;
+    --locked-text:#94a3b8;
+    --navy:#0f172a;--gold:#ca8a04;--gold2:#eab308;--cream:#f8fafc;
+    --rule:#e2e8f0;--ink:#020617;
+    --focus-ring:0 0 0 3px rgba(59,130,246,.5);
   }
   *{margin:0;padding:0;box-sizing:border-box;}
   html,body{min-height:100vh;}
-  body{background:var(--bg);color:var(--text);font-family:'Source Serif 4',serif;font-size:14px;min-height:100vh;}
+  @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important;}}
+  *:focus-visible{outline:none;box-shadow:var(--focus-ring);}
+  .skip-link{position:absolute;top:-100%;left:0;background:var(--navy);color:#fff;padding:8px 16px;font-family:'JetBrains Mono',monospace;font-size:12px;z-index:9999;text-decoration:none;}
+  .skip-link:focus{top:0;}
+  body{background:var(--bg);color:var(--text);font-family:'Crimson Text',serif;font-size:16px;min-height:100vh;}
   body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.5;}
 
   /* LOADING SCREEN */
   #loading{position:fixed;inset:0;background:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:999;}
   #loading.hidden{display:none;}
-  .loading-logo{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--cream);}
+  .loading-logo{font-family:'EB Garamond',serif;font-size:24px;font-weight:700;color:var(--cream);}
   .loading-logo em{font-style:italic;color:var(--gold2);}
   .loading-spinner{width:28px;height:28px;border:2px solid rgba(255,255,255,.15);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;}
   .loading-text{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,.35);letter-spacing:.15em;text-transform:uppercase;}
@@ -34,7 +40,7 @@
   /* ERROR SCREEN */
   #error-screen{display:none;position:fixed;inset:0;background:var(--bg);align-items:center;justify-content:center;flex-direction:column;gap:12px;text-align:center;padding:32px;}
   #error-screen.show{display:flex;}
-  .error-title{font-family:'Playfair Display',serif;font-size:20px;color:var(--failed-text);}
+  .error-title{font-family:'EB Garamond',serif;font-size:20px;color:var(--failed-text);}
   .error-msg{font-size:12px;color:var(--muted);max-width:400px;line-height:1.7;font-style:italic;}
   .error-back{margin-top:8px;background:var(--navy);border:none;color:var(--cream);padding:10px 22px;border-radius:3px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;}
   .error-back:hover{background:var(--gold);color:var(--navy);}
@@ -71,11 +77,11 @@
   .header-crest{
     width:32px;height:32px;border:1.5px solid var(--gold);border-radius:50%;
     display:flex;align-items:center;justify-content:center;
-    font-family:'Playfair Display',serif;font-size:12px;font-weight:900;
+    font-family:'EB Garamond',serif;font-size:12px;font-weight:900;
     color:var(--gold);flex-shrink:0;
   }
   .header-wordmark{
-    font-family:'Playfair Display',serif;font-size:17px;font-weight:700;
+    font-family:'EB Garamond',serif;font-size:17px;font-weight:700;
     color:var(--cream);cursor:pointer;line-height:1;
   }
   .header-wordmark em{font-style:italic;color:var(--gold2);}
@@ -90,7 +96,7 @@
     display:flex;flex-direction:column;align-items:center;justify-content:center;
     min-width:64px;
   }
-  .stat-num{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--cream);line-height:1;}
+  .stat-num{font-family:'EB Garamond',serif;font-size:20px;font-weight:700;color:var(--cream);line-height:1;}
   .stat-label{font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,.3);font-size:8px;text-transform:uppercase;letter-spacing:.1em;margin-top:2px;}
   .reset-btn{
     margin:auto 0;margin-left:0;
@@ -126,7 +132,7 @@
 
   .semester-group{margin-bottom:32px;}
   .semester-header{display:flex;align-items:baseline;gap:14px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--rule);}
-  .semester-num{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:var(--navy);font-style:italic;}
+  .semester-num{font-family:'EB Garamond',serif;font-size:22px;font-weight:900;color:var(--navy);font-style:italic;}
   .semester-title{font-family:'JetBrains Mono',monospace;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.12em;}
   .semester-opens{margin-left:auto;background:var(--navy);color:var(--gold2);border-radius:2px;padding:3px 10px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;}
   .open-group-badge{display:inline-block;padding:3px 10px;border-radius:2px;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;}
@@ -137,7 +143,7 @@
 
   .courses-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:8px;}
   .course-card{
-    background:var(--surface);border:1px solid var(--rule);
+    background:var(--surface);border:1px solid var(--rule);cursor:pointer;
     border-radius:3px;padding:12px 14px;
     transition:all .15s;position:relative;overflow:hidden;
     cursor:pointer;
@@ -162,7 +168,7 @@
   .course-card.failed .course-code{color:var(--failed-text);}
   .course-card.available .course-code{color:var(--available-text);}
   .course-card.locked .course-code{color:var(--locked-text);}
-  .course-name{font-size:12px;color:var(--ink);line-height:1.4;margin-bottom:9px;font-family:'Source Serif 4',serif;}
+  .course-name{font-size:12px;color:var(--ink);line-height:1.4;margin-bottom:9px;font-family:'Crimson Text',serif;}
   .course-card.failed .course-name{text-decoration:line-through;color:var(--muted);}
   .course-meta{display:flex;gap:5px;align-items:center;flex-wrap:wrap;}
   .badge{font-family:'JetBrains Mono',monospace;font-size:8px;padding:2px 6px;border-radius:2px;text-transform:uppercase;letter-spacing:.08em;font-weight:500;}
@@ -219,11 +225,11 @@
   .schedule-container{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
   .schedule-sem{background:var(--surface);border:1px solid var(--rule);border-radius:3px;overflow:hidden;}
   .schedule-sem-header{padding:12px 16px;background:var(--navy);border-bottom:2px solid var(--gold);display:flex;align-items:center;gap:10px;}
-  .schedule-sem-num{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:var(--gold2);font-style:italic;}
+  .schedule-sem-num{font-family:'EB Garamond',serif;font-size:22px;font-weight:900;color:var(--gold2);font-style:italic;}
   .schedule-sem-info{flex:1;}
   .schedule-sem-title{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.1em;}
   .schedule-sem-sub{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,.35);}
-  .schedule-credits{font-family:'Playfair Display',serif;font-size:16px;color:var(--gold2);font-style:italic;}
+  .schedule-credits{font-family:'EB Garamond',serif;font-size:16px;color:var(--gold2);font-style:italic;}
   .schedule-courses{padding:10px;display:flex;flex-direction:column;gap:4px;}
   .schedule-course{padding:7px 10px;border-radius:2px;display:flex;align-items:center;gap:7px;font-size:11px;}
   .schedule-course.sc-done{background:var(--passed-bg);color:var(--passed-text);opacity:.65;text-decoration:line-through;}
@@ -232,7 +238,7 @@
   .schedule-course.sc-now{background:var(--available-bg);color:var(--available-text);border:1px solid #e0d090;}
   .schedule-course.sc-future{background:var(--surface2);color:var(--muted);}
   .sched-code{font-family:'JetBrains Mono',monospace;font-weight:500;min-width:64px;font-size:9px;text-transform:uppercase;letter-spacing:.08em;}
-  .sched-name{flex:1;font-family:'Source Serif 4',serif;}
+  .sched-name{flex:1;font-family:'Crimson Text',serif;}
   .sched-crs{color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:9px;}
 
   #graph-container{background:var(--surface);border:1px solid var(--rule);border-radius:3px;overflow:auto;min-height:500px;}
@@ -253,7 +259,7 @@
   .modal-overlay.open{display:flex;}
   .modal{background:var(--cream);border:1px solid var(--rule);border-radius:3px;overflow:hidden;max-width:380px;width:90%;box-shadow:0 16px 48px rgba(0,0,0,.15);}
   .modal-head{background:var(--navy);padding:18px 24px;border-bottom:3px solid var(--gold);}
-  .modal h2{font-family:'Playfair Display',serif;font-size:18px;color:var(--cream);font-weight:700;}
+  .modal h2{font-family:'EB Garamond',serif;font-size:18px;color:var(--cream);font-weight:700;}
   .modal-body{padding:20px 24px;}
   .modal p{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:20px;font-style:italic;}
   .modal-btns{display:flex;gap:10px;justify-content:flex-end;}
@@ -275,6 +281,7 @@
 <body>
 
 <!-- Loading -->
+<a href="#app" class="skip-link">Saltar al contenido principal</a>
 <div id="loading">
   <div class="loading-logo">Pensum <em>Planner</em></div>
   <div class="loading-spinner"></div>
@@ -333,7 +340,7 @@
 <div id="auth-modal" style="display:none;position:fixed;inset:0;background:rgba(13,27,46,.7);backdrop-filter:blur(4px);z-index:1000;align-items:center;justify-content:center;">
   <div style="background:var(--cream);border:1px solid var(--rule);border-radius:3px;width:380px;max-width:92vw;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.15);">
     <div style="background:var(--navy);padding:20px 24px;border-bottom:3px solid var(--gold);display:flex;justify-content:space-between;align-items:center;">
-      <span style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--cream);">Pensum <em style="color:var(--gold2);">Planner</em></span>
+      <span style="font-family:'EB Garamond',serif;font-size:18px;font-weight:700;color:var(--cream);">Pensum <em style="color:var(--gold2);">Planner</em></span>
       <button onclick="closeAuthModal()" style="background:none;border:none;color:rgba(255,255,255,.4);cursor:pointer;font-size:20px;line-height:1;">×</button>
     </div>
     <div style="padding:22px 24px;display:flex;flex-direction:column;gap:13px;">
@@ -343,15 +350,15 @@
       </div>
       <div id="auth-error" style="color:var(--failed-text);font-size:11px;min-height:14px;text-align:center;font-style:italic;"></div>
       <div id="form-login" style="display:flex;flex-direction:column;gap:10px;">
-        <input id="login-email"    type="email"    placeholder="Correo electrónico" style="background:white;border:1px solid var(--rule);color:var(--ink);padding:11px 13px;border-radius:2px;font-family:'Source Serif 4',serif;font-size:14px;outline:none;width:100%;">
-        <input id="login-password" type="password" placeholder="Contraseña"         style="background:white;border:1px solid var(--rule);color:var(--ink);padding:11px 13px;border-radius:2px;font-family:'Source Serif 4',serif;font-size:14px;outline:none;width:100%;">
+        <input id="login-email"    type="email"    placeholder="Correo electrónico" style="background:white;border:1px solid var(--rule);color:var(--ink);padding:11px 13px;border-radius:2px;font-family:'Crimson Text',serif;font-size:14px;outline:none;width:100%;">
+        <input id="login-password" type="password" placeholder="Contraseña"         style="background:white;border:1px solid var(--rule);color:var(--ink);padding:11px 13px;border-radius:2px;font-family:'Crimson Text',serif;font-size:14px;outline:none;width:100%;">
         <button id="login-btn" onclick="doLogin()" style="background:var(--navy);border:none;color:var(--cream);padding:12px;border-radius:2px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;transition:all .15s;">Entrar</button>
         <p style="font-size:11px;color:var(--muted);text-align:center;font-style:italic;">¿No tienes cuenta? <a onclick="switchTab('register')" style="color:var(--navy);cursor:pointer;text-decoration:underline;">Regístrate aquí</a></p>
       </div>
       <div id="form-register" style="display:none;flex-direction:column;gap:10px;">
-        <input id="reg-name"     type="text"     placeholder="Nombre (opcional)"   style="background:white;border:1px solid var(--rule);color:var(--ink);padding:11px 13px;border-radius:2px;font-family:'Source Serif 4',serif;font-size:14px;outline:none;width:100%;">
-        <input id="reg-email"    type="email"    placeholder="Correo electrónico"   style="background:white;border:1px solid var(--rule);color:var(--ink);padding:11px 13px;border-radius:2px;font-family:'Source Serif 4',serif;font-size:14px;outline:none;width:100%;">
-        <input id="reg-password" type="password" placeholder="Contraseña (mín. 6)" style="background:white;border:1px solid var(--rule);color:var(--ink);padding:11px 13px;border-radius:2px;font-family:'Source Serif 4',serif;font-size:14px;outline:none;width:100%;">
+        <input id="reg-name"     type="text"     placeholder="Nombre (opcional)"   style="background:white;border:1px solid var(--rule);color:var(--ink);padding:11px 13px;border-radius:2px;font-family:'Crimson Text',serif;font-size:14px;outline:none;width:100%;">
+        <input id="reg-email"    type="email"    placeholder="Correo electrónico"   style="background:white;border:1px solid var(--rule);color:var(--ink);padding:11px 13px;border-radius:2px;font-family:'Crimson Text',serif;font-size:14px;outline:none;width:100%;">
+        <input id="reg-password" type="password" placeholder="Contraseña (mín. 6)" style="background:white;border:1px solid var(--rule);color:var(--ink);padding:11px 13px;border-radius:2px;font-family:'Crimson Text',serif;font-size:14px;outline:none;width:100%;">
         <button id="register-btn" onclick="doRegister()" style="background:var(--navy);border:none;color:var(--cream);padding:12px;border-radius:2px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;transition:all .15s;">Crear cuenta</button>
         <p style="font-size:11px;color:var(--muted);text-align:center;font-style:italic;">¿Ya tienes cuenta? <a onclick="switchTab('login')" style="color:var(--navy);cursor:pointer;text-decoration:underline;">Inicia sesión</a></p>
       </div>
