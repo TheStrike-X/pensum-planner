@@ -829,9 +829,6 @@ function goToPlanner(){
   window.location.href = `planner.html?pensum=${encodeURIComponent(career.file)}&id=${encodeURIComponent(career.id)}&name=${encodeURIComponent(career.name)}&uni=${encodeURIComponent(uni.name)}`;
 }
 
-// ─── INIT ──────────────────────────────────────────────────────────────────────
-renderUniversities(); updateBannerStats();
-
 // Update stats in banner
 function updateBannerStats() {
   const totalCareers = REGISTRY.reduce((a,u) => a + u.careers.length, 0);
@@ -839,11 +836,139 @@ function updateBannerStats() {
   if (el) el.textContent = totalCareers;
 }
 
+// ── Dark mode ────────────────────────────────────────────────────────────────
+function toggleDark(){
+  const isDark = document.documentElement.getAttribute('data-theme')==='dark';
+  document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  localStorage.setItem('pp_theme', isDark ? 'light' : 'dark');
+  const btn = document.getElementById('idx-dark-btn');
+  if(btn) btn.textContent = isDark ? '☀' : '☾';
+}
+(function(){
+  const saved = localStorage.getItem('pp_theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme:dark)').matches;
+  const theme = saved || (prefersDark ? 'dark' : 'light');
+  document.documentElement.setAttribute('data-theme', theme);
+  window.addEventListener('DOMContentLoaded',()=>{
+    const btn = document.getElementById('idx-dark-btn');
+    if(btn) btn.textContent = theme==='dark' ? '☾' : '☀';
+  });
+})();
+
+// ── Auth state ────────────────────────────────────────────────────────────────
+const API = '/api';
+let authToken = localStorage.getItem('pp_token') || null;
+let authUser  = null;
+
+async function apiCall(method, path, body){
+  const opts = { method, headers: { 'Content-Type': 'application/json' } };
+  if (authToken) opts.headers['Authorization'] = 'Bearer ' + authToken;
+  if (body) opts.body = JSON.stringify(body);
+  try {
+    const r = await fetch(API + path, opts);
+    return { ok: r.ok, data: await r.json() };
+  } catch(e) { return { ok: false, data: { error: 'Sin conexión con el servidor' } }; }
+}
+
+function updateUserUI(){
+  const guest = document.getElementById('auth-guest-view');
+  const user  = document.getElementById('auth-user-view');
+  const nameEl = document.getElementById('auth-user-name');
+  if (authUser) {
+    if(guest) guest.style.display = 'none';
+    if(user)  user.style.display  = 'block';
+    if(nameEl) nameEl.textContent = authUser.name || authUser.email;
+  } else {
+    if(guest) guest.style.display = 'block';
+    if(user)  user.style.display  = 'none';
+  }
+}
+
+function openAuthModal(tab){
+  document.getElementById('auth-overlay').classList.add('open');
+  switchAuthTab(tab === 'profile' ? 'login' : (tab || 'login'));
+  document.getElementById('idx-auth-err').textContent = '';
+}
+function closeAuthModal(){
+  document.getElementById('auth-overlay').classList.remove('open');
+}
+function handleOverlayClick(e){
+  if(e.target === document.getElementById('auth-overlay')) closeAuthModal();
+}
+
+function switchAuthTab(tab){
+  const isLogin = tab === 'login';
+  const tl = document.getElementById('idx-tab-login');
+  const tr = document.getElementById('idx-tab-register');
+  if(tl) { tl.classList.toggle('active', isLogin); }
+  if(tr) { tr.classList.toggle('active', !isLogin); }
+  const fl = document.getElementById('idx-form-login');
+  const fr = document.getElementById('idx-form-register');
+  if(fl) fl.style.display = isLogin ? 'flex' : 'none';
+  if(fr) fr.style.display = isLogin ? 'none' : 'flex';
+  document.getElementById('idx-auth-err').textContent = '';
+}
+
+async function doLogin(){
+  const email    = document.getElementById('idx-login-email').value.trim();
+  const password = document.getElementById('idx-login-password').value;
+  const errEl    = document.getElementById('idx-auth-err');
+  if (!email || !password){ errEl.textContent = 'Completa todos los campos.'; return; }
+  const btn = document.getElementById('idx-login-btn');
+  btn.disabled = true; btn.textContent = 'Entrando…';
+  const { ok, data } = await apiCall('POST', '/login', { email, password });
+  btn.disabled = false; btn.textContent = 'Entrar';
+  if (!ok){ errEl.textContent = data.error || 'Error al iniciar sesión.'; return; }
+  authToken = data.token; authUser = data.user;
+  localStorage.setItem('pp_token', authToken);
+  closeAuthModal(); updateUserUI();
+}
+
+async function doRegister(){
+  const name     = document.getElementById('idx-reg-name').value.trim();
+  const email    = document.getElementById('idx-reg-email').value.trim();
+  const password = document.getElementById('idx-reg-password').value;
+  const errEl    = document.getElementById('idx-auth-err');
+  if (!email || !password){ errEl.textContent = 'Email y contraseña son requeridos.'; return; }
+  if (password.length < 6){ errEl.textContent = 'La contraseña debe tener al menos 6 caracteres.'; return; }
+  const btn = document.getElementById('idx-register-btn');
+  btn.disabled = true; btn.textContent = 'Creando cuenta…';
+  const { ok, data } = await apiCall('POST', '/register', { name, email, password });
+  btn.disabled = false; btn.textContent = 'Crear cuenta';
+  if (!ok){ errEl.textContent = data.error || 'Error al registrarse.'; return; }
+  authToken = data.token; authUser = data.user;
+  localStorage.setItem('pp_token', authToken);
+  closeAuthModal(); updateUserUI();
+}
+
+async function doLogout(){
+  await apiCall('POST', '/logout');
+  authToken = null; authUser = null;
+  localStorage.removeItem('pp_token');
+  updateUserUI();
+}
+
+// Restore session on load (with 3s timeout)
+(async () => {
+  if (!authToken) { updateUserUI(); return; }
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 3000);
+    const r = await fetch(API + '/me', {
+      headers: { 'Authorization': 'Bearer ' + authToken },
+      signal: controller.signal
+    });
+    clearTimeout(timeout);
+    if (r.ok) { const d = await r.json(); authUser = d.user; }
+    else { authToken = null; localStorage.removeItem('pp_token'); }
+  } catch(e) { authToken = null; localStorage.removeItem('pp_token'); }
+  updateUserUI();
+})();
+
+// Boot
+renderUniversities();
+updateBannerStats();
 </script>
-
-</body>
-</html>
-
 
 </body>
 </html>
