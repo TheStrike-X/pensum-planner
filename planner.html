@@ -57,6 +57,36 @@
   }
   *{margin:0;padding:0;box-sizing:border-box;}
   html,body{min-height:100vh;}
+  /* GPA PANEL */
+  .gpa-header{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:28px;}
+  .gpa-card{background:#f8fafc;border:1px solid #e2e8f0;border-radius:4px;padding:18px 20px;text-align:center;border-top:3px solid #0f172a;}
+  .gpa-card.highlight{border-top-color:#ca8a04;background:#fefce8;}
+  [data-theme="dark"] .gpa-card{background:#181b23;border-color:#2d3348;border-top-color:#475569;}
+  [data-theme="dark"] .gpa-card.highlight{border-top-color:#ca8a04;background:#1c1600;}
+  .gpa-card-num{font-family:'EB Garamond',serif;font-size:36px;font-weight:700;color:#0f172a;line-height:1;margin-bottom:4px;}
+  [data-theme="dark"] .gpa-card-num{color:#e2e8f0;}
+  .gpa-card-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:.12em;}
+  .gpa-card-sub{font-family:'JetBrains Mono',monospace;font-size:9px;color:#94a3b8;margin-top:3px;}
+  .gpa-section-title{font-family:'EB Garamond',serif;font-size:18px;font-weight:700;color:#0f172a;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;gap:10px;}
+  [data-theme="dark"] .gpa-section-title{color:#e2e8f0;border-bottom-color:#2d3348;}
+  .gpa-section-title span{font-family:'JetBrains Mono',monospace;font-size:10px;color:#94a3b8;font-weight:400;}
+  .gpa-table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:28px;}
+  .gpa-table th{font-family:'JetBrains Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:#64748b;padding:8px 12px;border-bottom:2px solid #e2e8f0;text-align:left;}
+  [data-theme="dark"] .gpa-table th{color:#475569;border-bottom-color:#2d3348;}
+  .gpa-table td{padding:8px 12px;border-bottom:1px solid #f1f5f9;font-family:'Crimson Text',serif;}
+  [data-theme="dark"] .gpa-table td{border-bottom-color:#1e2230;color:#e2e8f0;}
+  .gpa-table tr:hover td{background:#f8fafc;}
+  [data-theme="dark"] .gpa-table tr:hover td{background:#1e2230;}
+  .gpa-grade-pill{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:2px;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:500;}
+  .gpa-bar-wrap{background:#f1f5f9;border-radius:2px;height:4px;margin-top:6px;overflow:hidden;}
+  [data-theme="dark"] .gpa-bar-wrap{background:#1e2230;}
+  .gpa-bar-fill{height:100%;border-radius:2px;transition:width .6s ease;}
+  .gpa-formula{background:#f8fafc;border:1px solid #e2e8f0;border-left:3px solid #ca8a04;border-radius:2px;padding:14px 16px;margin-bottom:24px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#64748b;line-height:1.8;}
+  [data-theme="dark"] .gpa-formula{background:#181b23;border-color:#2d3348;color:#475569;}
+  .gpa-sem-header{font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#94a3b8;padding:12px 12px 4px;background:#f8fafc;border-top:1px solid #e2e8f0;}
+  [data-theme="dark"] .gpa-sem-header{background:#181b23;border-top-color:#2d3348;color:#475569;}
+  .gpa-empty{text-align:center;padding:48px;color:#94a3b8;font-family:'Crimson Text',serif;font-size:16px;font-style:italic;}
+
   @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important;}}
   *:focus-visible{outline:none;box-shadow:var(--focus-ring);}
   .skip-link{position:absolute;top:-100%;left:0;background:#0f172a;color:#fff;padding:8px 16px;font-family:'JetBrains Mono',monospace;font-size:12px;z-index:9999;text-decoration:none;}
@@ -517,6 +547,7 @@
     <div class="tab active" onclick="showTab('courses')">📚 Todas las Materias</div>
     <div class="tab" onclick="showTab('schedule')">🗓 Plan Recomendado</div>
     <div class="tab" onclick="showTab('graph')">🔗 Grafo de Prereqs</div>
+    <div class="tab" onclick="showTab('gpa')">📊 Índice Académico</div>
   </div>
 
   <div class="panel active" id="panel-courses">
@@ -537,6 +568,10 @@
       <div style="margin-top:6px;font-size:10px" id="progress-text"></div>
     </div>
     <div class="schedule-container" id="schedule-container"></div>
+  </div>
+
+  <div class="panel" id="panel-gpa">
+    <div id="gpa-content"></div>
   </div>
 
   <div class="panel" id="panel-graph">
@@ -1047,9 +1082,10 @@ function getUnlockCount(code){ return COURSES.filter(c=>c.prereqs.includes(code)
 
 // ─── TABS ─────────────────────────────────────────────────────────────────────
 function showTab(id){
-  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['courses','schedule','graph'][i]===id));
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['courses','schedule','graph','gpa'][i]===id));
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.getElementById('panel-'+id).classList.add('active');
+  if(id==='gpa') renderGPA();
   if(id==='graph') renderGraph();
   if(id==='schedule') renderSchedule();
 }
@@ -1402,6 +1438,293 @@ async function confirmReset(){
   saveState();
   if(authToken){ try{ await apiCall('DELETE','/progress/'+PENSUM_ID); }catch(e){} }
   closeResetModal(); refresh();
+}
+
+// ─── GPA CALCULATOR ──────────────────────────────────────────────────────────
+
+function getGPAConfig(){
+  const uni = (UNI_NAME || '').toUpperCase();
+  if(uni.includes('PUCMM')){
+    // PUCMM: 4.0 scale (index acumulado out of 4.0)
+    // Grade → GPA points: A=4.0, B=3.0, C=2.0, D=1.0, F=0.0
+    // Passing = 65, displayed as 0.0-4.0
+    return {
+      name: 'PUCMM',
+      scale: '4.0',
+      pass: 65,
+      toPoints: (score) => {
+        if(score >= 90) return 4.0;
+        if(score >= 80) return 3.0;
+        if(score >= 65) return 2.0;  // PUCMM C starts at 65
+        if(score >= 60) return 1.0;
+        return 0.0;
+      },
+      format: (val) => val.toFixed(2),
+      honorThresholds: [{label:'Magna Cum Laude', min:3.9},{label:'Cum Laude', min:3.7},{label:'Bene Merito', min:3.5}],
+      indexLabel: 'Índice Acumulado (GPA)',
+      semLabel: 'Índice Semestral (GPA)',
+    };
+  }
+  // UNIBE & UASD: 0-100 scale (promedio ponderado)
+  // Formula: Σ(calificación × créditos) / Σ(créditos)
+  return {
+    name: uni.includes('UASD') ? 'UASD' : 'UNIBE',
+    scale: '100',
+    pass: 70,
+    toPoints: (score) => score, // use raw score
+    format: (val) => val.toFixed(2),
+    honorThresholds: [
+      {label:'Sortija / Magna Cum Laude', min: uni.includes('UASD') ? 85 : 90},
+      {label:'Cum Laude', min:80},
+    ],
+    indexLabel: 'Índice Acumulado',
+    semLabel: 'Índice Semestral',
+  };
+}
+
+function renderGPA(){
+  const container = document.getElementById('gpa-content');
+  if(!container) return;
+
+  const cfg = getGPAConfig();
+  const grades = window._grades || {};
+
+  // Get all graded courses (passed or failed with a score)
+  const graded = COURSES.filter(c => grades[c.code] && courseStates[c.code] !== 'enrolled');
+
+  if(graded.length === 0){
+    container.innerHTML = `
+      <div class="gpa-empty">
+        Aún no has calificado ninguna materia.<br>
+        <small style="font-size:12px;">Marca tus materias como aprobadas o reprobadas e ingresa tus notas para ver tu índice.</small>
+      </div>`;
+    return;
+  }
+
+  // Calculate overall GPA
+  let totalPoints = 0, totalCredits = 0;
+  graded.forEach(c => {
+    const g = grades[c.code];
+    totalPoints += cfg.toPoints(g.score) * c.crs;
+    totalCredits += c.crs;
+  });
+  const overall = totalCredits > 0 ? totalPoints / totalCredits : 0;
+
+  // Calculate by semester
+  const semGroups = {};
+  graded.forEach(c => {
+    if(!semGroups[c.sem]) semGroups[c.sem] = [];
+    semGroups[c.sem].push(c);
+  });
+  const semGPAs = Object.entries(semGroups).sort((a,b)=>Number(a[0])-Number(b[0])).map(([sem, courses]) => {
+    let pts=0, crs=0;
+    courses.forEach(c=>{ pts+=cfg.toPoints(grades[c.code].score)*c.crs; crs+=c.crs; });
+    return { sem: Number(sem), gpa: crs>0?pts/crs:0, credits: crs, courses };
+  });
+
+  // Honor status
+  const honorStatus = cfg.honorThresholds.find(h => overall >= h.min);
+  const passedCount = graded.filter(c=>courseStates[c.code]==='passed').length;
+  const failedCount = graded.filter(c=>courseStates[c.code]==='failed').length;
+  const totalCrs = COURSES.reduce((s,c)=>s+c.crs,0);
+  const passedCrs = graded.filter(c=>courseStates[c.code]==='passed').reduce((s,c)=>s+c.crs,0);
+  const progressPct = totalCredits > 0 ? Math.round(passedCrs/totalCrs*100) : 0;
+
+  // Build HTML
+  const maxVal = cfg.scale==='4.0' ? 4.0 : 100;
+  const barPct = Math.round((overall/maxVal)*100);
+
+  container.innerHTML = `
+    <div style="margin-bottom:24px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#94a3b8;text-transform:uppercase;letter-spacing:.15em;margin-bottom:6px;">
+        ${cfg.name} · Escala ${cfg.scale} · Nota mínima aprobatoria: ${cfg.pass}
+      </div>
+      <div class="gpa-formula">
+        <strong style="color:#ca8a04;">Fórmula:</strong>
+        ${cfg.name === 'PUCMM'
+          ? 'Σ(puntos_GPA × créditos) / Σ(créditos) · A=4.0 · B=3.0 · C=2.0 · D=1.0 · F=0.0'
+          : 'Σ(calificación × créditos) / Σ(créditos) · Promedio ponderado en escala 0–100'
+        }
+      </div>
+    </div>
+
+    <div class="gpa-header">
+      <div class="gpa-card highlight">
+        <div class="gpa-card-num" style="color:#ca8a04;">${cfg.format(overall)}</div>
+        <div class="gpa-card-label">${cfg.indexLabel}</div>
+        <div class="gpa-bar-wrap" style="margin-top:8px;">
+          <div class="gpa-bar-fill" style="width:${barPct}%;background:${overall>=(cfg.scale==='4.0'?3.5:85)?'#ca8a04':overall>=(cfg.scale==='4.0'?2.0:70)?'#15803d':'#dc2626'};"></div>
+        </div>
+        ${honorStatus ? `<div class="gpa-card-sub" style="color:#ca8a04;margin-top:6px;">🏅 ${honorStatus.label}</div>` : ''}
+      </div>
+      <div class="gpa-card">
+        <div class="gpa-card-num">${passedCount}</div>
+        <div class="gpa-card-label">Materias Aprobadas</div>
+        <div class="gpa-card-sub">${passedCrs} créditos</div>
+      </div>
+      <div class="gpa-card">
+        <div class="gpa-card-num" style="color:${failedCount>0?'#dc2626':'inherit'}">${failedCount}</div>
+        <div class="gpa-card-label">Materias Reprobadas</div>
+      </div>
+      <div class="gpa-card">
+        <div class="gpa-card-num">${progressPct}%</div>
+        <div class="gpa-card-label">Progreso Total</div>
+        <div class="gpa-bar-wrap" style="margin-top:8px;">
+          <div class="gpa-bar-fill" style="width:${progressPct}%;background:#0f172a;"></div>
+        </div>
+        <div class="gpa-card-sub">${passedCrs} / ${totalCrs} créditos</div>
+      </div>
+    </div>
+
+    <div class="gpa-section-title">Índice por Semestre <span>calificadas con nota</span></div>
+    <table class="gpa-table">
+      <thead>
+        <tr>
+          <th>Semestre</th>
+          <th>Índice</th>
+          <th>Créditos</th>
+          <th>Materias</th>
+          <th>Progreso</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${semGPAs.map(s => {
+          const pct = Math.round((s.gpa/maxVal)*100);
+          const color = s.gpa>=(cfg.scale==='4.0'?3.5:85)?'#ca8a04':s.gpa>=(cfg.scale==='4.0'?2.0:70)?'#15803d':'#dc2626';
+          return `<tr>
+            <td><strong style="font-family:'EB Garamond',serif;font-style:italic;font-size:16px;">${s.sem}</strong></td>
+            <td><strong style="font-family:'EB Garamond',serif;font-size:16px;color:${color}">${cfg.format(s.gpa)}</strong></td>
+            <td>${s.credits}</td>
+            <td>${s.courses.length}</td>
+            <td style="min-width:100px;">
+              <div class="gpa-bar-wrap">
+                <div class="gpa-bar-fill" style="width:${pct}%;background:${color};"></div>
+              </div>
+            </td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+
+    <div class="gpa-section-title">Detalle por Materia <span>${graded.length} calificadas</span></div>
+    <table class="gpa-table">
+      <thead>
+        <tr>
+          <th>Código</th>
+          <th>Materia</th>
+          <th>Créditos</th>
+          <th>Nota</th>
+          <th>Letra</th>
+          ${cfg.scale==='4.0'?'<th>Puntos GPA</th>':''}
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${graded.sort((a,b)=>a.sem-b.sem||a.code.localeCompare(b.code)).map(c => {
+          const g = grades[c.code];
+          const isPassed = courseStates[c.code]==='passed';
+          const pts = cfg.toPoints(g.score);
+          const rowColor = isPassed ? 'var(--passed-bg)' : 'var(--failed-bg)';
+          const txtColor = isPassed ? 'var(--passed-text)' : 'var(--failed-text)';
+          return `<tr style="background:${rowColor};">
+            <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:${txtColor};">${c.code}</td>
+            <td>${c.name}</td>
+            <td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${c.crs}</td>
+            <td><strong style="font-family:'EB Garamond',serif;font-size:16px;color:${txtColor};">${g.score}</strong></td>
+            <td><strong style="font-family:'EB Garamond',serif;font-size:16px;color:${txtColor};">${g.letter}</strong></td>
+            ${cfg.scale==='4.0'?`<td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${pts.toFixed(1)}</td>`:''}
+            <td><span class="gpa-grade-pill" style="background:${rowColor};color:${txtColor};border:1px solid ${isPassed?'var(--passed)':'var(--failed)'};">${isPassed?'✓ Aprobada':'✗ Reprobada'}</span></td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+// ─── GPA CALCULATOR ──────────────────────────────────────────────────────────
+
+function getGPAConfig(){
+  const uni = (UNI_NAME || '').toUpperCase();
+  if(uni.includes('PUCMM')){
+    return {
+      name:'PUCMM', scale:'4.0', pass:65,
+      toPoints:(s)=>s>=90?4.0:s>=80?3.0:s>=65?2.0:s>=60?1.0:0.0,
+      format:(v)=>v.toFixed(2),
+      honorThresholds:[{label:'Magna Cum Laude',min:3.9},{label:'Cum Laude',min:3.7},{label:'Bene Merito',min:3.5}],
+      indexLabel:'Índice Acumulado (GPA)', semLabel:'Índice Semestral (GPA)',
+    };
+  }
+  const isUASD = uni.includes('UASD');
+  return {
+    name:isUASD?'UASD':'UNIBE', scale:'100', pass:70,
+    toPoints:(s)=>s,
+    format:(v)=>v.toFixed(2),
+    honorThresholds:[{label:isUASD?'Sortija':'Magna Cum Laude',min:isUASD?85:90},{label:'Cum Laude',min:80}],
+    indexLabel:'Índice Acumulado', semLabel:'Índice Semestral',
+  };
+}
+
+function renderGPA(){
+  const container = document.getElementById('gpa-content');
+  if(!container) return;
+  const cfg = getGPAConfig();
+  const grades = window._grades || {};
+  const graded = COURSES.filter(c=>grades[c.code] && courseStates[c.code]!=='enrolled');
+
+  if(!graded.length){
+    container.innerHTML='<div class="gpa-empty">Aún no has calificado ninguna materia.<br><small style="font-size:12px;">Marca tus materias como aprobadas o reprobadas e ingresa tus notas para ver tu índice.</small></div>';
+    return;
+  }
+
+  let totalPts=0, totalCrs=0;
+  graded.forEach(c=>{ totalPts+=cfg.toPoints(grades[c.code].score)*c.crs; totalCrs+=c.crs; });
+  const overall = totalCrs>0 ? totalPts/totalCrs : 0;
+  const maxVal = cfg.scale==='4.0' ? 4.0 : 100;
+  const barPct = Math.min(100, Math.round((overall/maxVal)*100));
+  const honor = cfg.honorThresholds.find(h=>overall>=h.min);
+  const passedCrs = graded.filter(c=>courseStates[c.code]==='passed').reduce((s,c)=>s+c.crs,0);
+  const failedCount = graded.filter(c=>courseStates[c.code]==='failed').length;
+  const totalCareerCrs = COURSES.reduce((s,c)=>s+c.crs,0);
+  const progPct = Math.round(passedCrs/totalCareerCrs*100);
+
+  const semGroups={};
+  graded.forEach(c=>{ if(!semGroups[c.sem]) semGroups[c.sem]=[]; semGroups[c.sem].push(c); });
+  const semGPAs = Object.entries(semGroups).sort((a,b)=>+a[0]-+b[0]).map(([sem,cs])=>{
+    let p=0,cr=0; cs.forEach(c=>{p+=cfg.toPoints(grades[c.code].score)*c.crs;cr+=c.crs;});
+    return {sem:+sem,gpa:cr?p/cr:0,credits:cr,courses:cs};
+  });
+
+  const gpaColor = (v)=>v>=(cfg.scale==='4.0'?3.5:85)?'#ca8a04':v>=(cfg.scale==='4.0'?2.0:70)?'#15803d':'#dc2626';
+
+  container.innerHTML = `
+    <div style="margin-bottom:22px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#94a3b8;text-transform:uppercase;letter-spacing:.15em;margin-bottom:8px;">${cfg.name} · Escala ${cfg.scale} · Nota mínima: ${cfg.pass}</div>
+      <div class="gpa-formula"><strong style="color:#ca8a04;">Fórmula:</strong> ${cfg.scale==='4.0'?'Σ(puntos_GPA × créditos) / Σ(créditos) · A=4.0 B=3.0 C=2.0 D=1.0 F=0.0':'Σ(calificación × créditos) / Σ(créditos) · Promedio ponderado en escala 0–100'}</div>
+    </div>
+    <div class="gpa-header">
+      <div class="gpa-card highlight">
+        <div class="gpa-card-num" style="color:#ca8a04;">${cfg.format(overall)}</div>
+        <div class="gpa-card-label">${cfg.indexLabel}</div>
+        <div class="gpa-bar-wrap" style="margin-top:8px;"><div class="gpa-bar-fill" style="width:${barPct}%;background:${gpaColor(overall)};"></div></div>
+        ${honor?`<div class="gpa-card-sub" style="color:#ca8a04;margin-top:6px;">🏅 ${honor.label}</div>`:''}
+      </div>
+      <div class="gpa-card"><div class="gpa-card-num">${graded.filter(c=>courseStates[c.code]==='passed').length}</div><div class="gpa-card-label">Aprobadas</div><div class="gpa-card-sub">${passedCrs} créditos</div></div>
+      <div class="gpa-card"><div class="gpa-card-num" style="color:${failedCount>0?'#dc2626':'inherit'}">${failedCount}</div><div class="gpa-card-label">Reprobadas</div></div>
+      <div class="gpa-card"><div class="gpa-card-num">${progPct}%</div><div class="gpa-card-label">Progreso</div><div class="gpa-bar-wrap" style="margin-top:8px;"><div class="gpa-bar-fill" style="width:${progPct}%;background:#0f172a;"></div></div><div class="gpa-card-sub">${passedCrs}/${totalCareerCrs} créditos</div></div>
+    </div>
+    <div class="gpa-section-title">Índice por Semestre <span>basado en materias calificadas</span></div>
+    <table class="gpa-table"><thead><tr><th>Sem</th><th>Índice</th><th>Créditos</th><th>Materias</th><th style="min-width:80px;">Barra</th></tr></thead><tbody>
+    ${semGPAs.map(s=>{const pct=Math.min(100,Math.round((s.gpa/maxVal)*100));return`<tr><td><strong style="font-family:'EB Garamond',serif;font-style:italic;font-size:16px;">${s.sem}</strong></td><td><strong style="font-family:'EB Garamond',serif;font-size:16px;color:${gpaColor(s.gpa)}">${cfg.format(s.gpa)}</strong></td><td>${s.credits}</td><td>${s.courses.length}</td><td><div class="gpa-bar-wrap"><div class="gpa-bar-fill" style="width:${pct}%;background:${gpaColor(s.gpa)};"></div></div></td></tr>`;}).join('')}
+    </tbody></table>
+    <div class="gpa-section-title">Detalle por Materia <span>${graded.length} calificadas</span></div>
+    <table class="gpa-table"><thead><tr><th>Código</th><th>Materia</th><th>Cr</th><th>Nota</th><th>Letra</th>${cfg.scale==='4.0'?'<th>GPA</th>':''}<th>Estado</th></tr></thead><tbody>
+    ${graded.sort((a,b)=>a.sem-b.sem).map(c=>{
+      const g=grades[c.code];const ok=courseStates[c.code]==='passed';
+      const bg=ok?'var(--passed-bg)':'var(--failed-bg)';const tc=ok?'var(--passed-text)':'var(--failed-text)';
+      return`<tr style="background:${bg};"><td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:${tc};">${c.code}</td><td style="font-family:'Crimson Text',serif;">${c.name}</td><td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${c.crs}</td><td><strong style="font-family:'EB Garamond',serif;font-size:16px;color:${tc};">${g.score}</strong></td><td><strong style="font-family:'EB Garamond',serif;font-size:16px;color:${tc};">${g.letter}</strong></td>${cfg.scale==='4.0'?`<td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${cfg.toPoints(g.score).toFixed(1)}</td>`:''}<td><span class="gpa-grade-pill" style="background:${bg};color:${tc};">${ok?'✓ Aprobada':'✗ Reprobada'}</span></td></tr>`;
+    }).join('')}
+    </tbody></table>
+  `;
 }
 
 // ─── FILTER & INIT ────────────────────────────────────────────────────────────
