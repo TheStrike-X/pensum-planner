@@ -26,7 +26,7 @@
   ],
   "courses": [
     {
-      "code": "ADB-110",
+      "code": "AD8-110",
       "name": "Gestión Empresarial",
       "crs": 3,
       "sem": 1,
@@ -47,7 +47,7 @@
       "prereqs": []
     },
     {
-      "code": "EGB-122",
+      "code": "EGL-122",
       "name": "Taller de Comunicación",
       "crs": 2,
       "sem": 1,
@@ -61,14 +61,14 @@
       "prereqs": []
     },
     {
-      "code": "EGS-111",
+      "code": "EGS-110",
       "name": "Procesos Históricos y Construcción del Colectivo Social",
       "crs": 3,
       "sem": 1,
       "prereqs": []
     },
     {
-      "code": "EGV-130",
+      "code": "EGV-131",
       "name": "Taller Calidad de Vida",
       "crs": 1,
       "sem": 1,
@@ -114,7 +114,7 @@
       ]
     },
     {
-      "code": "EGS-112",
+      "code": "EGS-111",
       "name": "Análisis de la Realidad Dominicana en un Mundo Global",
       "crs": 2,
       "sem": 2,
@@ -171,7 +171,7 @@
       ]
     },
     {
-      "code": "EGS-170",
+      "code": "EGC-170",
       "name": "Física General I",
       "crs": 4,
       "sem": 3,
@@ -220,16 +220,16 @@
       "crs": 4,
       "sem": 4,
       "prereqs": [
-        "EGS-170"
+        "EGC-170"
       ]
     },
     {
-      "code": "EGS-270",
+      "code": "EGC-270",
       "name": "Física General II",
       "crs": 4,
       "sem": 4,
       "prereqs": [
-        "EGS-170"
+        "EGC-170"
       ]
     },
     {
@@ -291,18 +291,18 @@
       "sem": 5,
       "prereqs": [
         "EGC-252",
-        "EGS-270"
+        "EGC-270"
       ]
     },
     {
-      "code": "EGS-271",
+      "code": "EGC-271",
       "name": "Física General III",
       "crs": 4,
       "sem": 5,
       "prereqs": []
     },
     {
-      "code": "EGL-220",
+      "code": "EGL-222",
       "name": "Electiva Comunicación, Lengua y Cultura",
       "crs": 2,
       "sem": 5,
@@ -347,7 +347,7 @@
       "prereqs": []
     },
     {
-      "code": "EGH-140",
+      "code": "EGH-144",
       "name": "Bloque de Artes y Humanidades",
       "crs": 4,
       "sem": 6,
@@ -356,7 +356,7 @@
       ]
     },
     {
-      "code": "IGI-330",
+      "code": "IG1-330",
       "name": "Ingeniería Económica",
       "crs": 3,
       "sem": 6,
@@ -380,7 +380,7 @@
       "crs": 3,
       "sem": 6,
       "prereqs": [
-        "EGS-271"
+        "EGC-271"
       ]
     },
     {
@@ -415,7 +415,7 @@
       "crs": 4,
       "sem": 7,
       "prereqs": [
-        "IGI-330"
+        "IG1-330"
       ]
     },
     {
@@ -472,14 +472,14 @@
       "prereqs": []
     },
     {
-      "code": "ADB-120",
+      "code": "AD8-120",
       "name": "Taller de Creatividad e Innovación",
       "crs": 3,
       "sem": 8,
       "prereqs": []
     },
     {
-      "code": "ADB-130",
+      "code": "AD8-130",
       "name": "Contabilidad Financiera I",
       "crs": 3,
       "sem": 8,
@@ -630,12 +630,12 @@
       "prereqs": []
     },
     {
-      "code": "ADB-220",
+      "code": "AD8-220",
       "name": "Taller de Creatividad e Innovación para los Negocios",
       "crs": 1,
       "sem": 10,
       "prereqs": [
-        "ADB-120"
+        "AD8-120"
       ]
     },
     {
