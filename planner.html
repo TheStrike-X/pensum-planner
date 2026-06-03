@@ -941,6 +941,8 @@ async function processImportFile(file){
       const arrayBuffer = await file.arrayBuffer();
       const text = await extractPDFText(arrayBuffer);
       document.getElementById('import-text').value = text;
+      // Show character count so user knows extraction worked
+      document.querySelector('.import-drop-text').textContent = `✓ PDF leído (${text.length} chars, ${text.split('\n').length} líneas)`;
       parseImport();
     } catch(e) {
       alert('No se pudo leer el PDF. Intenta copiar y pegar el texto manualmente.');
@@ -954,7 +956,6 @@ async function processImportFile(file){
 }
 
 async function extractPDFText(arrayBuffer){
-  // Load PDF.js from CDN if not already loaded
   if(!window.pdfjsLib){
     await new Promise((resolve, reject) => {
       const s = document.createElement('script');
@@ -967,10 +968,35 @@ async function extractPDFText(arrayBuffer){
   }
   const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
   let fullText = '';
+
   for(let i = 1; i <= pdf.numPages; i++){
     const page = await pdf.getPage(i);
     const content = await page.getTextContent();
-    fullText += content.items.map(item => item.str).join(' ') + '\n';
+
+    // Sort items by vertical position (top to bottom), then horizontal (left to right)
+    // This ensures table rows come out in correct reading order
+    const items = content.items
+      .filter(item => item.str.trim())
+      .sort((a, b) => {
+        const yDiff = Math.round(b.transform[5]) - Math.round(a.transform[5]);
+        if(Math.abs(yDiff) > 3) return yDiff; // different rows
+        return a.transform[4] - b.transform[4]; // same row, sort left to right
+      });
+
+    // Group items into rows by Y position
+    let rows = [], currentRow = [], lastY = null;
+    items.forEach(item => {
+      const y = Math.round(item.transform[5]);
+      if(lastY !== null && Math.abs(y - lastY) > 3){
+        if(currentRow.length) rows.push(currentRow.join(' '));
+        currentRow = [];
+      }
+      currentRow.push(item.str.trim());
+      lastY = y;
+    });
+    if(currentRow.length) rows.push(currentRow.join(' '));
+
+    fullText += rows.join('\n') + '\n';
   }
   return fullText;
 }
@@ -987,17 +1013,60 @@ async function extractPDFText(arrayBuffer){
 // When same course appears multiple times → keep first non-RET occurrence
 // (document is newest-first)
 
+// Line-by-line parser — works when PDF.js preserves row structure
+// Each row: CODE NAME... CREDITS SECTION GRADE LITERAL
+function parseUNIBELines(text){
+  const results = {};
+  const codeRe = /^[A-Z]{2,4}\d{3,4}[A-Z]?$/;
+  const literalRe = /^(A|B|C|D|F|S|RET|SEL|AUS|AP|NA)$/;
+  const numRe = /^\d{1,3}$/;
+
+  const lines = text.split(/\n|\r/).map(l => l.trim()).filter(Boolean);
+
+  for(const line of lines){
+    const parts = line.split(/\s+/);
+    if(!parts.length || !codeRe.test(parts[0])) continue;
+
+    const code = parts[0];
+    // Find the pattern: NUM NUM NUM LITERAL anywhere in this line
+    let grade = null, literal = null;
+    for(let i = 1; i < parts.length - 3; i++){
+      if(numRe.test(parts[i]) && numRe.test(parts[i+1]) && numRe.test(parts[i+2]) && literalRe.test(parts[i+3])){
+        grade = parseInt(parts[i+2]);
+        literal = parts[i+3];
+        break;
+      }
+    }
+    if(literal === null) continue;
+    if(literal === 'RET' || literal === 'AUS') continue;
+
+    if(literal === 'SEL'){
+      if(!results[code]) results[code] = { score: null, literal: 'SEL', status: 'enrolled', attempts: [] };
+    } else if(literal === 'S'){
+      if(!results[code]) results[code] = { score: 100, literal: 'S', status: 'exonerated', attempts: [] };
+    } else {
+      const threshold = getPassThreshold();
+      const passes = grade >= threshold;
+      if(!results[code]) results[code] = { score: grade, literal, status: passes ? 'passed' : 'failed', attempts: [] };
+      results[code].attempts.push({ score: grade, literal });
+    }
+  }
+  return results;
+}
+
 function parseUNIBERecord(text){
   const results = {};
 
-  // Normalize: collapse multiple spaces, clean up
+  // Try line-by-line parsing first (works when PDF extraction preserves rows)
+  const lineResults = parseUNIBELines(text);
+  if(Object.keys(lineResults).length > 5) return lineResults;
+
+  // Fallback: token-based parsing (works when PDF text is one big blob)
   const normalized = text
     .replace(/\r/g, ' ')
     .replace(/\n/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
-
-  // Split into tokens
   const tokens = normalized.split(' ');
 
   // Course code pattern: 2-4 uppercase letters + 3-4 digits + optional letter
