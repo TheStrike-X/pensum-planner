@@ -1268,11 +1268,16 @@ function onGradeInput(){
   letterEl.textContent = letter;
   letterEl.style.color = passes ? 'var(--passed-text)' : 'var(--failed-text)';
 
+  // Show GPA points for universities that use 4.0 scale
+  const uni = (UNI_NAME||'').toUpperCase();
+  const gpaPoints = (uni.includes('UNIBE')||uni.includes('PUCMM'))
+    ? ` · GPA ${(g>=90?4.0:g>=80?3.0:(uni.includes('PUCMM')&&threshold===65?g>=65:g>=70)?2.0:g>=60?1.0:0.0).toFixed(1)}`
+    : '';
   if(passes){
-    resultEl.textContent = `${g} puntos · Letra ${letter} · ✓ Aprobada (mínimo ${threshold})`;
+    resultEl.textContent = `${g} puntos · ${letter}${gpaPoints} · ✓ Aprobada (mínimo ${threshold})`;
     resultEl.className = 'grade-result pass';
   } else {
-    resultEl.textContent = `${g} puntos · Letra ${letter} · ✗ Reprobada (mínimo ${threshold})`;
+    resultEl.textContent = `${g} puntos · ${letter}${gpaPoints} · ✗ Reprobada (mínimo ${threshold})`;
     resultEl.className = 'grade-result fail';
   }
 
@@ -1777,12 +1782,23 @@ function getGPAConfig(){
       indexLabel:'Índice Acumulado (GPA)', semLabel:'Índice Semestral (GPA)',
     };
   }
-  const isUASD = uni.includes('UASD');
+  if(uni.includes('UNIBE')){
+    // UNIBE uses 4.0 GPA scale (confirmed from UAcademy records)
+    // A=4.0, B=3.0, C=2.0, D=1.0, F=0.0 · passing grade: 70
+    return {
+      name:'UNIBE', scale:'4.0', pass:70,
+      toPoints:(s)=>s>=90?4.0:s>=80?3.0:s>=70?2.0:s>=60?1.0:0.0,
+      format:(v)=>v.toFixed(2),
+      honorThresholds:[{label:'Magna Cum Laude',min:3.9},{label:'Cum Laude',min:3.7},{label:'Bene Merito',min:3.5}],
+      indexLabel:'Índice Acumulado (GPA)', semLabel:'Índice Semestral (GPA)',
+    };
+  }
+  // UASD: 0-100 weighted average
   return {
-    name:isUASD?'UASD':'UNIBE', scale:'100', pass:70,
+    name:'UASD', scale:'100', pass:70,
     toPoints:(s)=>s,
     format:(v)=>v.toFixed(2),
-    honorThresholds:[{label:isUASD?'Sortija':'Magna Cum Laude',min:isUASD?85:90},{label:'Cum Laude',min:80}],
+    honorThresholds:[{label:'Sortija',min:85},{label:'Cum Laude',min:80}],
     indexLabel:'Índice Acumulado', semLabel:'Índice Semestral',
   };
 }
