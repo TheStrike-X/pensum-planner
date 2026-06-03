@@ -1907,7 +1907,15 @@ function renderGPA(){
   }
 
   let totalPts=0, totalCrs=0;
-  gradedForGPA.forEach(c=>{ totalPts+=cfg.toPoints(grades[c.code].score)*c.crs; totalCrs+=c.crs; });
+  gradedForGPA.forEach(c=>{
+    const g = grades[c.code];
+    const attempts = g.attempts && g.attempts.length > 0 ? g.attempts : [{ score: g.score }];
+    // Count ALL attempts (retakes included) — each attempt uses same credit weight
+    attempts.forEach(a => {
+      totalPts += cfg.toPoints(a.score) * c.crs;
+      totalCrs += c.crs;
+    });
+  });
   const overall = totalCrs>0 ? totalPts/totalCrs : 0;
   const maxVal = cfg.scale==='4.0' ? 4.0 : 100;
   const barPct = Math.min(100, Math.round((overall/maxVal)*100));
@@ -1920,7 +1928,12 @@ function renderGPA(){
   const semGroups={};
   graded.forEach(c=>{ if(!semGroups[c.sem]) semGroups[c.sem]=[]; semGroups[c.sem].push(c); });
   const semGPAs = Object.entries(semGroups).sort((a,b)=>+a[0]-+b[0]).map(([sem,cs])=>{
-    let p=0,cr=0; cs.filter(c=>courseStates[c.code]!=='exonerated').forEach(c=>{p+=cfg.toPoints(grades[c.code].score)*c.crs;cr+=c.crs;});
+    let p=0,cr=0;
+    cs.filter(c=>courseStates[c.code]!=='exonerated').forEach(c=>{
+      const g=grades[c.code];
+      const attempts=g.attempts&&g.attempts.length>0?g.attempts:[{score:g.score}];
+      attempts.forEach(a=>{p+=cfg.toPoints(a.score)*c.crs;cr+=c.crs;});
+    });
     return {sem:+sem,gpa:cr?p/cr:0,credits:cr,courses:cs};
   });
 
