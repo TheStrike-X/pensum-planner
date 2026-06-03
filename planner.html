@@ -4,107 +4,184 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Planificador — Pensum Planner</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,300;1,9..144,600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg:#0f0f13;--surface:#17171e;--surface2:#1f1f2a;--border:#2a2a38;
-    --text:#e8e6f0;--muted:#7a7890;--accent:#7c6af7;--accent2:#f7a26a;
-    --passed:#2d6a4f;--passed-bg:#1a3d2e;--passed-text:#74c69d;
-    --enrolled:#1e4a6e;--enrolled-bg:#0d2336;--enrolled-text:#60b8f0;
-    --failed:#8b3a3a;--failed-bg:#3d1a1a;--failed-text:#ff9f9f;
-    --available:#5a4e2a;--available-bg:#2a2410;--available-text:#e9c46a;
-    --locked-text:#5a5870;
+    --bg:#f5f1ea;--surface:#faf7f2;--surface2:#f0ebe0;--border:#ddd5c4;
+    --text:#1a1410;--muted:#8a7f72;--accent:#0d1b2e;--accent2:#c9a84c;
+    --passed:#1a4a2e;--passed-bg:#e8f4ed;--passed-text:#1a5c36;
+    --enrolled:#0d2a4a;--enrolled-bg:#e8f0f8;--enrolled-text:#1a3d6a;
+    --failed:#6a1a1a;--failed-bg:#faeaea;--failed-text:#8b2020;
+    --available:#5a4200;--available-bg:#fdf6e3;--available-text:#7a5800;
+    --locked-text:#b0a898;
+    --navy:#0d1b2e;--gold:#c9a84c;--gold2:#e8c97a;--cream:#faf7f2;
+    --rule:#ddd5c4;--ink:#1a1410;
   }
   *{margin:0;padding:0;box-sizing:border-box;}
-  body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font-size:13px;min-height:100vh;}
+  html,body{min-height:100vh;}
+  body{background:var(--bg);color:var(--text);font-family:'Source Serif 4',serif;font-size:14px;min-height:100vh;}
+  body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.5;}
 
   /* LOADING SCREEN */
-  #loading{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:999;}
+  #loading{position:fixed;inset:0;background:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:999;}
   #loading.hidden{display:none;}
-  .loading-logo{font-family:'Fraunces',serif;font-size:22px;font-weight:700;}
-  .loading-logo span{color:var(--accent);font-style:italic;}
-  .loading-spinner{width:28px;height:28px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;}
-  .loading-text{font-size:11px;color:var(--muted);}
+  .loading-logo{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--cream);}
+  .loading-logo em{font-style:italic;color:var(--gold2);}
+  .loading-spinner{width:28px;height:28px;border:2px solid rgba(255,255,255,.15);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;}
+  .loading-text{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,.35);letter-spacing:.15em;text-transform:uppercase;}
   @keyframes spin{to{transform:rotate(360deg)}}
 
   /* ERROR SCREEN */
   #error-screen{display:none;position:fixed;inset:0;background:var(--bg);align-items:center;justify-content:center;flex-direction:column;gap:12px;text-align:center;padding:32px;}
   #error-screen.show{display:flex;}
-  .error-title{font-family:'Fraunces',serif;font-size:20px;color:var(--failed-text);}
-  .error-msg{font-size:11px;color:var(--muted);max-width:400px;line-height:1.7;}
-  .error-back{margin-top:8px;background:none;border:1px solid var(--border);color:var(--muted);padding:8px 20px;border-radius:6px;cursor:pointer;font-family:'DM Mono',monospace;font-size:11px;}
-  .error-back:hover{border-color:var(--accent);color:var(--accent);}
+  .error-title{font-family:'Playfair Display',serif;font-size:20px;color:var(--failed-text);}
+  .error-msg{font-size:12px;color:var(--muted);max-width:400px;line-height:1.7;font-style:italic;}
+  .error-back{margin-top:8px;background:var(--navy);border:none;color:var(--cream);padding:10px 22px;border-radius:3px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;}
+  .error-back:hover{background:var(--gold);color:var(--navy);}
 
-  header{padding:20px 40px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:16px;background:linear-gradient(180deg,#13131a 0%,var(--bg) 100%);flex-wrap:wrap;}
-  .back-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:6px;cursor:pointer;font-family:'DM Mono',monospace;font-size:10px;transition:all .15s;text-decoration:none;display:inline-flex;align-items:center;gap:5px;}
-  .back-btn:hover{border-color:var(--accent);color:var(--accent);}
-  .header-titles{flex:1;}
-  .header-uni{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:3px;}
-  header h1{font-family:'Fraunces',serif;font-size:20px;font-weight:700;letter-spacing:-0.5px;}
-  header h1 span{color:var(--accent);font-style:italic;}
-  .header-stats{display:flex;gap:16px;align-items:center;flex-wrap:wrap;}
-  .stat{text-align:center;}
-  .stat-num{font-size:18px;font-weight:500;font-family:'Fraunces',serif;color:var(--accent);}
-  .stat-label{color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:1px;}
-  .reset-btn{background:none;border:1px solid #3a2a2a;color:#7a5050;font-size:10px;padding:5px 12px;border-radius:6px;cursor:pointer;font-family:'DM Mono',monospace;transition:all .2s;white-space:nowrap;}
-  .reset-btn:hover{border-color:var(--failed-text);color:var(--failed-text);}
+  header{
+    padding:0 48px;
+    border-bottom:1px solid var(--rule);
+    display:flex;align-items:stretch;gap:0;
+    background:var(--navy);
+    flex-wrap:wrap;
+    border-bottom:3px solid var(--gold);
+    position:relative;z-index:2;
+  }
+  header::before{
+    content:'';position:absolute;inset:0;
+    background:repeating-linear-gradient(90deg,transparent 0px,transparent 59px,rgba(255,255,255,.02) 60px,rgba(255,255,255,.02) 61px);
+    pointer-events:none;
+  }
+  .back-btn{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:0 20px;
+    color:rgba(255,255,255,.35);
+    font-family:'JetBrains Mono',monospace;font-size:10px;
+    text-decoration:none;transition:color .15s;
+    border-right:1px solid rgba(255,255,255,.08);
+    letter-spacing:.1em;text-transform:uppercase;
+  }
+  .back-btn:hover{color:var(--gold);}
+  .header-titles{
+    display:flex;align-items:center;gap:14px;
+    padding:14px 20px;
+    border-right:1px solid rgba(255,255,255,.08);
+  }
+  .header-crest{
+    width:32px;height:32px;border:1.5px solid var(--gold);border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Playfair Display',serif;font-size:12px;font-weight:900;
+    color:var(--gold);flex-shrink:0;
+  }
+  .header-wordmark{
+    font-family:'Playfair Display',serif;font-size:17px;font-weight:700;
+    color:var(--cream);cursor:pointer;line-height:1;
+  }
+  .header-wordmark em{font-style:italic;color:var(--gold2);}
+  .header-uni{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,.35);letter-spacing:.15em;text-transform:uppercase;margin-top:3px;}
+  .header-stats{
+    display:flex;gap:0;align-items:stretch;
+    margin-left:auto;
+  }
+  .stat{
+    text-align:center;padding:0 18px;
+    border-left:1px solid rgba(255,255,255,.08);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    min-width:64px;
+  }
+  .stat-num{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--cream);line-height:1;}
+  .stat-label{font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,.3);font-size:8px;text-transform:uppercase;letter-spacing:.1em;margin-top:2px;}
+  .reset-btn{
+    margin:auto 0;margin-left:0;
+    background:none;border:1px solid rgba(255,255,255,.15);
+    color:rgba(255,255,255,.35);font-size:10px;padding:6px 14px;
+    border-radius:3px;cursor:pointer;
+    font-family:'JetBrains Mono',monospace;transition:all .15s;
+    white-space:nowrap;letter-spacing:.08em;
+  }
+  .reset-btn:hover{border-color:var(--gold);color:var(--gold);}
 
-  .tabs{display:flex;gap:2px;padding:12px 40px 0;background:var(--surface);border-bottom:1px solid var(--border);}
-  .tab{padding:9px 18px;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;transition:all .2s;font-size:11px;text-transform:uppercase;letter-spacing:1px;}
-  .tab:hover{color:var(--text);}.tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+  .tabs{
+    display:flex;gap:0;padding:0 48px;
+    background:var(--surface);
+    border-bottom:1px solid var(--rule);
+    position:relative;z-index:1;
+  }
+  .tab{
+    padding:12px 20px;cursor:pointer;
+    color:var(--muted);
+    border-bottom:2px solid transparent;
+    transition:all .2s;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;text-transform:uppercase;letter-spacing:.12em;
+  }
+  .tab:hover{color:var(--navy);}
+  .tab.active{color:var(--navy);border-bottom-color:var(--gold);}
 
-  .panel{display:none;padding:24px 40px;}.panel.active{display:block;}
-  .legend{display:flex;gap:14px;margin-bottom:18px;flex-wrap:wrap;}
-  .legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);}
-  .legend-dot{width:10px;height:10px;border-radius:3px;}
+  .panel{display:none;padding:28px 48px;}.panel.active{display:block;position:relative;z-index:1;}
+  .legend{display:flex;gap:16px;margin-bottom:22px;flex-wrap:wrap;padding-bottom:16px;border-bottom:1px solid var(--rule);}
+  .legend-item{display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.05em;text-transform:uppercase;}
+  .legend-dot{width:8px;height:8px;border-radius:2px;}
 
-  .semester-group{margin-bottom:24px;}
-  .semester-header{display:flex;align-items:center;gap:12px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);}
-  .semester-num{font-family:'Fraunces',serif;font-size:18px;font-weight:600;color:var(--accent);}
-  .semester-title{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:1px;}
-  .semester-opens{margin-left:auto;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:3px 10px;font-size:10px;color:var(--accent2);}
-  .open-group-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:500;letter-spacing:.8px;text-transform:uppercase;}
-  .og-a{background:#1e2a3d;color:#74a8d4;border:1px solid #2a3a5d;}
-  .og-b{background:#2a1e3d;color:#a87dd4;border:1px solid #3a2a5d;}
-  .og-c{background:#1e3d2a;color:#74d4a8;border:1px solid #2a5d3a;}
-  .og-d{background:#2a1e1e;color:#f4a261;border:1px solid #5d2a2a;}
+  .semester-group{margin-bottom:32px;}
+  .semester-header{display:flex;align-items:baseline;gap:14px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--rule);}
+  .semester-num{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:var(--navy);font-style:italic;}
+  .semester-title{font-family:'JetBrains Mono',monospace;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.12em;}
+  .semester-opens{margin-left:auto;background:var(--navy);color:var(--gold2);border-radius:2px;padding:3px 10px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;}
+  .open-group-badge{display:inline-block;padding:3px 10px;border-radius:2px;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;}
+  .og-a{background:#e8f0f8;color:#1a3d6a;border:1px solid #c0d0e8;}
+  .og-b{background:#f0e8f8;color:#4a1a6a;border:1px solid #d0c0e8;}
+  .og-c{background:#e8f4ed;color:#1a5c36;border:1px solid #b8d8c4;}
+  .og-d{background:#fdf6e3;color:#7a5800;border:1px solid #e8d890;}
 
   .courses-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:8px;}
-  .course-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:11px 13px;transition:all .15s;position:relative;overflow:hidden;}
-  .course-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;}
-  .course-card:hover{transform:translateY(-1px);filter:brightness(1.08);}
-  .course-card.passed{border-color:var(--passed);background:var(--passed-bg);}
-  .course-card.passed::before{background:var(--passed-text);}
-  .course-card.enrolled{border-color:var(--enrolled);background:var(--enrolled-bg);}
-  .course-card.enrolled::before{background:var(--enrolled-text);}
-  .course-card.failed{border-color:var(--failed);background:var(--failed-bg);}
-  .course-card.failed::before{background:var(--failed-text);}
-  .course-card.available{border-color:var(--available);background:var(--available-bg);}
-  .course-card.available::before{background:var(--available-text);}
-  .course-card.locked{opacity:.45;}
+  .course-card{
+    background:var(--surface);border:1px solid var(--rule);
+    border-radius:3px;padding:12px 14px;
+    transition:all .15s;position:relative;overflow:hidden;
+    cursor:pointer;
+  }
+  .course-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--rule);}
+  .course-card:hover{box-shadow:0 2px 8px rgba(0,0,0,.08);border-color:var(--muted);}
+  .course-card.passed{border-color:#b8d8c4;background:var(--passed-bg);}
+  .course-card.passed::before{background:var(--passed);}
+  .course-card.enrolled{border-color:#b8cce8;background:var(--enrolled-bg);}
+  .course-card.enrolled::before{background:var(--enrolled);}
+  .course-card.failed{border-color:#e8b8b8;background:var(--failed-bg);}
+  .course-card.failed::before{background:var(--failed);}
+  .course-card.available{border-color:#e0d090;background:var(--available-bg);}
+  .course-card.available::before{background:var(--gold);}
+  .course-card.locked{opacity:.5;}
   .course-card.locked::before{background:var(--locked-text);}
-  .course-card.locked:hover{transform:none;filter:none;cursor:default;}
+  .course-card.locked:hover{transform:none;box-shadow:none;cursor:default;}
   .course-card.locked .status-btn{opacity:.35;cursor:not-allowed;pointer-events:none;}
-  .course-code{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;}
+  .course-code{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.12em;margin-bottom:4px;}
   .course-card.passed .course-code{color:var(--passed-text);}
   .course-card.enrolled .course-code{color:var(--enrolled-text);}
   .course-card.failed .course-code{color:var(--failed-text);}
   .course-card.available .course-code{color:var(--available-text);}
   .course-card.locked .course-code{color:var(--locked-text);}
-  .course-name{font-size:11.5px;color:var(--text);line-height:1.4;margin-bottom:8px;}
+  .course-name{font-size:12px;color:var(--ink);line-height:1.4;margin-bottom:9px;font-family:'Source Serif 4',serif;}
   .course-card.failed .course-name{text-decoration:line-through;color:var(--muted);}
-  .course-meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
-  .badge{font-size:9px;padding:2px 6px;border-radius:3px;text-transform:uppercase;letter-spacing:.5px;font-weight:500;}
-  .badge-crs{background:var(--surface2);color:var(--muted);border:1px solid var(--border);}
-  .badge-prereq{background:#2a1f3d;color:#a78bfa;border:1px solid #4a3a6d;}
-  .badge-unlocks{background:#1f2a2a;color:#5eead4;border:1px solid #2a4a4a;}
-  .badge-failed{background:var(--failed-bg);color:var(--failed-text);border:1px solid var(--failed);}
-  .badge-enrolled{background:var(--enrolled-bg);color:var(--enrolled-text);border:1px solid var(--enrolled);}
-  .status-btn{margin-left:auto;background:none;border:1px solid var(--border);color:var(--muted);font-size:9px;padding:2px 8px;border-radius:3px;font-family:'DM Mono',monospace;white-space:nowrap;pointer-events:none;}
-  .course-card.passed .status-btn{border-color:var(--passed-text);color:var(--passed-text);}
-  .course-card.enrolled .status-btn{border-color:var(--enrolled-text);color:var(--enrolled-text);}
-  .course-card.failed .status-btn{border-color:var(--failed-text);color:var(--failed-text);}
-  .course-card.available .status-btn{border-color:var(--available-text);color:var(--available-text);}
+  .course-meta{display:flex;gap:5px;align-items:center;flex-wrap:wrap;}
+  .badge{font-family:'JetBrains Mono',monospace;font-size:8px;padding:2px 6px;border-radius:2px;text-transform:uppercase;letter-spacing:.08em;font-weight:500;}
+  .badge-crs{background:var(--surface2);color:var(--muted);border:1px solid var(--rule);}
+  .badge-prereq{background:#f0ecf8;color:#4a2a8a;border:1px solid #d0c0e8;}
+  .badge-unlocks{background:#e8f4f0;color:#1a5a4a;border:1px solid #b8d8d0;}
+  .badge-failed{background:var(--failed-bg);color:var(--failed-text);border:1px solid #e8b8b8;}
+  .badge-enrolled{background:var(--enrolled-bg);color:var(--enrolled-text);border:1px solid #b8cce8;}
+  .status-btn{
+    margin-left:auto;background:none;
+    border:1px solid var(--rule);color:var(--muted);
+    font-size:8px;padding:2px 8px;border-radius:2px;
+    font-family:'JetBrains Mono',monospace;white-space:nowrap;
+    pointer-events:none;letter-spacing:.08em;text-transform:uppercase;
+  }
+  .course-card.passed .status-btn{border-color:#b8d8c4;color:var(--passed-text);}
+  .course-card.enrolled .status-btn{border-color:#b8cce8;color:var(--enrolled-text);}
+  .course-card.failed .status-btn{border-color:#e8b8b8;color:var(--failed-text);}
+  .course-card.available .status-btn{border-color:#e0d090;color:var(--available-text);}
 
   .schedule-container{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
   .schedule-sem{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
@@ -138,23 +215,60 @@
   .progress-bar-wrap{background:var(--surface2);border-radius:4px;height:6px;margin-top:8px;overflow:hidden;}
   .progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px;transition:width .4s ease;}
 
+  /* SCHEDULE & GRAPH */
+  .schedule-container{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
+  .schedule-sem{background:var(--surface);border:1px solid var(--rule);border-radius:3px;overflow:hidden;}
+  .schedule-sem-header{padding:12px 16px;background:var(--navy);border-bottom:2px solid var(--gold);display:flex;align-items:center;gap:10px;}
+  .schedule-sem-num{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:var(--gold2);font-style:italic;}
+  .schedule-sem-info{flex:1;}
+  .schedule-sem-title{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.1em;}
+  .schedule-sem-sub{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,.35);}
+  .schedule-credits{font-family:'Playfair Display',serif;font-size:16px;color:var(--gold2);font-style:italic;}
+  .schedule-courses{padding:10px;display:flex;flex-direction:column;gap:4px;}
+  .schedule-course{padding:7px 10px;border-radius:2px;display:flex;align-items:center;gap:7px;font-size:11px;}
+  .schedule-course.sc-done{background:var(--passed-bg);color:var(--passed-text);opacity:.65;text-decoration:line-through;}
+  .schedule-course.sc-enrolled{background:var(--enrolled-bg);color:var(--enrolled-text);border:1px solid #b8cce8;}
+  .schedule-course.sc-failed{background:var(--failed-bg);color:var(--failed-text);border:1px solid #e8b8b8;}
+  .schedule-course.sc-now{background:var(--available-bg);color:var(--available-text);border:1px solid #e0d090;}
+  .schedule-course.sc-future{background:var(--surface2);color:var(--muted);}
+  .sched-code{font-family:'JetBrains Mono',monospace;font-weight:500;min-width:64px;font-size:9px;text-transform:uppercase;letter-spacing:.08em;}
+  .sched-name{flex:1;font-family:'Source Serif 4',serif;}
+  .sched-crs{color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:9px;}
+
+  #graph-container{background:var(--surface);border:1px solid var(--rule);border-radius:3px;overflow:auto;min-height:500px;}
+  #graph-svg{display:block;}
+  .graph-controls{display:flex;gap:10px;margin-bottom:16px;align-items:center;flex-wrap:wrap;}
+  .graph-controls button{background:var(--navy);border:none;color:var(--cream);padding:7px 16px;border-radius:2px;font-family:'JetBrains Mono',monospace;font-size:10px;cursor:pointer;letter-spacing:.1em;text-transform:uppercase;transition:all .15s;}
+  .graph-controls button:hover{background:var(--gold);color:var(--navy);}
+  .fc-node{cursor:pointer;transition:all .15s;}
+  .fc-node:hover rect{filter:brightness(1.1);}
+  .fc-node.expanded rect{stroke-width:2;}
+
+  .info-box{background:var(--navy);border-left:3px solid var(--gold);border-radius:2px;padding:12px 16px;margin-bottom:18px;font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,.5);line-height:1.7;letter-spacing:.05em;}
+  .progress-bar-wrap{background:var(--surface2);border-radius:2px;height:5px;margin-top:8px;overflow:hidden;}
+  .progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--navy),var(--gold));border-radius:2px;transition:width .4s ease;}
+
   /* MODALS */
-  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;align-items:center;justify-content:center;}
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(13,27,46,.75);backdrop-filter:blur(4px);z-index:100;align-items:center;justify-content:center;}
   .modal-overlay.open{display:flex;}
-  .modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:28px 32px;max-width:380px;width:90%;text-align:center;}
-  .modal h2{font-family:'Fraunces',serif;font-size:18px;margin-bottom:10px;color:var(--text);}
-  .modal p{font-size:11px;color:var(--muted);line-height:1.7;margin-bottom:22px;}
-  .modal-btns{display:flex;gap:10px;justify-content:center;}
-  .modal-btns button{padding:8px 22px;border-radius:6px;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;border:1px solid var(--border);}
-  .btn-cancel{background:var(--surface2);color:var(--muted);}
-  .btn-cancel:hover{border-color:var(--muted);color:var(--text);}
-  .btn-confirm{background:var(--failed-bg);color:var(--failed-text);border-color:var(--failed);}
-  .btn-confirm:hover{background:#5a2020;}
+  .modal{background:var(--cream);border:1px solid var(--rule);border-radius:3px;overflow:hidden;max-width:380px;width:90%;box-shadow:0 16px 48px rgba(0,0,0,.15);}
+  .modal-head{background:var(--navy);padding:18px 24px;border-bottom:3px solid var(--gold);}
+  .modal h2{font-family:'Playfair Display',serif;font-size:18px;color:var(--cream);font-weight:700;}
+  .modal-body{padding:20px 24px;}
+  .modal p{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:20px;font-style:italic;}
+  .modal-btns{display:flex;gap:10px;justify-content:flex-end;}
+  .modal-btns button{padding:9px 20px;border-radius:2px;font-family:'JetBrains Mono',monospace;font-size:10px;cursor:pointer;border:none;letter-spacing:.1em;text-transform:uppercase;transition:all .15s;}
+  .btn-cancel{background:var(--ivory);color:var(--muted);border:1px solid var(--rule)!important;}
+  .btn-cancel:hover{color:var(--ink);}
+  .btn-confirm{background:var(--failed);color:#fff;}
+  .btn-confirm:hover{background:#6a1010;}
 
   @media(max-width:600px){
-    header{padding:14px 16px;}
-    .panel{padding:16px;}
-    .tabs{padding:10px 16px 0;}
+    header{padding:0 16px;}
+    .panel{padding:16px 20px;}
+    .tabs{padding:0 16px;}
+    .stat{padding:0 10px;min-width:48px;}
+    .stat-num{font-size:16px;}
   }
 </style>
 </head>
@@ -162,7 +276,7 @@
 
 <!-- Loading -->
 <div id="loading">
-  <div class="loading-logo">Pensum <span>Planner</span></div>
+  <div class="loading-logo">Pensum <em>Planner</em></div>
   <div class="loading-spinner"></div>
   <div class="loading-text" id="loading-text">Cargando pensum…</div>
 </div>
@@ -177,11 +291,13 @@
 <!-- Reset modal -->
 <div class="modal-overlay" id="reset-modal" onclick="closeResetModal()">
   <div class="modal" onclick="event.stopPropagation()">
-    <h2>¿Reiniciar pensum?</h2>
-    <p>Todas las materias volverán a estado <strong style="color:var(--text)">sin cursar</strong>.<br>Esta acción no se puede deshacer.</p>
-    <div class="modal-btns">
-      <button class="btn-cancel" onclick="closeResetModal()">Cancelar</button>
-      <button class="btn-confirm" onclick="confirmReset()">Sí, reiniciar</button>
+    <div class="modal-head"><h2>¿Reiniciar pensum?</h2></div>
+    <div class="modal-body">
+      <p>Todas las materias volverán a estado sin cursar.<br>Esta acción no se puede deshacer.</p>
+      <div class="modal-btns">
+        <button class="btn-cancel" onclick="closeResetModal()">Cancelar</button>
+        <button class="btn-confirm" onclick="confirmReset()">Sí, reiniciar</button>
+      </div>
     </div>
   </div>
 </div>
@@ -191,8 +307,11 @@
   <header>
     <a class="back-btn" href="index.html">← Inicio</a>
     <div class="header-titles">
-      <div class="header-uni" id="header-uni"></div>
-      <h1 id="header-title" style="cursor:pointer;" onclick="window.location.href='index.html'">Pensum <span>Planner</span></h1>
+      <div class="header-crest">PP</div>
+      <div>
+        <div class="header-wordmark" onclick="window.location.href='index.html'">Pensum <em>Planner</em></div>
+        <div class="header-uni" id="header-uni"></div>
+      </div>
     </div>
     <div class="header-stats">
       <div class="stat"><div class="stat-num" id="stat-total">0</div><div class="stat-label">Total</div></div>
@@ -202,38 +321,40 @@
       <div class="stat"><div class="stat-num" id="stat-available" style="color:var(--available-text)">0</div><div class="stat-label">Disponibles</div></div>
       <div class="stat"><div class="stat-num" id="stat-credits" style="color:var(--accent2)">0</div><div class="stat-label">Créditos ✓</div></div>
       <button class="reset-btn" onclick="openResetModal()">↺ Reiniciar</button>
-    <button id="auth-btn" class="auth-login-btn" onclick="openAuthModal('login')" style="background:none;border:1px solid var(--border);color:var(--muted);font-size:10px;padding:5px 12px;border-radius:6px;cursor:pointer;font-family:'DM Mono',monospace;white-space:nowrap;">⚙ Cuenta</button>
+    <button id="auth-btn" class="reset-btn" onclick="openAuthModal('login')" style="border-color:rgba(255,255,255,.15);color:rgba(255,255,255,.4);">⚙ Cuenta</button>
     <div id="user-info" style="display:none;align-items:center;gap:8px;">
-      <span class="user-name" style="font-size:11px;color:var(--muted);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
-      <button class="reset-btn" onclick="doLogout()" style="border-color:#2a3a2a;color:#5a805a;">Salir</button>
+      <span class="user-name" style="font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,.4);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:.08em;"></span>
+      <button class="reset-btn" onclick="doLogout()" style="border-color:rgba(255,255,255,.15);color:rgba(255,255,255,.4);">Salir</button>
     </div>
     </div>
   </header>
 
-<!-- ── AUTH MODAL ─────────────────────────────────────────────────────────── -->
-<div id="auth-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;align-items:center;justify-content:center;">
-  <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:32px;width:340px;max-width:90vw;display:flex;flex-direction:column;gap:16px;">
-    <div style="display:flex;justify-content:space-between;align-items:center;">
-      <span style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;">Pensum <span style="color:var(--accent);font-style:italic;">Planner</span></span>
-      <button onclick="closeAuthModal()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;line-height:1;">×</button>
+<!-- ── AUTH MODAL ── -->
+<div id="auth-modal" style="display:none;position:fixed;inset:0;background:rgba(13,27,46,.7);backdrop-filter:blur(4px);z-index:1000;align-items:center;justify-content:center;">
+  <div style="background:var(--cream);border:1px solid var(--rule);border-radius:3px;width:380px;max-width:92vw;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.15);">
+    <div style="background:var(--navy);padding:20px 24px;border-bottom:3px solid var(--gold);display:flex;justify-content:space-between;align-items:center;">
+      <span style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--cream);">Pensum <em style="color:var(--gold2);">Planner</em></span>
+      <button onclick="closeAuthModal()" style="background:none;border:none;color:rgba(255,255,255,.4);cursor:pointer;font-size:20px;line-height:1;">×</button>
     </div>
-    <div style="display:flex;gap:4px;background:var(--surface2);border-radius:8px;padding:3px;">
-      <button id="tab-login"    onclick="switchTab('login')"    style="flex:1;padding:6px;border:none;border-radius:6px;cursor:pointer;font-family:'DM Mono',monospace;font-size:11px;transition:all .15s;" class="tab-active-login">Iniciar sesión</button>
-      <button id="tab-register" onclick="switchTab('register')" style="flex:1;padding:6px;border:none;border-radius:6px;cursor:pointer;font-family:'DM Mono',monospace;font-size:11px;transition:all .15s;" class="tab-inactive">Crear cuenta</button>
-    </div>
-    <div id="auth-error" style="color:var(--failed-text);font-size:11px;min-height:14px;text-align:center;"></div>
-    <div id="form-login" style="display:flex;flex-direction:column;gap:10px;">
-      <input id="login-email"    type="email"    placeholder="Correo electrónico" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:8px;font-family:'DM Mono',monospace;font-size:12px;outline:none;">
-      <input id="login-password" type="password" placeholder="Contraseña"         style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:8px;font-family:'DM Mono',monospace;font-size:12px;outline:none;">
-      <button id="login-btn" onclick="doLogin()" style="background:var(--accent);border:none;color:#fff;padding:10px;border-radius:8px;cursor:pointer;font-family:'DM Mono',monospace;font-size:12px;font-weight:500;">Entrar</button>
-      <p style="font-size:10px;color:var(--muted);text-align:center;">¿No tienes cuenta? <a onclick="switchTab('register')" style="color:var(--accent);cursor:pointer;text-decoration:underline;">Regístrate</a></p>
-    </div>
-    <div id="form-register" style="display:none;flex-direction:column;gap:10px;">
-      <input id="reg-name"     type="text"     placeholder="Nombre (opcional)"   style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:8px;font-family:'DM Mono',monospace;font-size:12px;outline:none;">
-      <input id="reg-email"    type="email"    placeholder="Correo electrónico"   style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:8px;font-family:'DM Mono',monospace;font-size:12px;outline:none;">
-      <input id="reg-password" type="password" placeholder="Contraseña (mín. 6)" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:8px;font-family:'DM Mono',monospace;font-size:12px;outline:none;">
-      <button id="register-btn" onclick="doRegister()" style="background:var(--accent);border:none;color:#fff;padding:10px;border-radius:8px;cursor:pointer;font-family:'DM Mono',monospace;font-size:12px;font-weight:500;">Crear cuenta</button>
-      <p style="font-size:10px;color:var(--muted);text-align:center;">¿Ya tienes cuenta? <a onclick="switchTab('login')" style="color:var(--accent);cursor:pointer;text-decoration:underline;">Inicia sesión</a></p>
+    <div style="padding:22px 24px;display:flex;flex-direction:column;gap:13px;">
+      <div style="display:flex;gap:0;border:1px solid var(--rule);border-radius:2px;overflow:hidden;">
+        <button id="tab-login"    onclick="switchTab('login')"    style="flex:1;padding:9px;border:none;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;transition:all .15s;background:var(--navy);color:var(--cream);">Iniciar sesión</button>
+        <button id="tab-register" onclick="switchTab('register')" style="flex:1;padding:9px;border:none;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;transition:all .15s;background:var(--ivory);color:var(--muted);">Crear cuenta</button>
+      </div>
+      <div id="auth-error" style="color:var(--failed-text);font-size:11px;min-height:14px;text-align:center;font-style:italic;"></div>
+      <div id="form-login" style="display:flex;flex-direction:column;gap:10px;">
+        <input id="login-email"    type="email"    placeholder="Correo electrónico" style="background:white;border:1px solid var(--rule);color:var(--ink);padding:11px 13px;border-radius:2px;font-family:'Source Serif 4',serif;font-size:14px;outline:none;width:100%;">
+        <input id="login-password" type="password" placeholder="Contraseña"         style="background:white;border:1px solid var(--rule);color:var(--ink);padding:11px 13px;border-radius:2px;font-family:'Source Serif 4',serif;font-size:14px;outline:none;width:100%;">
+        <button id="login-btn" onclick="doLogin()" style="background:var(--navy);border:none;color:var(--cream);padding:12px;border-radius:2px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;transition:all .15s;">Entrar</button>
+        <p style="font-size:11px;color:var(--muted);text-align:center;font-style:italic;">¿No tienes cuenta? <a onclick="switchTab('register')" style="color:var(--navy);cursor:pointer;text-decoration:underline;">Regístrate aquí</a></p>
+      </div>
+      <div id="form-register" style="display:none;flex-direction:column;gap:10px;">
+        <input id="reg-name"     type="text"     placeholder="Nombre (opcional)"   style="background:white;border:1px solid var(--rule);color:var(--ink);padding:11px 13px;border-radius:2px;font-family:'Source Serif 4',serif;font-size:14px;outline:none;width:100%;">
+        <input id="reg-email"    type="email"    placeholder="Correo electrónico"   style="background:white;border:1px solid var(--rule);color:var(--ink);padding:11px 13px;border-radius:2px;font-family:'Source Serif 4',serif;font-size:14px;outline:none;width:100%;">
+        <input id="reg-password" type="password" placeholder="Contraseña (mín. 6)" style="background:white;border:1px solid var(--rule);color:var(--ink);padding:11px 13px;border-radius:2px;font-family:'Source Serif 4',serif;font-size:14px;outline:none;width:100%;">
+        <button id="register-btn" onclick="doRegister()" style="background:var(--navy);border:none;color:var(--cream);padding:12px;border-radius:2px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;transition:all .15s;">Crear cuenta</button>
+        <p style="font-size:11px;color:var(--muted);text-align:center;font-style:italic;">¿Ya tienes cuenta? <a onclick="switchTab('login')" style="color:var(--navy);cursor:pointer;text-decoration:underline;">Inicia sesión</a></p>
+      </div>
     </div>
   </div>
 </div>
