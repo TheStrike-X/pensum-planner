@@ -946,47 +946,90 @@ async function extractPDFText(arrayBuffer){
 }
 
 // ── UNIBE UAcademy parser ────────────────────────────────────────────────────
-// Format: CODE NAME... CREDITS SECTION GRADE LITERAL
-// LITERAL: A B C D F = grade, RET = retirada (skip), SEL = seleccionada/enrolled
-// When same course appears multiple times → use most recent non-RET entry
-// "most recent" = appears earlier in the document (newest semester first)
+// PDF.js extracts text as space-separated tokens, not clean lines.
+// Strategy: find tokens matching course code pattern, then grab the
+// grade and literal from the tokens that follow.
+//
+// Token sequence per course (after PDF.js extraction):
+// CODE  WORD(S)...  CREDITS  SECTION  GRADE  LITERAL
+// e.g.: TI3111 FUNDAMENTOS DE PROGRAMACIÓN 3 02 80 B
+//
+// When same course appears multiple times → keep first non-RET occurrence
+// (document is newest-first)
 
 function parseUNIBERecord(text){
-  const results = {}; // code → {score, literal, status}
+  const results = {};
 
-  // Pattern: starts with alphanumeric code (e.g. TI3111, EGC154, UNB100)
-  // followed by course name words, then: CREDITS SECTION GRADE LITERAL
-  // GRADE is a number (0-100) or 0, LITERAL is A/B/C/D/F/S/RET/SEL
-  const linePattern = /^([A-Z]{2,4}\d{3,4}[A-Z]?)\s+(.+?)\s+(\d+)\s+(\d+)\s+(\d+)\s+(A|B|C|D|F|S|RET|SEL|AUS)\s*$/;
+  // Normalize: collapse multiple spaces, clean up
+  const normalized = text
+    .replace(/\r/g, ' ')
+    .replace(/\n/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 
-  const lines = text.split(/\n|\r/).map(l => l.trim()).filter(Boolean);
+  // Split into tokens
+  const tokens = normalized.split(' ');
 
-  for(const line of lines){
-    const m = line.match(linePattern);
-    if(!m) continue;
-    const [, code, , , , gradeStr, literal] = m;
-    const score = parseInt(gradeStr, 10);
+  // Course code pattern: 2-4 uppercase letters + 3-4 digits + optional letter
+  // e.g. TI3111, EGC154, UNB100, AD8120, EGH144
+  const codeRe = /^[A-Z]{2,4}\d{3,4}[A-Z]?$/;
+  const literalRe = /^(A|B|C|D|F|S|RET|SEL|AUS|AP|NA)$/;
+  const numRe = /^\d{1,3}$/;
 
-    // Skip if already have a result for this code (first occurrence = most recent)
-    if(results[code]) continue;
+  let i = 0;
+  while(i < tokens.length){
+    const tok = tokens[i];
+    if(!codeRe.test(tok)){ i++; continue; }
 
-    if(literal === 'RET' || literal === 'AUS') continue; // withdrawn/absent — skip
+    const code = tok;
 
-    if(literal === 'SEL'){
-      results[code] = { score: null, literal: 'SEL', status: 'enrolled' };
-    } else {
-      // Determine pass/fail based on score and university threshold
-      const threshold = getPassThreshold();
-      const passes = score >= threshold;
-      results[code] = { score, literal, status: passes ? 'passed' : 'failed' };
+    // Skip ahead past course name words until we hit 3 consecutive numbers
+    // (credits, section, grade) followed by a literal
+    let j = i + 1;
+    let credits = null, section = null, grade = null, literal = null;
+
+    while(j < tokens.length && j < i + 20){
+      const t0 = tokens[j];
+      const t1 = tokens[j+1];
+      const t2 = tokens[j+2];
+      const t3 = tokens[j+3];
+
+      // Look for pattern: NUM NUM NUM LITERAL
+      if(numRe.test(t0) && numRe.test(t1) && numRe.test(t2) && t3 && literalRe.test(t3)){
+        credits = parseInt(t0);
+        section = parseInt(t1);
+        grade   = parseInt(t2);
+        literal = t3;
+        j += 4;
+        break;
+      }
+      j++;
     }
+
+    if(literal === null){ i++; continue; }
+
+    // Skip if already recorded (first = most recent semester)
+    if(!results[code]){
+      if(literal === 'RET' || literal === 'AUS'){
+        // withdrawn — skip but still advance
+      } else if(literal === 'SEL' || (literal === 'NA' && grade === 0)){
+        results[code] = { score: null, literal: 'SEL', status: 'enrolled' };
+      } else {
+        const threshold = getPassThreshold();
+        const passes = grade >= threshold;
+        results[code] = { score: grade, literal, status: passes ? 'passed' : 'failed' };
+      }
+    }
+
+    i = j;
   }
+
   return results;
 }
 
 function normalizeCode(code){
-  // UNIBE codes in history may differ slightly from pensum codes
-  // e.g. "EGC154" vs "EGC-154" — normalize to match pensum format
+  // Remove dashes, spaces, convert to uppercase
+  // "EGC-154" → "EGC154", "EGC154" → "EGC154"
   return code.replace(/[-\s]/g, '').toUpperCase();
 }
 
@@ -998,6 +1041,7 @@ function parseImport(){
   const found = [], notFound = [];
 
   // Match parsed codes to COURSES
+  // Build map: normalized (no dash) → course
   const courseMap = {};
   COURSES.forEach(c => { courseMap[normalizeCode(c.code)] = c; });
 
