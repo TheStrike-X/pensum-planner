@@ -21,8 +21,9 @@
   }
   /* Dark mode card + panel overrides */
   [data-theme="dark"] header{background:#020617 !important;border-bottom-color:#ca8a04;}
-  [data-theme="dark"] .stat-num{color:#e2e8f0;}
-  [data-theme="dark"] .stat-label{color:rgba(255,255,255,.3);}
+  [data-theme="dark"] .stat{background:#fff;}
+  [data-theme="dark"] .stat-num{color:#0f172a;}
+  [data-theme="dark"] .stat-label{color:#64748b;}
   [data-theme="dark"] .header-wordmark{color:#e2e8f0;}
   [data-theme="dark"] .header-uni{color:rgba(255,255,255,.3);}
   [data-theme="dark"] .header-crest{border-color:#ca8a04;color:#ca8a04;}
@@ -121,17 +122,19 @@
   .header-wordmark em{font-style:italic;color:var(--gold2);}
   .header-uni{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,.35);letter-spacing:.15em;text-transform:uppercase;margin-top:3px;}
   .header-stats{
-    display:flex;gap:0;align-items:stretch;
-    margin-left:auto;
+    display:flex;gap:6px;align-items:center;
+    margin-left:auto;padding:0 12px;
   }
   .stat{
-    text-align:center;padding:0 18px;
-    border-left:1px solid rgba(255,255,255,.08);
+    text-align:center;
+    background:#fff;
+    border-radius:4px;
+    padding:4px 12px;
     display:flex;flex-direction:column;align-items:center;justify-content:center;
-    min-width:64px;
+    min-width:52px;
   }
-  .stat-num{font-family:'EB Garamond',serif;font-size:20px;font-weight:700;color:var(--cream);line-height:1;}
-  .stat-label{font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,.3);font-size:8px;text-transform:uppercase;letter-spacing:.1em;margin-top:2px;}
+  .stat-num{font-family:'EB Garamond',serif;font-size:18px;font-weight:700;color:#0f172a;line-height:1;}
+  .stat-label{font-family:'JetBrains Mono',monospace;color:#64748b;font-size:7px;text-transform:uppercase;letter-spacing:.1em;margin-top:2px;}
   .reset-btn{
     margin:auto 0;margin-left:0;
     background:none;border:1px solid rgba(255,255,255,.15);
@@ -392,7 +395,7 @@
     header{padding:0 16px;}
     .panel{padding:16px 20px;}
     .tabs{padding:0 16px;}
-    .stat{padding:0 10px;min-width:48px;}
+    .stat{padding:3px 8px;min-width:44px;}
     .stat-num{font-size:16px;}
   }
 </style>
