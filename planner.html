@@ -955,58 +955,49 @@ function _pickerClose(e){
 }
 
 function showActionPicker(code, event){
-  closeActionPicker();
   event.stopPropagation();
+  event.preventDefault();
+  closeActionPicker();
 
   const picker = document.createElement('div');
   picker.className = 'action-picker';
+  picker.addEventListener('click', e => e.stopPropagation());
 
   const course = COURSES.find(c=>c.code===code);
-  picker.innerHTML = `
-    <div class="action-picker-header">${course ? course.code : code}</div>
-    <div class="action-picker-item" onclick="pickGrade('${code}','passed')">
-      <div class="action-picker-dot" style="background:var(--passed-text)"></div>
-      Aprobada — ingresar nota
-    </div>
-    <div class="action-picker-item" onclick="pickGrade('${code}','failed')">
-      <div class="action-picker-dot" style="background:var(--failed-text)"></div>
-      Reprobada — ingresar nota
-    </div>
-    <div class="action-picker-item" onclick="pickCancel('${code}')">
-      <div class="action-picker-dot" style="background:var(--muted)"></div>
-      Desmarcar (quitar cursando)
-    </div>
-  `;
+
+  const items = [
+    { label:'Aprobada — ingresar nota',    color:'var(--passed-text)', action:() => { closeActionPicker(); openGradeModal(code,'passed'); } },
+    { label:'Reprobada — ingresar nota',   color:'var(--failed-text)', action:() => { closeActionPicker(); openGradeModal(code,'failed'); } },
+    { label:'Desmarcar (quitar cursando)', color:'var(--muted)',        action:() => { closeActionPicker(); courseStates[code]=null; if(window._grades) delete window._grades[code]; localStorage.setItem('pp_grades_'+PENSUM_ID, JSON.stringify(window._grades||{})); saveState(); refresh(); } },
+  ];
+
+  const header = document.createElement('div');
+  header.className = 'action-picker-header';
+  header.textContent = course ? course.code : code;
+  picker.appendChild(header);
+
+  items.forEach(item => {
+    const el = document.createElement('div');
+    el.className = 'action-picker-item';
+    el.innerHTML = `<div class="action-picker-dot" style="background:${item.color}"></div>${item.label}`;
+    el.addEventListener('click', item.action);
+    picker.appendChild(el);
+  });
 
   // Position near click
-  const x = Math.min(event.clientX, window.innerWidth - 200);
-  const y = Math.min(event.clientY + 8, window.innerHeight - 160);
+  const x = Math.min(event.clientX, window.innerWidth - 210);
+  const y = Math.min(event.clientY + 8, window.innerHeight - 170);
   picker.style.left = x + 'px';
   picker.style.top  = y + 'px';
 
   document.body.appendChild(picker);
   _pickerEl = picker;
-  setTimeout(() => document.addEventListener('click', _pickerClose), 10);
+
+  // Delay adding close listener so this click doesn't immediately close it
+  setTimeout(() => document.addEventListener('click', _pickerClose), 50);
 }
 
-function pickEnrolled(code){
-  closeActionPicker();
-  courseStates[code] = 'enrolled';
-  saveState(); refresh();
-}
 
-function pickCancel(code){
-  closeActionPicker();
-  courseStates[code] = null;
-  if(window._grades) delete window._grades[code];
-  localStorage.setItem('pp_grades_'+PENSUM_ID, JSON.stringify(window._grades||{}));
-  saveState(); refresh();
-}
-
-function pickGrade(code, hint){
-  closeActionPicker();
-  openGradeModal(code, hint);
-}
 
 function cycleState(code, event){
   if(getEffectiveStatus(code)==='locked') return;
