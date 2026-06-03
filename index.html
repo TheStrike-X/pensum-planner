@@ -67,6 +67,37 @@
   /* empty state */
   .empty-careers{padding:20px;text-align:center;color:var(--muted);font-size:11px;border:1px dashed var(--border);border-radius:10px;}
 
+  /* AUTH */
+  .auth-section{text-align:center;margin-bottom:28px;}
+  .auth-section-label{font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;}
+  .auth-big-btn{display:inline-flex;align-items:center;gap:8px;padding:13px 28px;border-radius:10px;font-family:'DM Mono',monospace;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;letter-spacing:.3px;border:none;}
+  .auth-big-btn.signin{background:linear-gradient(135deg,var(--grad1),#9f5af7);color:#fff;box-shadow:0 4px 18px rgba(124,106,247,.35);}
+  .auth-big-btn.signin:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(124,106,247,.5);}
+  .auth-big-btn.user{background:var(--surface2);color:var(--text);border:1px solid var(--border);}
+  .auth-big-btn.user:hover{border-color:var(--accent);color:var(--accent);}
+  .auth-divider{display:flex;align-items:center;gap:12px;margin-bottom:24px;color:var(--muted);font-size:10px;}
+  .auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border);}
+  .auth-logout-link{font-size:10px;color:var(--muted);cursor:pointer;text-decoration:underline;margin-left:12px;}
+  .auth-logout-link:hover{color:var(--accent);}
+
+  /* AUTH MODAL */
+  .auth-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;align-items:center;justify-content:center;}
+  .auth-overlay.open{display:flex;}
+  .auth-box{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:32px;width:360px;max-width:92vw;display:flex;flex-direction:column;gap:14px;}
+  .auth-box-title{font-family:'Fraunces',serif;font-size:20px;font-weight:700;display:flex;justify-content:space-between;align-items:center;}
+  .auth-close{background:none;border:none;color:var(--muted);cursor:pointer;font-size:20px;line-height:1;padding:0;}
+  .auth-tabs{display:flex;gap:3px;background:var(--surface2);border-radius:8px;padding:3px;}
+  .auth-tab{flex:1;padding:7px;border:none;border-radius:6px;cursor:pointer;font-family:'DM Mono',monospace;font-size:11px;transition:all .15s;background:none;color:var(--muted);}
+  .auth-tab.active{background:var(--surface);color:var(--text);}
+  .auth-input{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:11px 13px;border-radius:8px;font-family:'DM Mono',monospace;font-size:12px;outline:none;width:100%;box-sizing:border-box;}
+  .auth-input:focus{border-color:var(--accent);}
+  .auth-submit{background:linear-gradient(135deg,var(--grad1),#9f5af7);border:none;color:#fff;padding:12px;border-radius:8px;cursor:pointer;font-family:'DM Mono',monospace;font-size:12px;font-weight:500;width:100%;transition:all .15s;}
+  .auth-submit:hover{opacity:.9;}
+  .auth-submit:disabled{opacity:.5;cursor:default;}
+  .auth-err{color:#ff6b6b;font-size:11px;min-height:14px;text-align:center;}
+  .auth-switch{font-size:10px;color:var(--muted);text-align:center;}
+  .auth-switch a{color:var(--accent);cursor:pointer;text-decoration:underline;}
+
   /* FOOTER */
   footer{padding:20px 48px;border-top:1px solid rgba(255,255,255,.05);display:flex;justify-content:space-between;align-items:center;}
   .footer-text{font-size:10px;color:var(--muted);}
@@ -103,6 +134,24 @@
     <div class="hero-eyebrow">Planificador de carrera universitaria</div>
     <h1 class="hero-title">Planifica tu<br><em>pensum</em> académico</h1>
     <p class="hero-sub">Selecciona tu universidad y carrera para ver todas tus materias, prerequisitos y el camino óptimo hacia tu graduación.</p>
+
+    <!-- AUTH SECTION -->
+    <div class="auth-section" id="auth-section">
+      <div class="auth-section-label">Tu progreso, en todos tus dispositivos</div>
+      <div id="auth-guest-view">
+        <button class="auth-big-btn signin" onclick="openAuthModal('login')">
+          ⚡ Iniciar sesión o crear cuenta
+        </button>
+      </div>
+      <div id="auth-user-view" style="display:none;">
+        <button class="auth-big-btn user" onclick="openAuthModal('profile')">
+          ✓ <span id="auth-user-name"></span>
+        </button>
+        <a class="auth-logout-link" onclick="doLogout()">Cerrar sesión</a>
+      </div>
+    </div>
+
+    <div class="auth-divider">o continúa sin cuenta</div>
 
     <div class="selector-wrap">
 
@@ -351,6 +400,141 @@ function goToPlanner(){
 
 // ─── INIT ──────────────────────────────────────────────────────────────────────
 renderUniversities();
+</script>
+<!-- AUTH MODAL -->
+<div class="auth-overlay" id="auth-overlay" onclick="handleOverlayClick(event)">
+  <div class="auth-box">
+    <div class="auth-box-title">
+      <span>Pensum <em style="color:var(--accent);font-style:italic;">Planner</em></span>
+      <button class="auth-close" onclick="closeAuthModal()">×</button>
+    </div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="idx-tab-login"    onclick="switchAuthTab('login')">Iniciar sesión</button>
+      <button class="auth-tab"        id="idx-tab-register" onclick="switchAuthTab('register')">Crear cuenta</button>
+    </div>
+    <div class="auth-err" id="idx-auth-err"></div>
+
+    <!-- LOGIN -->
+    <div id="idx-form-login" style="display:flex;flex-direction:column;gap:10px;">
+      <input id="idx-login-email"    type="email"    class="auth-input" placeholder="Correo electrónico">
+      <input id="idx-login-password" type="password" class="auth-input" placeholder="Contraseña">
+      <button class="auth-submit" id="idx-login-btn" onclick="doLogin()">Entrar</button>
+      <p class="auth-switch">¿No tienes cuenta? <a onclick="switchAuthTab('register')">Regístrate</a></p>
+    </div>
+
+    <!-- REGISTER -->
+    <div id="idx-form-register" style="display:none;flex-direction:column;gap:10px;">
+      <input id="idx-reg-name"     type="text"     class="auth-input" placeholder="Nombre (opcional)">
+      <input id="idx-reg-email"    type="email"    class="auth-input" placeholder="Correo electrónico">
+      <input id="idx-reg-password" type="password" class="auth-input" placeholder="Contraseña (mín. 6 caracteres)">
+      <button class="auth-submit" id="idx-register-btn" onclick="doRegister()">Crear cuenta</button>
+      <p class="auth-switch">¿Ya tienes cuenta? <a onclick="switchAuthTab('login')">Inicia sesión</a></p>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Auth state ───────────────────────────────────────────────────────────────
+const API = '/api';
+let authToken = localStorage.getItem('pp_token') || null;
+let authUser  = null;
+
+async function apiCall(method, path, body){
+  const opts = { method, headers: { 'Content-Type': 'application/json' } };
+  if (authToken) opts.headers['Authorization'] = 'Bearer ' + authToken;
+  if (body) opts.body = JSON.stringify(body);
+  try {
+    const r = await fetch(API + path, opts);
+    return { ok: r.ok, data: await r.json() };
+  } catch(e) { return { ok: false, data: { error: 'Sin conexión con el servidor' } }; }
+}
+
+function updateUserUI(){
+  const guest = document.getElementById('auth-guest-view');
+  const user  = document.getElementById('auth-user-view');
+  const name  = document.getElementById('auth-user-name');
+  if (authUser) {
+    guest.style.display = 'none';
+    user.style.display  = 'block';
+    name.textContent    = authUser.name || authUser.email;
+  } else {
+    guest.style.display = 'block';
+    user.style.display  = 'none';
+  }
+}
+
+function openAuthModal(tab){
+  document.getElementById('auth-overlay').classList.add('open');
+  switchAuthTab(tab === 'profile' ? 'login' : (tab || 'login'));
+  document.getElementById('idx-auth-err').textContent = '';
+}
+function closeAuthModal(){ document.getElementById('auth-overlay').classList.remove('open'); }
+function handleOverlayClick(e){ if(e.target === document.getElementById('auth-overlay')) closeAuthModal(); }
+
+function switchAuthTab(tab){
+  const isLogin = tab === 'login';
+  document.getElementById('idx-tab-login').classList.toggle('active', isLogin);
+  document.getElementById('idx-tab-register').classList.toggle('active', !isLogin);
+  document.getElementById('idx-form-login').style.display    = isLogin ? 'flex' : 'none';
+  document.getElementById('idx-form-register').style.display = isLogin ? 'none' : 'flex';
+  document.getElementById('idx-auth-err').textContent = '';
+}
+
+async function doLogin(){
+  const email    = document.getElementById('idx-login-email').value.trim();
+  const password = document.getElementById('idx-login-password').value;
+  const errEl    = document.getElementById('idx-auth-err');
+  if (!email || !password){ errEl.textContent = 'Completa todos los campos.'; return; }
+  const btn = document.getElementById('idx-login-btn');
+  btn.disabled = true; btn.textContent = 'Entrando…';
+  const { ok, data } = await apiCall('POST', '/login', { email, password });
+  btn.disabled = false; btn.textContent = 'Entrar';
+  if (!ok){ errEl.textContent = data.error || 'Error al iniciar sesión.'; return; }
+  authToken = data.token; authUser = data.user;
+  localStorage.setItem('pp_token', authToken);
+  closeAuthModal(); updateUserUI();
+}
+
+async function doRegister(){
+  const name     = document.getElementById('idx-reg-name').value.trim();
+  const email    = document.getElementById('idx-reg-email').value.trim();
+  const password = document.getElementById('idx-reg-password').value;
+  const errEl    = document.getElementById('idx-auth-err');
+  if (!email || !password){ errEl.textContent = 'Email y contraseña son requeridos.'; return; }
+  if (password.length < 6){ errEl.textContent = 'La contraseña debe tener al menos 6 caracteres.'; return; }
+  const btn = document.getElementById('idx-register-btn');
+  btn.disabled = true; btn.textContent = 'Creando cuenta…';
+  const { ok, data } = await apiCall('POST', '/register', { name, email, password });
+  btn.disabled = false; btn.textContent = 'Crear cuenta';
+  if (!ok){ errEl.textContent = data.error || 'Error al registrarse.'; return; }
+  authToken = data.token; authUser = data.user;
+  localStorage.setItem('pp_token', authToken);
+  closeAuthModal(); updateUserUI();
+}
+
+async function doLogout(){
+  await apiCall('POST', '/logout');
+  authToken = null; authUser = null;
+  localStorage.removeItem('pp_token');
+  updateUserUI();
+}
+
+// Restore session on load (with 3s timeout)
+(async () => {
+  if (!authToken) return;
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 3000);
+    const r = await fetch(API + '/me', {
+      headers: { 'Authorization': 'Bearer ' + authToken },
+      signal: controller.signal
+    });
+    clearTimeout(timeout);
+    if (r.ok) { const d = await r.json(); authUser = d.user; }
+    else { authToken = null; localStorage.removeItem('pp_token'); }
+  } catch(e) { authToken = null; localStorage.removeItem('pp_token'); }
+  updateUserUI();
+})();
 </script>
 </body>
 </html>
