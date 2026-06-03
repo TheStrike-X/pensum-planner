@@ -1442,6 +1442,25 @@ async function confirmReset(){
 
 // ─── GPA CALCULATOR ──────────────────────────────────────────────────────────
 
+let _gpaSort = 'sem'; // 'sem' | 'grade-desc' | 'grade-asc' | 'name' | 'status'
+
+function setGPASort(key){
+  _gpaSort = key;
+  renderGPA();
+}
+
+function sortGraded(graded, grades){
+  const arr = [...graded];
+  switch(_gpaSort){
+    case 'grade-desc': return arr.sort((a,b)=>grades[b.code].score-grades[a.code].score);
+    case 'grade-asc':  return arr.sort((a,b)=>grades[a.code].score-grades[b.code].score);
+    case 'name':       return arr.sort((a,b)=>a.name.localeCompare(b.name));
+    case 'status':     return arr.sort((a,b)=>(courseStates[b.code]==='passed'?1:-1)-(courseStates[a.code]==='passed'?1:-1)||grades[b.code].score-grades[a.code].score);
+    case 'sem':
+    default:           return arr.sort((a,b)=>a.sem-b.sem||grades[b.code].score-grades[a.code].score);
+  }
+}
+
 function getGPAConfig(){
   const uni = (UNI_NAME || '').toUpperCase();
   if(uni.includes('PUCMM')){
@@ -1643,6 +1662,25 @@ function renderGPA(){
 
 // ─── GPA CALCULATOR ──────────────────────────────────────────────────────────
 
+let _gpaSort = 'sem'; // 'sem' | 'grade-desc' | 'grade-asc' | 'name' | 'status'
+
+function setGPASort(key){
+  _gpaSort = key;
+  renderGPA();
+}
+
+function sortGraded(graded, grades){
+  const arr = [...graded];
+  switch(_gpaSort){
+    case 'grade-desc': return arr.sort((a,b)=>grades[b.code].score-grades[a.code].score);
+    case 'grade-asc':  return arr.sort((a,b)=>grades[a.code].score-grades[b.code].score);
+    case 'name':       return arr.sort((a,b)=>a.name.localeCompare(b.name));
+    case 'status':     return arr.sort((a,b)=>(courseStates[b.code]==='passed'?1:-1)-(courseStates[a.code]==='passed'?1:-1)||grades[b.code].score-grades[a.code].score);
+    case 'sem':
+    default:           return arr.sort((a,b)=>a.sem-b.sem||grades[b.code].score-grades[a.code].score);
+  }
+}
+
 function getGPAConfig(){
   const uni = (UNI_NAME || '').toUpperCase();
   if(uni.includes('PUCMM')){
@@ -1716,12 +1754,17 @@ function renderGPA(){
     <table class="gpa-table"><thead><tr><th>Sem</th><th>Índice</th><th>Créditos</th><th>Materias</th><th style="min-width:80px;">Barra</th></tr></thead><tbody>
     ${semGPAs.map(s=>{const pct=Math.min(100,Math.round((s.gpa/maxVal)*100));return`<tr><td><strong style="font-family:'EB Garamond',serif;font-style:italic;font-size:16px;">${s.sem}</strong></td><td><strong style="font-family:'EB Garamond',serif;font-size:16px;color:${gpaColor(s.gpa)}">${cfg.format(s.gpa)}</strong></td><td>${s.credits}</td><td>${s.courses.length}</td><td><div class="gpa-bar-wrap"><div class="gpa-bar-fill" style="width:${pct}%;background:${gpaColor(s.gpa)};"></div></div></td></tr>`;}).join('')}
     </tbody></table>
-    <div class="gpa-section-title">Detalle por Materia <span>${graded.length} calificadas</span></div>
-    <table class="gpa-table"><thead><tr><th>Código</th><th>Materia</th><th>Cr</th><th>Nota</th><th>Letra</th>${cfg.scale==='4.0'?'<th>GPA</th>':''}<th>Estado</th></tr></thead><tbody>
-    ${graded.sort((a,b)=>a.sem-b.sem).map(c=>{
+    <div class="gpa-section-title" style="flex-wrap:wrap;gap:8px;">
+      Detalle por Materia <span>${graded.length} calificadas</span>
+      <div style="margin-left:auto;display:flex;gap:4px;flex-wrap:wrap;">
+        ${[['sem','Por semestre'],['grade-desc','Nota ↓'],['grade-asc','Nota ↑'],['status','Aprobadas primero'],['name','A–Z']].map(([k,l])=>`<button onclick="setGPASort('${k}')" style="font-family:'JetBrains Mono',monospace;font-size:9px;padding:4px 10px;border-radius:2px;cursor:pointer;border:1px solid ${_gpaSort===k?'#ca8a04':'#e2e8f0'};background:${_gpaSort===k?'#ca8a04':'transparent'};color:${_gpaSort===k?'#0f172a':'#64748b'};">${l}</button>`).join('')}
+      </div>
+    </div>
+    <table class="gpa-table"><thead><tr><th>Código</th><th>Materia</th><th>Cr</th><th>Nota</th><th>Letra</th>${cfg.scale==='4.0'?'<th>GPA</th>':''}<th>Sem</th><th>Estado</th></tr></thead><tbody>
+    ${sortGraded(graded,grades).map(c=>{
       const g=grades[c.code];const ok=courseStates[c.code]==='passed';
       const bg=ok?'var(--passed-bg)':'var(--failed-bg)';const tc=ok?'var(--passed-text)':'var(--failed-text)';
-      return`<tr style="background:${bg};"><td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:${tc};">${c.code}</td><td style="font-family:'Crimson Text',serif;">${c.name}</td><td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${c.crs}</td><td><strong style="font-family:'EB Garamond',serif;font-size:16px;color:${tc};">${g.score}</strong></td><td><strong style="font-family:'EB Garamond',serif;font-size:16px;color:${tc};">${g.letter}</strong></td>${cfg.scale==='4.0'?`<td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${cfg.toPoints(g.score).toFixed(1)}</td>`:''}<td><span class="gpa-grade-pill" style="background:${bg};color:${tc};">${ok?'✓ Aprobada':'✗ Reprobada'}</span></td></tr>`;
+      return`<tr style="background:${bg};"><td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:${tc};">${c.code}</td><td style="font-family:'Crimson Text',serif;">${c.name}</td><td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${c.crs}</td><td><strong style="font-family:'EB Garamond',serif;font-size:16px;color:${tc};">${g.score}</strong></td><td><strong style="font-family:'EB Garamond',serif;font-size:16px;color:${tc};">${g.letter}</strong></td>${cfg.scale==='4.0'?`<td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${cfg.toPoints(g.score).toFixed(1)}</td>`:''}<td style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#94a3b8;">${c.sem}</td><td><span class="gpa-grade-pill" style="background:${bg};color:${tc};">${ok?'✓ Aprobada':'✗ Reprobada'}</span></td></tr>`;
     }).join('')}
     </tbody></table>
   `;
