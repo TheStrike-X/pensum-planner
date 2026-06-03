@@ -332,6 +332,56 @@
   .progress-bar-wrap{background:var(--surface2);border-radius:2px;height:5px;margin-top:8px;overflow:hidden;}
   .progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--navy),var(--gold));border-radius:2px;transition:width .4s ease;}
 
+  /* IMPORT MODAL */
+  .import-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:200;align-items:center;justify-content:center;}
+  .import-overlay.open{display:flex;}
+  .import-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:4px;width:540px;max-width:95vw;max-height:88vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 24px 64px rgba(0,0,0,.2);}
+  [data-theme="dark"] .import-box{background:#181b23;border-color:#2d3348;}
+  .import-head{background:#0f172a;padding:16px 22px;border-bottom:3px solid #ca8a04;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
+  .import-title{font-family:'EB Garamond',serif;font-size:18px;font-weight:700;color:#f8fafc;}
+  .import-sub{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,.4);margin-top:2px;letter-spacing:.1em;text-transform:uppercase;}
+  .import-close{background:none;border:none;color:rgba(255,255,255,.4);cursor:pointer;font-size:20px;line-height:1;}
+  .import-close:hover{color:#f8fafc;}
+  .import-body{padding:20px 22px;overflow-y:auto;flex:1;}
+  .import-drop{border:2px dashed #e2e8f0;border-radius:4px;padding:32px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:16px;position:relative;}
+  [data-theme="dark"] .import-drop{border-color:#2d3348;}
+  .import-drop:hover,.import-drop.drag-over{border-color:#ca8a04;background:#fefce8;}
+  [data-theme="dark"] .import-drop:hover,[data-theme="dark"] .import-drop.drag-over{background:#1c1600;}
+  .import-drop input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+  .import-drop-icon{font-size:28px;margin-bottom:8px;}
+  .import-drop-text{font-family:'EB Garamond',serif;font-size:16px;color:#475569;}
+  [data-theme="dark"] .import-drop-text{color:#94a3b8;}
+  .import-drop-sub{font-family:'JetBrains Mono',monospace;font-size:9px;color:#94a3b8;margin-top:4px;letter-spacing:.08em;}
+  .import-divider{display:flex;align-items:center;gap:10px;margin:14px 0;font-family:'JetBrains Mono',monospace;font-size:9px;color:#94a3b8;text-transform:uppercase;letter-spacing:.1em;}
+  .import-divider::before,.import-divider::after{content:'';flex:1;height:1px;background:#e2e8f0;}
+  [data-theme="dark"] .import-divider::before,[data-theme="dark"] .import-divider::after{background:#2d3348;}
+  .import-textarea{width:100%;min-height:120px;background:#fff;border:1px solid #e2e8f0;border-radius:3px;padding:10px 12px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#1a1410;resize:vertical;outline:none;box-sizing:border-box;}
+  [data-theme="dark"] .import-textarea{background:#1e293b;border-color:#2d3348;color:#e2e8f0;}
+  .import-textarea:focus{border-color:#ca8a04;}
+  .import-parse-btn{width:100%;padding:11px;background:#0f172a;border:none;border-radius:3px;color:#f8fafc;font-family:'JetBrains Mono',monospace;font-size:11px;cursor:pointer;letter-spacing:.1em;text-transform:uppercase;transition:all .15s;margin-top:10px;}
+  .import-parse-btn:hover{background:#ca8a04;color:#0f172a;}
+  .import-results{margin-top:16px;}
+  .import-result-header{font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#64748b;margin-bottom:8px;}
+  .import-result-item{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:3px;margin-bottom:3px;font-size:12px;font-family:'Crimson Text',serif;}
+  .import-result-item.found-pass{background:#f0fdf4;color:#15803d;}
+  .import-result-item.found-fail{background:#fef2f2;color:#dc2626;}
+  .import-result-item.found-enrolled{background:#eff6ff;color:#1d4ed8;}
+  .import-result-item.not-found{background:#f8fafc;color:#94a3b8;}
+  [data-theme="dark"] .import-result-item.found-pass{background:#052e16;color:#4ade80;}
+  [data-theme="dark"] .import-result-item.found-fail{background:#2d0a0a;color:#f87171;}
+  [data-theme="dark"] .import-result-item.found-enrolled{background:#0c1a3d;color:#60a5fa;}
+  [data-theme="dark"] .import-result-item.not-found{background:#181b23;color:#475569;}
+  .import-result-code{font-family:'JetBrains Mono',monospace;font-size:9px;min-width:72px;letter-spacing:.08em;}
+  .import-result-grade{font-family:'JetBrains Mono',monospace;font-size:9px;margin-left:auto;font-weight:500;}
+  .import-apply-btn{width:100%;padding:12px;background:#15803d;border:none;border-radius:3px;color:#fff;font-family:'JetBrains Mono',monospace;font-size:11px;cursor:pointer;letter-spacing:.1em;text-transform:uppercase;transition:all .15s;margin-top:12px;}
+  .import-apply-btn:hover{background:#166534;}
+  .import-stats-row{display:flex;gap:8px;margin-bottom:12px;}
+  .import-stat{flex:1;text-align:center;padding:8px;border-radius:3px;border:1px solid #e2e8f0;}
+  [data-theme="dark"] .import-stat{border-color:#2d3348;background:#1e293b;}
+  .import-stat-num{font-family:'EB Garamond',serif;font-size:22px;font-weight:700;color:#0f172a;}
+  [data-theme="dark"] .import-stat-num{color:#e2e8f0;}
+  .import-stat-label{font-family:'JetBrains Mono',monospace;font-size:8px;color:#64748b;text-transform:uppercase;letter-spacing:.1em;}
+
   /* ACTION PICKER */
   .action-picker{
     position:fixed;z-index:300;
@@ -481,6 +531,7 @@
       <div class="stat"><div class="stat-num" id="stat-available" style="color:var(--available-text)">0</div><div class="stat-label">Disponibles</div></div>
       <div class="stat"><div class="stat-num" id="stat-credits" style="color:var(--accent2)">0</div><div class="stat-label">Créditos ✓</div></div>
       <button class="reset-btn" onclick="openResetModal()">↺ Reiniciar</button>
+    <button class="reset-btn" onclick="openImportModal()" style="border-color:rgba(255,255,255,.25);color:rgba(255,255,255,.5);">⬆ Importar récord</button>
     <button id="auth-btn" class="reset-btn" onclick="openAuthModal('login')" style="border-color:rgba(255,255,255,.15);color:rgba(255,255,255,.4);">⚙ Cuenta</button>
     <div id="user-info" style="display:none;align-items:center;gap:8px;">
       <span class="user-name" style="font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,.4);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:.08em;"></span>
@@ -489,6 +540,31 @@
     <button class="dark-toggle" id="dark-toggle-btn" onclick="toggleDark()" title="Cambiar modo oscuro/claro" aria-label="Alternar modo oscuro">☀</button>
     </div>
   </header>
+
+<!-- ── IMPORT MODAL ── -->
+<div class="import-overlay" id="import-modal">
+  <div class="import-box">
+    <div class="import-head">
+      <div>
+        <div class="import-title">Importar Récord Académico</div>
+        <div class="import-sub">UNIBE · UAcademy · Historia Académica</div>
+      </div>
+      <button class="import-close" onclick="closeImportModal()">×</button>
+    </div>
+    <div class="import-body">
+      <div class="import-drop" id="import-drop">
+        <input type="file" accept=".pdf,.txt" id="import-file" onchange="handleImportFile(event)">
+        <div class="import-drop-icon">📄</div>
+        <div class="import-drop-text">Arrastra tu PDF aquí o haz clic para seleccionar</div>
+        <div class="import-drop-sub">UAcademy → Historia Académica → Guardar como PDF</div>
+      </div>
+      <div class="import-divider">o pega el texto directamente</div>
+      <textarea class="import-textarea" id="import-text" placeholder="Pega aquí el contenido copiado de tu Historia Académica...&#10;&#10;Ejemplo:&#10;EGC154 CÁLCULO I 4 01 70 C&#10;TI3111 FUNDAMENTOS DE PROGRAMACIÓN 3 02 80 B"></textarea>
+      <button class="import-parse-btn" onclick="parseImport()">Analizar récord</button>
+      <div class="import-results" id="import-results" style="display:none;"></div>
+    </div>
+  </div>
+</div>
 
 <!-- ── GRADE MODAL ── -->
 <div class="grade-overlay" id="grade-modal">
@@ -797,6 +873,210 @@ async function restoreSession(){
     // API unavailable or timeout — continue as guest
     authToken=null; localStorage.removeItem('pp_token');
   }
+}
+
+// ─── RECORD IMPORT ──────────────────────────────────────────────────────────
+
+let _importParsed = null; // stores parsed results before applying
+
+function openImportModal(){
+  document.getElementById('import-modal').classList.add('open');
+  document.getElementById('import-results').style.display = 'none';
+  document.getElementById('import-text').value = '';
+  document.getElementById('import-file').value = '';
+  _importParsed = null;
+}
+function closeImportModal(){
+  document.getElementById('import-modal').classList.remove('open');
+}
+
+// Drag & drop
+document.addEventListener('DOMContentLoaded', () => {
+  const drop = document.getElementById('import-drop');
+  if(!drop) return;
+  drop.addEventListener('dragover', e=>{ e.preventDefault(); drop.classList.add('drag-over'); });
+  drop.addEventListener('dragleave', ()=>drop.classList.remove('drag-over'));
+  drop.addEventListener('drop', e=>{ e.preventDefault(); drop.classList.remove('drag-over'); const f=e.dataTransfer.files[0]; if(f) processImportFile(f); });
+});
+
+function handleImportFile(e){
+  const file = e.target.files[0];
+  if(file) processImportFile(file);
+}
+
+async function processImportFile(file){
+  if(file.type === 'application/pdf' || file.name.endsWith('.pdf')){
+    // Use PDF.js to extract text
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const text = await extractPDFText(arrayBuffer);
+      document.getElementById('import-text').value = text;
+      parseImport();
+    } catch(e) {
+      alert('No se pudo leer el PDF. Intenta copiar y pegar el texto manualmente.');
+    }
+  } else {
+    // Plain text file
+    const text = await file.text();
+    document.getElementById('import-text').value = text;
+    parseImport();
+  }
+}
+
+async function extractPDFText(arrayBuffer){
+  // Load PDF.js from CDN if not already loaded
+  if(!window.pdfjsLib){
+    await new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+      s.onload = resolve; s.onerror = reject;
+      document.head.appendChild(s);
+    });
+    window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+      'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  }
+  const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  let fullText = '';
+  for(let i = 1; i <= pdf.numPages; i++){
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    fullText += content.items.map(item => item.str).join(' ') + '\n';
+  }
+  return fullText;
+}
+
+// ── UNIBE UAcademy parser ────────────────────────────────────────────────────
+// Format: CODE NAME... CREDITS SECTION GRADE LITERAL
+// LITERAL: A B C D F = grade, RET = retirada (skip), SEL = seleccionada/enrolled
+// When same course appears multiple times → use most recent non-RET entry
+// "most recent" = appears earlier in the document (newest semester first)
+
+function parseUNIBERecord(text){
+  const results = {}; // code → {score, literal, status}
+
+  // Pattern: starts with alphanumeric code (e.g. TI3111, EGC154, UNB100)
+  // followed by course name words, then: CREDITS SECTION GRADE LITERAL
+  // GRADE is a number (0-100) or 0, LITERAL is A/B/C/D/F/S/RET/SEL
+  const linePattern = /^([A-Z]{2,4}\d{3,4}[A-Z]?)\s+(.+?)\s+(\d+)\s+(\d+)\s+(\d+)\s+(A|B|C|D|F|S|RET|SEL|AUS)\s*$/;
+
+  const lines = text.split(/\n|\r/).map(l => l.trim()).filter(Boolean);
+
+  for(const line of lines){
+    const m = line.match(linePattern);
+    if(!m) continue;
+    const [, code, , , , gradeStr, literal] = m;
+    const score = parseInt(gradeStr, 10);
+
+    // Skip if already have a result for this code (first occurrence = most recent)
+    if(results[code]) continue;
+
+    if(literal === 'RET' || literal === 'AUS') continue; // withdrawn/absent — skip
+
+    if(literal === 'SEL'){
+      results[code] = { score: null, literal: 'SEL', status: 'enrolled' };
+    } else {
+      // Determine pass/fail based on score and university threshold
+      const threshold = getPassThreshold();
+      const passes = score >= threshold;
+      results[code] = { score, literal, status: passes ? 'passed' : 'failed' };
+    }
+  }
+  return results;
+}
+
+function normalizeCode(code){
+  // UNIBE codes in history may differ slightly from pensum codes
+  // e.g. "EGC154" vs "EGC-154" — normalize to match pensum format
+  return code.replace(/[-\s]/g, '').toUpperCase();
+}
+
+function parseImport(){
+  const raw = document.getElementById('import-text').value.trim();
+  if(!raw){ alert('Pega tu récord académico antes de analizar.'); return; }
+
+  const parsed = parseUNIBERecord(raw);
+  const found = [], notFound = [];
+
+  // Match parsed codes to COURSES
+  const courseMap = {};
+  COURSES.forEach(c => { courseMap[normalizeCode(c.code)] = c; });
+
+  for(const [rawCode, data] of Object.entries(parsed)){
+    const norm = normalizeCode(rawCode);
+    const course = courseMap[norm];
+    if(course){
+      found.push({ course, data, rawCode });
+    } else {
+      notFound.push({ rawCode, data });
+    }
+  }
+
+  _importParsed = { found, notFound };
+  renderImportResults(found, notFound);
+}
+
+function renderImportResults(found, notFound){
+  const container = document.getElementById('import-results');
+  container.style.display = 'block';
+
+  const passed = found.filter(r=>r.data.status==='passed').length;
+  const failed = found.filter(r=>r.data.status==='failed').length;
+  const enrolled = found.filter(r=>r.data.status==='enrolled').length;
+
+  container.innerHTML = `
+    <div class="import-stats-row">
+      <div class="import-stat"><div class="import-stat-num" style="color:#15803d;">${passed}</div><div class="import-stat-label">Aprobadas</div></div>
+      <div class="import-stat"><div class="import-stat-num" style="color:#dc2626;">${failed}</div><div class="import-stat-label">Reprobadas</div></div>
+      <div class="import-stat"><div class="import-stat-num" style="color:#1d4ed8;">${enrolled}</div><div class="import-stat-label">En curso</div></div>
+      <div class="import-stat"><div class="import-stat-num" style="color:#94a3b8;">${notFound.length}</div><div class="import-stat-label">No encontradas</div></div>
+    </div>
+    <div class="import-result-header">${found.length} materias encontradas en tu pensum</div>
+    ${found.map(r => {
+      const cls = r.data.status==='passed'?'found-pass':r.data.status==='failed'?'found-fail':'found-enrolled';
+      const icon = r.data.status==='passed'?'✓':r.data.status==='failed'?'✗':'📖';
+      const gradeStr = r.data.score !== null ? ` · ${r.data.score} (${r.data.literal})` : ' · En curso';
+      return `<div class="import-result-item ${cls}">
+        <span>${icon}</span>
+        <span class="import-result-code">${r.rawCode}</span>
+        <span style="flex:1;">${r.course.name}</span>
+        <span class="import-result-grade">${gradeStr}</span>
+      </div>`;
+    }).join('')}
+    ${notFound.length ? `
+    <div class="import-result-header" style="margin-top:12px;">${notFound.length} códigos no encontrados en este pensum</div>
+    ${notFound.map(r=>`<div class="import-result-item not-found"><span class="import-result-code">${r.rawCode}</span><span style="flex:1;font-size:11px;">No está en este pensum</span><span class="import-result-grade">${r.data.score!==null?r.data.score+' '+r.data.literal:r.data.status}</span></div>`).join('')}` : ''}
+    <button class="import-apply-btn" onclick="applyImport()">✓ Aplicar ${found.length} materias al planificador</button>
+  `;
+}
+
+function applyImport(){
+  if(!_importParsed) return;
+  const { found } = _importParsed;
+
+  found.forEach(({ course, data }) => {
+    courseStates[course.code] = data.status;
+    if(data.score !== null && data.status !== 'enrolled'){
+      if(!window._grades) window._grades = {};
+      const threshold = getPassThreshold();
+      window._grades[course.code] = {
+        score: data.score,
+        letter: data.literal,
+        passes: data.score >= threshold,
+      };
+    }
+  });
+
+  localStorage.setItem('pp_grades_' + PENSUM_ID, JSON.stringify(window._grades || {}));
+  saveState();
+  refresh();
+  closeImportModal();
+
+  // Show success toast
+  const toast = document.createElement('div');
+  toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0f172a;color:#f8fafc;padding:10px 22px;border-radius:4px;font-family:JetBrains Mono,monospace;font-size:11px;letter-spacing:.1em;z-index:9999;border-bottom:2px solid #ca8a04;box-shadow:0 4px 16px rgba(0,0,0,.2);';
+  toast.textContent = `✓ ${found.length} materias importadas correctamente`;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 3500);
 }
 
 // ─── DARK MODE ────────────────────────────────────────────────────────────────
