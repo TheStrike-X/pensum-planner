@@ -59,6 +59,38 @@
   }
   *{margin:0;padding:0;box-sizing:border-box;}
   html,body{min-height:100vh;}
+  /* RETAKE MANAGER */
+  .retake-manager{background:#f8fafc;border:1px solid var(--rule);border-radius:3px;padding:16px 18px;margin-bottom:24px;}
+  [data-theme="dark"] .retake-manager{background:#181b23;border-color:#2d3348;}
+  .retake-title{font-family:'EB Garamond',serif;font-size:15px;font-weight:700;color:#0f172a;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+  [data-theme="dark"] .retake-title{color:#e2e8f0;}
+  .retake-title span{font-family:'JetBrains Mono',monospace;font-size:9px;color:#94a3b8;font-weight:400;}
+  .retake-row{display:flex;gap:8px;align-items:center;margin-bottom:6px;flex-wrap:wrap;}
+  .retake-select{flex:1;min-width:160px;background:#fff;border:1px solid var(--rule);color:#0f172a;padding:7px 10px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:10px;outline:none;}
+  [data-theme="dark"] .retake-select{background:#1e293b;border-color:#2d3348;color:#e2e8f0;}
+  .retake-input{width:70px;background:#fff;border:1px solid var(--rule);color:#0f172a;padding:7px 10px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:10px;outline:none;text-align:center;}
+  [data-theme="dark"] .retake-input{background:#1e293b;border-color:#2d3348;color:#e2e8f0;}
+  .retake-add-btn{background:#0f172a;border:none;color:#f8fafc;padding:7px 14px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:10px;cursor:pointer;transition:all .15s;letter-spacing:.08em;white-space:nowrap;}
+  .retake-add-btn:hover{background:#ca8a04;color:#0f172a;}
+  .retake-list{display:flex;flex-direction:column;gap:4px;margin-top:8px;}
+  .retake-item{display:flex;align-items:center;gap:8px;padding:5px 10px;background:var(--failed-bg);border-radius:2px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--failed-text);}
+  .retake-remove{background:none;border:none;color:var(--failed-text);cursor:pointer;font-size:14px;line-height:1;padding:0;margin-left:auto;opacity:.6;}
+  .retake-remove:hover{opacity:1;}
+  .retake-note{font-family:'JetBrains Mono',monospace;font-size:9px;color:#94a3b8;margin-top:8px;line-height:1.6;}
+
+  /* PIE CHART */
+  .gpa-charts-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px;}
+  @media(max-width:600px){.gpa-charts-row{grid-template-columns:1fr;}}
+  .gpa-chart-box{background:#f8fafc;border:1px solid var(--rule);border-radius:3px;padding:16px 18px;}
+  [data-theme="dark"] .gpa-chart-box{background:#181b23;border-color:#2d3348;}
+  .gpa-chart-title{font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#64748b;margin-bottom:12px;}
+  .pie-wrap{display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+  .pie-legend{display:flex;flex-direction:column;gap:6px;flex:1;}
+  .pie-legend-item{display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#475569;}
+  [data-theme="dark"] .pie-legend-item{color:#94a3b8;}
+  .pie-legend-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
+  .pie-legend-pct{margin-left:auto;font-weight:500;}
+
   /* GPA PANEL */
   .gpa-header{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:28px;}
   .gpa-card{background:#f8fafc;border:1px solid #e2e8f0;border-radius:4px;padding:18px 20px;text-align:center;border-top:3px solid #0f172a;}
@@ -1914,6 +1946,54 @@ async function confirmReset(){
 
 // ─── GPA CALCULATOR ──────────────────────────────────────────────────────────
 
+// ─── RETAKE MANAGER ──────────────────────────────────────────────────────────
+// _retakes: { courseCode: [{score, letter}] } — extra failed attempts beyond what's in _grades
+
+function getRetakes(){ return JSON.parse(localStorage.getItem('pp_retakes_'+PENSUM_ID)||'{}'); }
+function saveRetakes(r){ localStorage.setItem('pp_retakes_'+PENSUM_ID, JSON.stringify(r)); }
+
+function addRetake(){
+  const sel = document.getElementById('retake-course-sel');
+  const inp = document.getElementById('retake-score-inp');
+  const code = sel?.value;
+  const score = parseInt(inp?.value, 10);
+  if(!code || isNaN(score) || score < 0 || score > 100) return;
+  const letter = score>=90?'A':score>=80?'B':score>=70?'C':score>=60?'D':'F';
+  const r = getRetakes();
+  if(!r[code]) r[code] = [];
+  r[code].push({ score, letter });
+  saveRetakes(r);
+  if(inp) inp.value = '';
+  renderGPA();
+}
+
+function removeRetake(code, idx){
+  const r = getRetakes();
+  if(r[code]){ r[code].splice(idx, 1); if(!r[code].length) delete r[code]; }
+  saveRetakes(r);
+  renderGPA();
+}
+
+function buildPieChart(data, size=120){
+  // data: [{label, value, color}]
+  const total = data.reduce((s,d)=>s+d.value,0);
+  if(!total) return '<svg width="'+size+'" height="'+size+'"><text x="50%" y="50%" text-anchor="middle" font-size="10" fill="#94a3b8">Sin datos</text></svg>';
+  let cumulative = 0;
+  const cx = size/2, cy = size/2, r = size/2 - 4;
+  let paths = '';
+  data.forEach(d => {
+    if(!d.value) return;
+    const startAngle = (cumulative/total)*Math.PI*2 - Math.PI/2;
+    cumulative += d.value;
+    const endAngle = (cumulative/total)*Math.PI*2 - Math.PI/2;
+    const x1=cx+r*Math.cos(startAngle), y1=cy+r*Math.sin(startAngle);
+    const x2=cx+r*Math.cos(endAngle),   y2=cy+r*Math.sin(endAngle);
+    const large = (d.value/total) > 0.5 ? 1 : 0;
+    paths += `<path d="M${cx},${cy} L${x1},${y1} A${r},${r},0,${large},1,${x2},${y2} Z" fill="${d.color}" stroke="#fff" stroke-width="1.5"/>`;
+  });
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">${paths}</svg>`;
+}
+
 let _gpaSort = 'sem';
 
 function setGPASort(key){ _gpaSort = key; renderGPA(); }
@@ -1975,12 +2055,15 @@ function renderGPA(){
     return;
   }
 
+  const retakes = getRetakes();
   let totalPts=0, totalCrs=0;
   gradedForGPA.forEach(c=>{
     const g = grades[c.code];
-    const attempts = g.attempts && g.attempts.length > 0 ? g.attempts : [{ score: g.score }];
-    // Count ALL attempts (retakes included) — each attempt uses same credit weight
-    attempts.forEach(a => {
+    // Combine: imported attempts + manually added retakes
+    const importedAttempts = g.attempts && g.attempts.length > 0 ? g.attempts : [{ score: g.score }];
+    const manualRetakes = retakes[c.code] || [];
+    const allAttempts = [...importedAttempts, ...manualRetakes];
+    allAttempts.forEach(a => {
       totalPts += cfg.toPoints(a.score) * c.crs;
       totalCrs += c.crs;
     });
@@ -2000,8 +2083,9 @@ function renderGPA(){
     let p=0,cr=0;
     cs.filter(c=>courseStates[c.code]!=='exonerated').forEach(c=>{
       const g=grades[c.code];
-      const attempts=g.attempts&&g.attempts.length>0?g.attempts:[{score:g.score}];
-      attempts.forEach(a=>{p+=cfg.toPoints(a.score)*c.crs;cr+=c.crs;});
+      const importedAttempts=g.attempts&&g.attempts.length>0?g.attempts:[{score:g.score}];
+      const manualRetakes=retakes[c.code]||[];
+      [...importedAttempts,...manualRetakes].forEach(a=>{p+=cfg.toPoints(a.score)*c.crs;cr+=c.crs;});
     });
     return {sem:+sem,gpa:cr?p/cr:0,credits:cr,courses:cs};
   });
@@ -2013,6 +2097,20 @@ function renderGPA(){
       <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#94a3b8;text-transform:uppercase;letter-spacing:.15em;margin-bottom:8px;">${cfg.name} · Escala ${cfg.scale} · Nota mínima: ${cfg.pass}</div>
       <div class="gpa-formula"><strong style="color:#ca8a04;">Fórmula:</strong> ${cfg.scale==='4.0'?'Σ(puntos_GPA × créditos) / Σ(créditos) · A=4.0 B=3.0 C=2.0 D=1.0 F=0.0':'Σ(calificación × créditos) / Σ(créditos) · Promedio ponderado en escala 0–100'} · <span style="color:var(--exonerated-text)">Exoneradas (S) no cuentan en el índice</span></div>
     </div>
+    <!-- PIE CHARTS ROW -->
+    <div class="gpa-charts-row">
+      <div class="gpa-chart-box">
+        <div class="gpa-chart-title">Distribución por Letra</div>
+        <div class="pie-wrap" id="gpa-pie-wrap">
+        </div>
+      </div>
+      <div class="gpa-chart-box">
+        <div class="gpa-chart-title">Distribución por Estado</div>
+        <div class="pie-wrap" id="gpa-status-pie-wrap">
+        </div>
+      </div>
+    </div>
+
     <div class="gpa-header">
       <div class="gpa-card highlight">
         <div class="gpa-card-num" style="color:#ca8a04;">${cfg.format(overall)}</div>
@@ -2028,6 +2126,32 @@ function renderGPA(){
     <table class="gpa-table"><thead><tr><th>Sem</th><th>Índice</th><th>Créditos</th><th>Materias</th><th style="min-width:80px;">Barra</th></tr></thead><tbody>
     ${semGPAs.map(s=>{const pct=Math.min(100,Math.round((s.gpa/maxVal)*100));return`<tr><td><strong style="font-family:'EB Garamond',serif;font-style:italic;font-size:16px;">${s.sem}</strong></td><td><strong style="font-family:'EB Garamond',serif;font-size:16px;color:${gpaColor(s.gpa)}">${cfg.format(s.gpa)}</strong></td><td>${s.credits}</td><td>${s.courses.length}</td><td><div class="gpa-bar-wrap"><div class="gpa-bar-fill" style="width:${pct}%;background:${gpaColor(s.gpa)};"></div></div></td></tr>`;}).join('')}
     </tbody></table>
+    <!-- RETAKE MANAGER -->
+    <div class="retake-manager">
+      <div class="retake-title">Agregar Repeticiones de Materias <span>impactan el índice negativamente</span></div>
+      <div class="retake-row">
+        <select id="retake-course-sel" class="retake-select">
+          <option value="">— Selecciona una materia —</option>
+          ${graded.filter(c=>courseStates[c.code]!=='exonerated').map(c=>`<option value="${c.code}">${c.code} · ${c.name}</option>`).join('')}
+        </select>
+        <input id="retake-score-inp" class="retake-input" type="number" min="0" max="100" placeholder="Nota">
+        <button class="retake-add-btn" onclick="addRetake()">+ Agregar</button>
+      </div>
+      ${Object.keys(retakes).length ? `
+      <div class="retake-list">
+        ${Object.entries(retakes).flatMap(([code,arr],ci)=>arr.map((a,i)=>{
+          const course=COURSES.find(c=>c.code===code);
+          return `<div class="retake-item">
+            <span style="font-weight:500;">${code}</span>
+            <span style="flex:1;color:var(--muted);font-size:9px;">${course?course.name:code}</span>
+            <span>${a.score} ${a.letter}</span>
+            <button class="retake-remove" onclick="removeRetake('${code}',${i})">×</button>
+          </div>`;
+        })).join('')}
+      </div>` : ''}
+      <div class="retake-note">Estas notas se suman al cálculo del índice junto a las notas importadas del PDF. Si ya importaste tu récord, las repeticiones ya están incluidas automáticamente.</div>
+    </div>
+
     <div class="gpa-section-title" style="flex-wrap:wrap;gap:8px;">
       Detalle por Materia <span>${graded.length} calificadas</span>
       <div style="margin-left:auto;display:flex;gap:4px;flex-wrap:wrap;">
@@ -2045,6 +2169,52 @@ function renderGPA(){
     }).join('')}
     </tbody></table>
   `;
+  // Build pie charts after HTML is injected
+  setTimeout(() => buildGPAPies(graded, grades, cfg), 0);
+}
+
+function buildGPAPies(graded, grades, cfg){
+  // 1. Letter distribution
+  const letterColors = { A:'#15803d', B:'#0e7490', C:'#ca8a04', D:'#b45309', F:'#dc2626', S:'#7c3aed' };
+  const letterCounts = {};
+  graded.forEach(c => {
+    const g = grades[c.code];
+    const letter = g.letter || 'F';
+    letterCounts[letter] = (letterCounts[letter]||0) + 1;
+  });
+  const letterData = Object.entries(letterCounts)
+    .sort((a,b)=>['A','B','C','D','F','S'].indexOf(a[0])-['A','B','C','D','F','S'].indexOf(b[0]))
+    .map(([l,v]) => ({ label:l, value:v, color:letterColors[l]||'#94a3b8' }));
+  const total = graded.length;
+  const pieWrap = document.getElementById('gpa-pie-wrap');
+  if(pieWrap){
+    const svg = buildPieChart(letterData, 110);
+    const legend = letterData.map(d=>`
+      <div class="pie-legend-item">
+        <div class="pie-legend-dot" style="background:${d.color}"></div>
+        <span>${d.label}</span>
+        <span class="pie-legend-pct">${d.value} (${Math.round(d.value/total*100)}%)</span>
+      </div>`).join('');
+    pieWrap.innerHTML = svg + `<div class="pie-legend">${legend}</div>`;
+  }
+
+  // 2. Status distribution
+  const statusData = [
+    { label:'Aprobada',   value:graded.filter(c=>courseStates[c.code]==='passed').length,     color:'#15803d' },
+    { label:'Exonerada',  value:graded.filter(c=>courseStates[c.code]==='exonerated').length, color:'#7c3aed' },
+    { label:'Reprobada',  value:graded.filter(c=>courseStates[c.code]==='failed').length,     color:'#dc2626' },
+  ].filter(d=>d.value>0);
+  const statusWrap = document.getElementById('gpa-status-pie-wrap');
+  if(statusWrap){
+    const svg2 = buildPieChart(statusData, 110);
+    const legend2 = statusData.map(d=>`
+      <div class="pie-legend-item">
+        <div class="pie-legend-dot" style="background:${d.color}"></div>
+        <span>${d.label}</span>
+        <span class="pie-legend-pct">${d.value} (${Math.round(d.value/total*100)}%)</span>
+      </div>`).join('');
+    statusWrap.innerHTML = svg2 + `<div class="pie-legend">${legend2}</div>`;
+  }
 }
 
 // ─── FILTER & INIT ────────────────────────────────────────────────────────────
