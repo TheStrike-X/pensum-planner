@@ -19,6 +19,17 @@
     --rule:#e2e8f0;--ink:#020617;
     --focus-ring:0 0 0 3px rgba(59,130,246,.5);
   }
+  [data-theme="dark"] {
+    --bg:#0f1117;--surface:#181b23;--surface2:#1e2230;--border:#2d3348;
+    --text:#e2e8f0;--muted:#64748b;--accent:#e2e8f0;--accent2:#eab308;
+    --passed:#14532d;--passed-bg:#052e16;--passed-text:#4ade80;
+    --enrolled:#1e3a8a;--enrolled-bg:#0c1a3d;--enrolled-text:#60a5fa;
+    --failed:#991b1b;--failed-bg:#2d0a0a;--failed-text:#f87171;
+    --available:#713f12;--available-bg:#1c1100;--available-text:#fbbf24;
+    --locked-text:#334155;
+    --navy:#e2e8f0;--gold:#eab308;--gold2:#fde047;--cream:#181b23;
+    --rule:#2d3348;--ink:#e2e8f0;
+  }
   *{margin:0;padding:0;box-sizing:border-box;}
   html,body{min-height:100vh;}
   @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important;}}
@@ -107,6 +118,16 @@
     white-space:nowrap;letter-spacing:.08em;
   }
   .reset-btn:hover{border-color:var(--gold);color:var(--gold);}
+  .dark-toggle{
+    margin:auto 0;
+    background:none;border:1px solid rgba(255,255,255,.15);
+    color:rgba(255,255,255,.5);font-size:14px;
+    width:36px;height:32px;
+    border-radius:3px;cursor:pointer;
+    transition:all .15s;display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+  }
+  .dark-toggle:hover{border-color:var(--gold);color:var(--gold);}
 
   .tabs{
     display:flex;gap:0;padding:0 48px;
@@ -254,6 +275,56 @@
   .progress-bar-wrap{background:var(--surface2);border-radius:2px;height:5px;margin-top:8px;overflow:hidden;}
   .progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--navy),var(--gold));border-radius:2px;transition:width .4s ease;}
 
+  /* GRADE MODAL */
+  .grade-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:200;align-items:center;justify-content:center;}
+  .grade-overlay.open{display:flex;}
+  .grade-box{
+    background:var(--surface);border:1px solid var(--rule);
+    border-radius:3px;width:340px;max-width:92vw;overflow:hidden;
+    box-shadow:0 24px 64px rgba(0,0,0,.2);
+  }
+  .grade-head{
+    background:var(--navy);padding:16px 20px;
+    border-bottom:3px solid var(--gold);
+  }
+  .grade-head-title{font-family:'EB Garamond',serif;font-size:16px;font-weight:700;color:var(--cream);}
+  .grade-head-sub{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,.4);margin-top:3px;letter-spacing:.1em;text-transform:uppercase;}
+  .grade-body{padding:20px;display:flex;flex-direction:column;gap:14px;}
+  .grade-input-wrap{position:relative;}
+  .grade-input{
+    width:100%;background:var(--surface2);
+    border:2px solid var(--rule);color:var(--text);
+    padding:14px 60px 14px 16px;
+    border-radius:3px;
+    font-family:'EB Garamond',serif;font-size:28px;font-weight:700;
+    text-align:center;outline:none;transition:border-color .15s;
+  }
+  .grade-input:focus{border-color:var(--gold);}
+  .grade-letter{
+    position:absolute;right:16px;top:50%;transform:translateY(-50%);
+    font-family:'EB Garamond',serif;font-size:22px;font-weight:700;
+    transition:all .2s;
+  }
+  .grade-result{
+    text-align:center;font-family:'JetBrains Mono',monospace;
+    font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);min-height:16px;
+  }
+  .grade-result.pass{color:var(--passed-text);}
+  .grade-result.fail{color:var(--failed-text);}
+  .grade-btns{display:flex;gap:8px;}
+  .grade-btn{flex:1;padding:11px;border:none;border-radius:3px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;transition:all .15s;}
+  .grade-btn-cancel{background:var(--surface2);color:var(--muted);border:1px solid var(--rule);}
+  .grade-btn-cancel:hover{color:var(--text);}
+  .grade-btn-confirm{background:var(--navy);color:var(--cream);}
+  .grade-btn-confirm:hover{background:var(--gold);color:var(--navy);}
+  .grade-btn-confirm:disabled{opacity:.4;cursor:default;pointer-events:none;}
+  .grade-scale{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;font-family:'JetBrains Mono',monospace;font-size:9px;text-align:center;}
+  .grade-scale-item{padding:4px 2px;border-radius:2px;background:var(--surface2);color:var(--muted);}
+  .grade-scale-item.active{color:var(--text);font-weight:500;}
+  .grade-scale-item.active.pass-item{background:var(--passed-bg);color:var(--passed-text);}
+  .grade-scale-item.active.fail-item{background:var(--failed-bg);color:var(--failed-text);}
+
   /* MODALS */
   .modal-overlay{display:none;position:fixed;inset:0;background:rgba(13,27,46,.75);backdrop-filter:blur(4px);z-index:100;align-items:center;justify-content:center;}
   .modal-overlay.open{display:flex;}
@@ -333,8 +404,38 @@
       <span class="user-name" style="font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,.4);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:.08em;"></span>
       <button class="reset-btn" onclick="doLogout()" style="border-color:rgba(255,255,255,.15);color:rgba(255,255,255,.4);">Salir</button>
     </div>
+    <button class="dark-toggle" id="dark-toggle-btn" onclick="toggleDark()" title="Cambiar modo oscuro/claro" aria-label="Alternar modo oscuro">☀</button>
     </div>
   </header>
+
+<!-- ── GRADE MODAL ── -->
+<div class="grade-overlay" id="grade-modal">
+  <div class="grade-box">
+    <div class="grade-head">
+      <div class="grade-head-title" id="grade-course-name">Materia</div>
+      <div class="grade-head-sub" id="grade-course-code">COD-000 · ¿Cuál fue tu calificación?</div>
+    </div>
+    <div class="grade-body">
+      <div class="grade-input-wrap">
+        <input class="grade-input" id="grade-input" type="number" min="0" max="100" placeholder="00"
+          oninput="onGradeInput()" onkeydown="onGradeKey(event)" autofocus>
+        <div class="grade-letter" id="grade-letter">—</div>
+      </div>
+      <div class="grade-result" id="grade-result">Escribe tu calificación (0–100)</div>
+      <div class="grade-scale" id="grade-scale">
+        <div class="grade-scale-item">A · 90–100</div>
+        <div class="grade-scale-item">B · 80–89</div>
+        <div class="grade-scale-item">C · 70–79</div>
+        <div class="grade-scale-item">D · 60–69</div>
+        <div class="grade-scale-item">F · 0–59</div>
+      </div>
+      <div class="grade-btns">
+        <button class="grade-btn grade-btn-cancel" onclick="closeGradeModal()">Cancelar</button>
+        <button class="grade-btn grade-btn-confirm" id="grade-confirm-btn" onclick="confirmGrade()" disabled>Confirmar</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- ── AUTH MODAL ── -->
 <div id="auth-modal" style="display:none;position:fixed;inset:0;background:rgba(13,27,46,.7);backdrop-filter:blur(4px);z-index:1000;align-items:center;justify-content:center;">
@@ -448,7 +549,8 @@ async function loadPensum(){
     document.title = (params.get('name')||'Planificador') + ' — Pensum Planner';
 
     // init state
-    courseStates = initDefaults(loadState());
+    await loadGrades();
+    courseStates = initDefaults(await loadState());
 
     // populate graph filter
     populateFilter();
@@ -606,10 +708,181 @@ async function restoreSession(){
   }
 }
 
+// ─── DARK MODE ────────────────────────────────────────────────────────────────
+function toggleDark(){
+  const isDark = document.documentElement.getAttribute('data-theme')==='dark';
+  document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  localStorage.setItem('pp_theme', isDark ? 'light' : 'dark');
+  document.getElementById('dark-toggle-btn').textContent = isDark ? '☀' : '☾';
+}
+(function initTheme(){
+  const saved = localStorage.getItem('pp_theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme:dark)').matches;
+  const theme = saved || (prefersDark ? 'dark' : 'light');
+  document.documentElement.setAttribute('data-theme', theme);
+  // Button update happens after DOM is ready
+  window.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('dark-toggle-btn');
+    if(btn) btn.textContent = theme === 'dark' ? '☾' : '☀';
+  });
+})();
+
+// ─── GRADE MODAL ──────────────────────────────────────────────────────────────
+let _gradePendingCode = null;
+
+// Passing thresholds per university
+function getPassThreshold(){
+  const uni = (UNI_NAME || '').toUpperCase();
+  if(uni.includes('PUCMM')) return 65;
+  return 70; // UASD, UNIBE, all others
+}
+
+function gradeToLetter(g){
+  if(g >= 90) return 'A';
+  if(g >= 80) return 'B';
+  if(g >= 70) return 'C';
+  if(g >= 60) return 'D';
+  return 'F';
+}
+
+function openGradeModal(code){
+  const course = COURSES.find(c=>c.code===code);
+  if(!course) return;
+  _gradePendingCode = code;
+  document.getElementById('grade-course-name').textContent = course.name;
+  document.getElementById('grade-course-code').textContent = code + ' · ¿Cuál fue tu calificación?';
+  document.getElementById('grade-input').value = '';
+  document.getElementById('grade-letter').textContent = '—';
+  document.getElementById('grade-letter').style.color = 'var(--muted)';
+  document.getElementById('grade-result').textContent = 'Escribe tu calificación (0–100)';
+  document.getElementById('grade-result').className = 'grade-result';
+  document.getElementById('grade-confirm-btn').disabled = true;
+
+  // Update scale labels with university threshold
+  const threshold = getPassThreshold();
+  updateGradeScale(null, threshold);
+
+  document.getElementById('grade-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('grade-input').focus(), 80);
+}
+
+function closeGradeModal(){
+  document.getElementById('grade-modal').classList.remove('open');
+  _gradePendingCode = null;
+}
+
+function updateGradeScale(grade, threshold){
+  const items = document.querySelectorAll('.grade-scale-item');
+  const labels = [
+    {label:'A · 90–100', min:90},
+    {label:'B · 80–89',  min:80},
+    {label:'C · 70–79',  min:70},
+    {label:`D · 60–69`,  min:60},
+    {label:'F · 0–59',   min:0}
+  ];
+  items.forEach((el, i)=>{
+    const isPass = labels[i].min >= threshold;
+    el.className = 'grade-scale-item';
+    if(grade !== null){
+      const inRange = grade >= labels[i].min && (i===0 ? grade<=100 : grade < labels[i-1].min + (i===1?1:0) + 10);
+      // simpler: check if this is the active bucket
+    }
+    el.textContent = labels[i].label + (isPass ? ' ✓' : ' ✗');
+    el.style.color = isPass ? 'var(--passed-text)' : 'var(--failed-text)';
+    el.style.background = isPass ? 'var(--passed-bg)' : 'var(--failed-bg)';
+  });
+}
+
+function onGradeInput(){
+  const val = document.getElementById('grade-input').value;
+  const g = parseInt(val, 10);
+  const threshold = getPassThreshold();
+  const letterEl = document.getElementById('grade-letter');
+  const resultEl = document.getElementById('grade-result');
+  const confirmBtn = document.getElementById('grade-confirm-btn');
+
+  if(val === '' || isNaN(g)){
+    letterEl.textContent = '—';
+    letterEl.style.color = 'var(--muted)';
+    resultEl.textContent = 'Escribe tu calificación (0–100)';
+    resultEl.className = 'grade-result';
+    confirmBtn.disabled = true;
+    return;
+  }
+
+  const clamped = Math.max(0, Math.min(100, g));
+  if(g !== clamped) { document.getElementById('grade-input').value = clamped; return; }
+
+  const letter = gradeToLetter(g);
+  const passes = g >= threshold;
+
+  letterEl.textContent = letter;
+  letterEl.style.color = passes ? 'var(--passed-text)' : 'var(--failed-text)';
+
+  if(passes){
+    resultEl.textContent = `${g} puntos · Letra ${letter} · ✓ Aprobada (mínimo ${threshold})`;
+    resultEl.className = 'grade-result pass';
+  } else {
+    resultEl.textContent = `${g} puntos · Letra ${letter} · ✗ Reprobada (mínimo ${threshold})`;
+    resultEl.className = 'grade-result fail';
+  }
+
+  confirmBtn.disabled = false;
+}
+
+function onGradeKey(e){
+  if(e.key === 'Enter') confirmGrade();
+  if(e.key === 'Escape') closeGradeModal();
+}
+
+function confirmGrade(){
+  if(!_gradePendingCode) return;
+  const val = parseInt(document.getElementById('grade-input').value, 10);
+  if(isNaN(val)) return;
+  const threshold = getPassThreshold();
+  const passes = val >= threshold;
+  const letter = gradeToLetter(val);
+
+  // Store state with grade metadata
+  courseStates[_gradePendingCode] = passes ? 'passed' : 'failed';
+  // Also store the grade value for display
+  if(!window._grades) window._grades = {};
+  window._grades[_gradePendingCode] = { score: val, letter, passes };
+  localStorage.setItem('pp_grades_' + PENSUM_ID, JSON.stringify(window._grades));
+
+  closeGradeModal();
+  saveState();
+  refresh();
+}
+
+// Load saved grades on boot
+function loadGrades(){
+  try{
+    const saved = localStorage.getItem('pp_grades_' + PENSUM_ID);
+    window._grades = saved ? JSON.parse(saved) : {};
+  }catch(e){ window._grades = {}; }
+}
+
+// ─── CYCLE STATE ──────────────────────────────────────────────────────────────
 function cycleState(code){
   if(getEffectiveStatus(code)==='locked') return;
   const cur=courseStates[code];
-  courseStates[code]=cur===null?'passed':cur==='passed'?'enrolled':cur==='enrolled'?'failed':null;
+  if(cur===null){
+    // null → open grade modal (which sets passed or failed)
+    openGradeModal(code);
+    return;
+  }
+  if(cur==='passed'){
+    courseStates[code]='enrolled';
+    if(window._grades) delete window._grades[code];
+    localStorage.setItem('pp_grades_'+PENSUM_ID, JSON.stringify(window._grades||{}));
+  } else if(cur==='enrolled'){
+    courseStates[code]='failed';
+  } else {
+    courseStates[code]=null;
+    if(window._grades) delete window._grades[code];
+    localStorage.setItem('pp_grades_'+PENSUM_ID, JSON.stringify(window._grades||{}));
+  }
   saveState(); refresh();
 }
 
@@ -674,7 +947,9 @@ function renderCourses(){
       const st=courseStates[course.code];
       const unlocks=getUnlockCount(course.code);
       const isLocked=status==='locked';
-      const btnLabel=st==='passed'?'✓ Aprobada':st==='enrolled'?'📖 Cursando':st==='failed'?'✗ Reprobada':'Marcar…';
+      const grade = window._grades && window._grades[course.code];
+      const gradeSuffix = grade ? ` · ${grade.score} (${grade.letter})` : '';
+      const btnLabel=st==='passed'?`✓ Aprobada${gradeSuffix}`:st==='enrolled'?'Cursando':st==='failed'?`✗ Reprobada${gradeSuffix}`:'Marcar…';
       const card=document.createElement('div');
       card.className=`course-card ${status}`;
       if(!isLocked) card.onclick = ()=>cycleState(course.code);
@@ -686,8 +961,9 @@ function renderCourses(){
           <span class="badge badge-crs">${course.crs} CR</span>
           ${course.prereqs.length?`<span class="badge badge-prereq">↑ ${course.prereqs.length} prereq</span>`:''}
           ${unlocks?`<span class="badge badge-unlocks">↓ ${unlocks} unlock</span>`:''}
-          ${status==='failed'?'<span class="badge badge-failed">¡Repetir!</span>':''}
+          ${status==='failed'?(()=>{const g=window._grades&&window._grades[course.code];return `<span class="badge badge-failed">✗ ${g?g.score+' '+g.letter:'Reprobada'}</span>`;})():''}
           ${status==='enrolled'?'<span class="badge badge-enrolled">En curso</span>':''}
+          ${status==='passed'?(()=>{const g=window._grades&&window._grades[course.code];return g?`<span class="badge" style="background:var(--passed-bg);color:var(--passed-text);border:1px solid;">${g.score} ${g.letter}</span>`:'';})():''}
           ${isLocked
             ?`<span class="status-btn" style="margin-left:auto;opacity:.4;cursor:not-allowed">🔒 Bloqueada</span>`
             :`<span class="status-btn">${btnLabel}</span>`}
