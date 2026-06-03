@@ -410,6 +410,8 @@
     transition:background .1s;border-bottom:1px solid var(--rule);
   }
   .action-picker-item:last-child{border-bottom:none;}
+  .action-picker-item.current{background:var(--surface2);}
+  [data-theme="dark"] .action-picker-item.current{background:#1e2230;}
   .action-picker-item:hover{background:var(--surface2);}
   .action-picker-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
 
@@ -1346,13 +1348,54 @@ function showActionPicker(code, event){
   picker.addEventListener('click', e => e.stopPropagation());
 
   const course = COURSES.find(c=>c.code===code);
+  const cur = courseStates[code]; // current state
 
-  const items = [
-    { label:'Aprobada — ingresar nota',    color:'var(--passed-text)',     action:() => { closeActionPicker(); openGradeModal(code,'passed'); } },
-    { label:'Exonerada (S = 100)',         color:'var(--exonerated-text)', action:() => { closeActionPicker(); markExonerated(code); } },
-    { label:'Reprobada — ingresar nota',   color:'var(--failed-text)',     action:() => { closeActionPicker(); openGradeModal(code,'failed'); } },
-    { label:'Desmarcar (quitar cursando)', color:'var(--muted)',           action:() => { closeActionPicker(); courseStates[code]=null; if(window._grades) delete window._grades[code]; localStorage.setItem('pp_grades_'+PENSUM_ID, JSON.stringify(window._grades||{})); saveState(); refresh(); } },
-  ];
+  function clearGrade(){ if(window._grades) delete window._grades[code]; localStorage.setItem('pp_grades_'+PENSUM_ID, JSON.stringify(window._grades||{})); }
+
+  // Build items based on current state — always show all options, mark current
+  const items = [];
+
+  // Cursando
+  items.push({
+    label: cur==='enrolled' ? '📖 Cursando (actual)' : 'Cursando',
+    color: 'var(--enrolled-text)',
+    current: cur==='enrolled',
+    action: () => { closeActionPicker(); courseStates[code]='enrolled'; clearGrade(); saveState(); refresh(); }
+  });
+
+  // Aprobada
+  items.push({
+    label: cur==='passed' ? '✓ Aprobada (actual) — cambiar nota' : 'Aprobada — ingresar nota',
+    color: 'var(--passed-text)',
+    current: cur==='passed',
+    action: () => { closeActionPicker(); openGradeModal(code,'passed'); }
+  });
+
+  // Exonerada
+  items.push({
+    label: cur==='exonerated' ? 'S Exonerada (actual)' : 'Exonerada (S = 100)',
+    color: 'var(--exonerated-text)',
+    current: cur==='exonerated',
+    action: () => { closeActionPicker(); markExonerated(code); }
+  });
+
+  // Reprobada
+  items.push({
+    label: cur==='failed' ? '✗ Reprobada (actual) — cambiar nota' : 'Reprobada — ingresar nota',
+    color: 'var(--failed-text)',
+    current: cur==='failed',
+    action: () => { closeActionPicker(); openGradeModal(code,'failed'); }
+  });
+
+  // Desmarcar — always show if something is set
+  if(cur !== null){
+    items.push({
+      label: 'Desmarcar',
+      color: 'var(--muted)',
+      current: false,
+      action: () => { closeActionPicker(); courseStates[code]=null; clearGrade(); saveState(); refresh(); }
+    });
+  }
 
   const header = document.createElement('div');
   header.className = 'action-picker-header';
@@ -1361,7 +1404,8 @@ function showActionPicker(code, event){
 
   items.forEach(item => {
     const el = document.createElement('div');
-    el.className = 'action-picker-item';
+    el.className = 'action-picker-item' + (item.current ? ' current' : '');
+    if(item.current) el.style.cssText += 'font-weight:600;';
     el.innerHTML = `<div class="action-picker-dot" style="background:${item.color}"></div>${item.label}`;
     el.addEventListener('click', item.action);
     picker.appendChild(el);
@@ -1392,29 +1436,8 @@ function markExonerated(code){
 
 function cycleState(code, event){
   if(getEffectiveStatus(code)==='locked') return;
-  const cur = courseStates[code];
-
-  if(cur === null){
-    // null → enrolled (first step: enroll in class)
-    courseStates[code] = 'enrolled';
-  } else if(cur === 'enrolled'){
-    // enrolled → pick pass or fail (grade modal)
-    if(event) showActionPicker(code, event);
-    return;
-  } else if(cur === 'passed'){
-    courseStates[code] = null;
-    if(window._grades) delete window._grades[code];
-    localStorage.setItem('pp_grades_'+PENSUM_ID, JSON.stringify(window._grades||{}));
-  } else if(cur === 'exonerated'){
-    courseStates[code] = null;
-    if(window._grades) delete window._grades[code];
-    localStorage.setItem('pp_grades_'+PENSUM_ID, JSON.stringify(window._grades||{}));
-  } else if(cur === 'failed'){
-    courseStates[code] = null;
-    if(window._grades) delete window._grades[code];
-    localStorage.setItem('pp_grades_'+PENSUM_ID, JSON.stringify(window._grades||{}));
-  }
-  saveState(); refresh();
+  // Always show action picker on click — regardless of current state
+  if(event) showActionPicker(code, event);
 }
 
 function getEffectiveStatus(code){
