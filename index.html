@@ -165,7 +165,9 @@
       <!-- STEP 2: Career -->
       <div class="selector-step" id="career-step" style="display:none;">
         <div class="step-label"><span class="step-num">2</span>Selecciona tu carrera</div>
+        <input class="search-input" id="career-search" placeholder="Buscar carrera…" oninput="filterCareers()" autocomplete="off" style="margin-bottom:10px;">
         <div class="career-grid" id="career-grid"></div>
+        <div id="career-no-results" style="display:none;padding:20px;text-align:center;color:var(--muted);font-size:11px;border:1px dashed var(--border);border-radius:10px;">No se encontraron carreras para "<span id="career-search-term"></span>"</div>
       </div>
 
       <!-- GO -->
@@ -357,6 +359,10 @@ function selectUni(id){
   selectedCareer = null;
   renderUniversities(document.getElementById('uni-search').value);
   renderCareers();
+  const searchEl = document.getElementById('career-search');
+  if(searchEl) searchEl.value = '';
+  const noRes = document.getElementById('career-no-results');
+  if(noRes) noRes.style.display = 'none';
   document.getElementById('career-step').style.display = 'block';
   document.getElementById('career-step').scrollIntoView({behavior:'smooth', block:'nearest'});
   updateGoBtn();
@@ -366,18 +372,33 @@ function selectUni(id){
 function renderCareers(){
   const uni = REGISTRY.find(u=>u.id===selectedUni);
   const grid = document.getElementById('career-grid');
+  const noResults = document.getElementById('career-no-results');
+  const searchTerm = document.getElementById('career-search-term');
   if(!uni){ grid.innerHTML=''; return; }
-  grid.innerHTML = uni.careers.map(c => `
-    <div class="career-card ${selectedCareer===c.id?'selected':''}" onclick="selectCareer('${c.id}')">
-      <span class="career-badge">${c.short}</span>
-      <div class="career-name">${c.name}</div>
-      <div class="career-meta">
-        <span>${c.semesters} semestres</span>
-        <span>${c.credits} créditos</span>
+  const q = (document.getElementById('career-search')?.value || '').toLowerCase().trim();
+  const filtered = q
+    ? uni.careers.filter(c => c.name.toLowerCase().includes(q) || c.short.toLowerCase().includes(q))
+    : uni.careers;
+  if(filtered.length === 0){
+    grid.innerHTML = '';
+    if(searchTerm) searchTerm.textContent = q;
+    if(noResults) noResults.style.display = 'block';
+  } else {
+    if(noResults) noResults.style.display = 'none';
+    grid.innerHTML = filtered.map(c => `
+      <div class="career-card ${selectedCareer===c.id?'selected':''}" onclick="selectCareer('${c.id}')">
+        <span class="career-badge">${c.short}</span>
+        <div class="career-name">${c.name}</div>
+        <div class="career-meta">
+          <span>${c.semesters} semestres</span>
+          <span>${c.credits} créditos</span>
+        </div>
       </div>
-    </div>
-  `).join('');
+    `).join('');
+  }
 }
+
+function filterCareers(){ renderCareers(); }
 
 function selectCareer(id){
   selectedCareer = id;
