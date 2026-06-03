@@ -1771,6 +1771,21 @@ async function confirmReset(){
 
 // ─── GPA CALCULATOR ──────────────────────────────────────────────────────────
 
+let _gpaSort = 'sem';
+
+function setGPASort(key){ _gpaSort = key; renderGPA(); }
+
+function sortGraded(graded, grades){
+  const arr = [...graded];
+  switch(_gpaSort){
+    case 'grade-desc': return arr.sort((a,b)=>grades[b.code].score-grades[a.code].score);
+    case 'grade-asc':  return arr.sort((a,b)=>grades[a.code].score-grades[b.code].score);
+    case 'name':       return arr.sort((a,b)=>a.name.localeCompare(b.name));
+    case 'status':     return arr.sort((a,b)=>(courseStates[b.code]==='passed'?1:-1)-(courseStates[a.code]==='passed'?1:-1)||grades[b.code].score-grades[a.code].score);
+    default:           return arr.sort((a,b)=>a.sem-b.sem||grades[b.code].score-grades[a.code].score);
+  }
+}
+
 function getGPAConfig(){
   const uni = (UNI_NAME || '').toUpperCase();
   if(uni.includes('PUCMM')){
