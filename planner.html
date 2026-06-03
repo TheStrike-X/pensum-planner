@@ -36,6 +36,7 @@
   [data-theme="dark"] .tabs{background:#181b23;border-bottom-color:#2d3348;}
   [data-theme="dark"] .tab{color:#475569;}
   [data-theme="dark"] .tab.active{color:#e2e8f0;border-bottom-color:var(--gold);}
+  [data-theme="dark"] .semester-num{color:#e2e8f0;}
   [data-theme="dark"] .action-picker{background:#181b23;border-color:#2d3348;}
   [data-theme="dark"] .action-picker-item{color:#e2e8f0;border-bottom-color:#2d3348;}
   [data-theme="dark"] .action-picker-item:hover{background:#1e2230;}
@@ -58,15 +59,15 @@
   html,body{min-height:100vh;}
   @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important;}}
   *:focus-visible{outline:none;box-shadow:var(--focus-ring);}
-  .skip-link{position:absolute;top:-100%;left:0;background:var(--navy);color:#fff;padding:8px 16px;font-family:'JetBrains Mono',monospace;font-size:12px;z-index:9999;text-decoration:none;}
+  .skip-link{position:absolute;top:-100%;left:0;background:#0f172a;color:#fff;padding:8px 16px;font-family:'JetBrains Mono',monospace;font-size:12px;z-index:9999;text-decoration:none;}
   .skip-link:focus{top:0;}
   body{background:var(--bg);color:var(--text);font-family:'Crimson Text',serif;font-size:16px;min-height:100vh;}
   body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.5;}
 
   /* LOADING SCREEN */
-  #loading{position:fixed;inset:0;background:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:999;}
+  #loading{position:fixed;inset:0;background:#0f172a;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:999;}
   #loading.hidden{display:none;}
-  .loading-logo{font-family:'EB Garamond',serif;font-size:24px;font-weight:700;color:var(--cream);}
+  .loading-logo{font-family:'EB Garamond',serif;font-size:24px;font-weight:700;color:#f8fafc;}
   .loading-logo em{font-style:italic;color:var(--gold2);}
   .loading-spinner{width:28px;height:28px;border:2px solid rgba(255,255,255,.15);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;}
   .loading-text{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,.35);letter-spacing:.15em;text-transform:uppercase;}
@@ -77,14 +78,14 @@
   #error-screen.show{display:flex;}
   .error-title{font-family:'EB Garamond',serif;font-size:20px;color:var(--failed-text);}
   .error-msg{font-size:12px;color:var(--muted);max-width:400px;line-height:1.7;font-style:italic;}
-  .error-back{margin-top:8px;background:var(--navy);border:none;color:var(--cream);padding:10px 22px;border-radius:3px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;}
-  .error-back:hover{background:var(--gold);color:var(--navy);}
+  .error-back{margin-top:8px;background:#0f172a;border:none;color:#f8fafc;padding:10px 22px;border-radius:3px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;}
+  .error-back:hover{background:var(--gold);color:#0f172a;}
 
   header{
     padding:0 48px;
     border-bottom:1px solid var(--rule);
     display:flex;align-items:stretch;gap:0;
-    background:var(--navy);
+    background:#0f172a;
     flex-wrap:wrap;
     border-bottom:3px solid var(--gold);
     position:relative;z-index:2;
@@ -117,7 +118,7 @@
   }
   .header-wordmark{
     font-family:'EB Garamond',serif;font-size:17px;font-weight:700;
-    color:var(--cream);cursor:pointer;line-height:1;
+    color:#f8fafc;cursor:pointer;line-height:1;
   }
   .header-wordmark em{font-style:italic;color:var(--gold2);}
   .header-uni{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,.35);letter-spacing:.15em;text-transform:uppercase;margin-top:3px;}
@@ -169,8 +170,8 @@
     font-family:'JetBrains Mono',monospace;
     font-size:10px;text-transform:uppercase;letter-spacing:.12em;
   }
-  .tab:hover{color:var(--navy);}
-  .tab.active{color:var(--navy);border-bottom-color:var(--gold);}
+  .tab:hover{color:#0f172a;}
+  .tab.active{color:#0f172a;border-bottom-color:var(--gold);}
 
   .panel{display:none;padding:28px 48px;}.panel.active{display:block;position:relative;z-index:1;}
   .legend{display:flex;gap:16px;margin-bottom:22px;flex-wrap:wrap;padding-bottom:16px;border-bottom:1px solid var(--rule);}
@@ -179,7 +180,7 @@
 
   .semester-group{margin-bottom:32px;}
   .semester-header{display:flex;align-items:baseline;gap:14px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--rule);}
-  .semester-num{font-family:'EB Garamond',serif;font-size:22px;font-weight:900;color:var(--navy);font-style:italic;}
+  .semester-num{font-family:'EB Garamond',serif;font-size:22px;font-weight:900;color:#0f172a;font-style:italic;}
   .semester-title{font-family:'JetBrains Mono',monospace;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.12em;}
   .semester-opens{margin-left:auto;background:#0f172a;color:#eab308;border-radius:2px;padding:3px 10px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;}
   .open-group-badge{display:inline-block;padding:3px 10px;border-radius:2px;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;}
@@ -239,7 +240,7 @@
   .schedule-container{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
   .schedule-sem{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
   .schedule-sem-header{padding:12px 14px;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
-  .schedule-sem-num{font-family:'Fraunces',serif;font-size:22px;font-weight:700;color:var(--accent);}
+  .schedule-sem-num{font-family:'Fraunces',serif;font-size:22px;font-weight:700;color:#0f172a;}
   .schedule-sem-info{flex:1;}
   .schedule-sem-title{font-size:11px;color:var(--text);}
   .schedule-sem-sub{font-size:10px;}
@@ -259,7 +260,7 @@
   #graph-svg{display:block;}
   .graph-controls{display:flex;gap:10px;margin-bottom:14px;align-items:center;flex-wrap:wrap;}
   .graph-controls button{background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:6px 12px;border-radius:6px;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;}
-  .graph-controls button:hover{border-color:var(--accent);color:var(--accent);}
+  .graph-controls button:hover{border-color:#0f172a;color:#0f172a;}
   .fc-node{cursor:pointer;transition:all .15s;}
   .fc-node:hover rect{filter:brightness(1.3);}
   .fc-node.expanded rect{stroke-width:2;}
@@ -271,7 +272,7 @@
   /* SCHEDULE & GRAPH */
   .schedule-container{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
   .schedule-sem{background:var(--surface);border:1px solid var(--rule);border-radius:3px;overflow:hidden;}
-  .schedule-sem-header{padding:12px 16px;background:var(--navy);border-bottom:2px solid var(--gold);display:flex;align-items:center;gap:10px;}
+  .schedule-sem-header{padding:12px 16px;background:#0f172a;border-bottom:2px solid var(--gold);display:flex;align-items:center;gap:10px;}
   .schedule-sem-num{font-family:'EB Garamond',serif;font-size:22px;font-weight:900;color:var(--gold2);font-style:italic;}
   .schedule-sem-info{flex:1;}
   .schedule-sem-title{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.1em;}
@@ -291,13 +292,13 @@
   #graph-container{background:var(--surface);border:1px solid var(--rule);border-radius:3px;overflow:auto;min-height:500px;}
   #graph-svg{display:block;}
   .graph-controls{display:flex;gap:10px;margin-bottom:16px;align-items:center;flex-wrap:wrap;}
-  .graph-controls button{background:var(--navy);border:none;color:var(--cream);padding:7px 16px;border-radius:2px;font-family:'JetBrains Mono',monospace;font-size:10px;cursor:pointer;letter-spacing:.1em;text-transform:uppercase;transition:all .15s;}
-  .graph-controls button:hover{background:var(--gold);color:var(--navy);}
+  .graph-controls button{background:#0f172a;border:none;color:#f8fafc;padding:7px 16px;border-radius:2px;font-family:'JetBrains Mono',monospace;font-size:10px;cursor:pointer;letter-spacing:.1em;text-transform:uppercase;transition:all .15s;}
+  .graph-controls button:hover{background:var(--gold);color:#0f172a;}
   .fc-node{cursor:pointer;transition:all .15s;}
   .fc-node:hover rect{filter:brightness(1.1);}
   .fc-node.expanded rect{stroke-width:2;}
 
-  .info-box{background:var(--navy);border-left:3px solid var(--gold);border-radius:2px;padding:12px 16px;margin-bottom:18px;font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,.5);line-height:1.7;letter-spacing:.05em;}
+  .info-box{background:#0f172a;border-left:3px solid var(--gold);border-radius:2px;padding:12px 16px;margin-bottom:18px;font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,.5);line-height:1.7;letter-spacing:.05em;}
   .progress-bar-wrap{background:var(--surface2);border-radius:2px;height:5px;margin-top:8px;overflow:hidden;}
   .progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--navy),var(--gold));border-radius:2px;transition:width .4s ease;}
 
@@ -311,7 +312,7 @@
   }
   @keyframes fadeIn{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:translateY(0);}}
   .action-picker-header{
-    padding:8px 12px;background:var(--navy);
+    padding:8px 12px;background:#0f172a;
     font-family:'JetBrains Mono',monospace;font-size:9px;
     color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.1em;
     border-bottom:2px solid var(--gold);
@@ -335,10 +336,10 @@
     box-shadow:0 24px 64px rgba(0,0,0,.2);
   }
   .grade-head{
-    background:var(--navy);padding:16px 20px;
+    background:#0f172a;padding:16px 20px;
     border-bottom:3px solid var(--gold);
   }
-  .grade-head-title{font-family:'EB Garamond',serif;font-size:16px;font-weight:700;color:var(--cream);}
+  .grade-head-title{font-family:'EB Garamond',serif;font-size:16px;font-weight:700;color:#f8fafc;}
   .grade-head-sub{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,.4);margin-top:3px;letter-spacing:.1em;text-transform:uppercase;}
   .grade-body{padding:20px;display:flex;flex-direction:column;gap:14px;}
   .grade-input-wrap{position:relative;}
@@ -367,8 +368,8 @@
   .grade-btn{flex:1;padding:11px;border:none;border-radius:3px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;transition:all .15s;}
   .grade-btn-cancel{background:var(--surface2);color:var(--muted);border:1px solid var(--rule);}
   .grade-btn-cancel:hover{color:var(--text);}
-  .grade-btn-confirm{background:var(--navy);color:var(--cream);}
-  .grade-btn-confirm:hover{background:var(--gold);color:var(--navy);}
+  .grade-btn-confirm{background:#0f172a;color:#f8fafc;}
+  .grade-btn-confirm:hover{background:var(--gold);color:#0f172a;}
   .grade-btn-confirm:disabled{opacity:.4;cursor:default;pointer-events:none;}
   .grade-scale{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;font-family:'JetBrains Mono',monospace;font-size:9px;text-align:center;}
   .grade-scale-item{padding:4px 2px;border-radius:2px;background:var(--surface2);color:var(--muted);}
@@ -379,9 +380,9 @@
   /* MODALS */
   .modal-overlay{display:none;position:fixed;inset:0;background:rgba(13,27,46,.75);backdrop-filter:blur(4px);z-index:100;align-items:center;justify-content:center;}
   .modal-overlay.open{display:flex;}
-  .modal{background:var(--cream);border:1px solid var(--rule);border-radius:3px;overflow:hidden;max-width:380px;width:90%;box-shadow:0 16px 48px rgba(0,0,0,.15);}
-  .modal-head{background:var(--navy);padding:18px 24px;border-bottom:3px solid var(--gold);}
-  .modal h2{font-family:'EB Garamond',serif;font-size:18px;color:var(--cream);font-weight:700;}
+  .modal{background:#f8fafc;border:1px solid var(--rule);border-radius:3px;overflow:hidden;max-width:380px;width:90%;box-shadow:0 16px 48px rgba(0,0,0,.15);}
+  .modal-head{background:#0f172a;padding:18px 24px;border-bottom:3px solid var(--gold);}
+  .modal h2{font-family:'EB Garamond',serif;font-size:18px;color:#f8fafc;font-weight:700;}
   .modal-body{padding:20px 24px;}
   .modal p{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:20px;font-style:italic;}
   .modal-btns{display:flex;gap:10px;justify-content:flex-end;}
@@ -484,28 +485,28 @@
 
 <!-- ── AUTH MODAL ── -->
 <div id="auth-modal" style="display:none;position:fixed;inset:0;background:rgba(13,27,46,.7);backdrop-filter:blur(4px);z-index:1000;align-items:center;justify-content:center;">
-  <div style="background:var(--cream);border:1px solid var(--rule);border-radius:3px;width:380px;max-width:92vw;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.15);">
-    <div style="background:var(--navy);padding:20px 24px;border-bottom:3px solid var(--gold);display:flex;justify-content:space-between;align-items:center;">
-      <span style="font-family:'EB Garamond',serif;font-size:18px;font-weight:700;color:var(--cream);">Pensum <em style="color:var(--gold2);">Planner</em></span>
+  <div style="background:#f8fafc;border:1px solid var(--rule);border-radius:3px;width:380px;max-width:92vw;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.15);">
+    <div style="background:#0f172a;padding:20px 24px;border-bottom:3px solid var(--gold);display:flex;justify-content:space-between;align-items:center;">
+      <span style="font-family:'EB Garamond',serif;font-size:18px;font-weight:700;color:#f8fafc;">Pensum <em style="color:var(--gold2);">Planner</em></span>
       <button onclick="closeAuthModal()" style="background:none;border:none;color:rgba(255,255,255,.4);cursor:pointer;font-size:20px;line-height:1;">×</button>
     </div>
     <div style="padding:22px 24px;display:flex;flex-direction:column;gap:13px;">
       <div style="display:flex;gap:0;border:1px solid var(--rule);border-radius:2px;overflow:hidden;">
-        <button id="tab-login"    onclick="switchTab('login')"    style="flex:1;padding:9px;border:none;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;transition:all .15s;background:var(--navy);color:var(--cream);">Iniciar sesión</button>
+        <button id="tab-login"    onclick="switchTab('login')"    style="flex:1;padding:9px;border:none;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;transition:all .15s;background:#0f172a;color:#f8fafc;">Iniciar sesión</button>
         <button id="tab-register" onclick="switchTab('register')" style="flex:1;padding:9px;border:none;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;transition:all .15s;background:var(--ivory);color:var(--muted);">Crear cuenta</button>
       </div>
       <div id="auth-error" style="color:var(--failed-text);font-size:11px;min-height:14px;text-align:center;font-style:italic;"></div>
       <div id="form-login" style="display:flex;flex-direction:column;gap:10px;">
         <input id="login-email"    type="email"    placeholder="Correo electrónico" style="background:white;border:1px solid var(--rule);color:var(--ink);padding:11px 13px;border-radius:2px;font-family:'Crimson Text',serif;font-size:14px;outline:none;width:100%;">
         <input id="login-password" type="password" placeholder="Contraseña"         style="background:white;border:1px solid var(--rule);color:var(--ink);padding:11px 13px;border-radius:2px;font-family:'Crimson Text',serif;font-size:14px;outline:none;width:100%;">
-        <button id="login-btn" onclick="doLogin()" style="background:var(--navy);border:none;color:var(--cream);padding:12px;border-radius:2px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;transition:all .15s;">Entrar</button>
+        <button id="login-btn" onclick="doLogin()" style="background:#0f172a;border:none;color:#f8fafc;padding:12px;border-radius:2px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;transition:all .15s;">Entrar</button>
         <p style="font-size:11px;color:var(--muted);text-align:center;font-style:italic;">¿No tienes cuenta? <a onclick="switchTab('register')" style="color:var(--navy);cursor:pointer;text-decoration:underline;">Regístrate aquí</a></p>
       </div>
       <div id="form-register" style="display:none;flex-direction:column;gap:10px;">
         <input id="reg-name"     type="text"     placeholder="Nombre (opcional)"   style="background:white;border:1px solid var(--rule);color:var(--ink);padding:11px 13px;border-radius:2px;font-family:'Crimson Text',serif;font-size:14px;outline:none;width:100%;">
         <input id="reg-email"    type="email"    placeholder="Correo electrónico"   style="background:white;border:1px solid var(--rule);color:var(--ink);padding:11px 13px;border-radius:2px;font-family:'Crimson Text',serif;font-size:14px;outline:none;width:100%;">
         <input id="reg-password" type="password" placeholder="Contraseña (mín. 6)" style="background:white;border:1px solid var(--rule);color:var(--ink);padding:11px 13px;border-radius:2px;font-family:'Crimson Text',serif;font-size:14px;outline:none;width:100%;">
-        <button id="register-btn" onclick="doRegister()" style="background:var(--navy);border:none;color:var(--cream);padding:12px;border-radius:2px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;transition:all .15s;">Crear cuenta</button>
+        <button id="register-btn" onclick="doRegister()" style="background:#0f172a;border:none;color:#f8fafc;padding:12px;border-radius:2px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;transition:all .15s;">Crear cuenta</button>
         <p style="font-size:11px;color:var(--muted);text-align:center;font-style:italic;">¿Ya tienes cuenta? <a onclick="switchTab('login')" style="color:var(--navy);cursor:pointer;text-decoration:underline;">Inicia sesión</a></p>
       </div>
     </div>
@@ -649,7 +650,11 @@ async function loadState(){
   if (authToken) {
     try {
       const { ok, data } = await apiCall('GET', '/progress/' + PENSUM_ID);
-      if (ok && data.data && Object.keys(data.data).length) return data.data;
+      if (ok && data.data && Object.keys(data.data).length) {
+        // Also restore grades from cloud
+        if (data.grades) window._grades = data.grades;
+        return data.data;
+      }
     } catch(e) {}
   }
   try { const s=localStorage.getItem(STATE_KEY); return s?JSON.parse(s):{}; } catch(e){ return {}; }
@@ -657,10 +662,16 @@ async function loadState(){
 
 function saveState(){
   localStorage.setItem(STATE_KEY, JSON.stringify(courseStates));
+  localStorage.setItem('pp_grades_' + PENSUM_ID, JSON.stringify(window._grades || {}));
   if (authToken) {
     clearTimeout(saveTimer);
     saveTimer = setTimeout(async () => {
-      try { await apiCall('POST', '/progress/' + PENSUM_ID, { data: courseStates }); } catch(e) {}
+      try {
+        await apiCall('POST', '/progress/' + PENSUM_ID, {
+          data: courseStates,
+          grades: window._grades || {}
+        });
+      } catch(e) {}
     }, 800);
   }
 }
@@ -1173,7 +1184,7 @@ function renderSchedule(){
         <span class="sched-code">${course.code}</span>
         <span class="sched-name">${course.name}</span>
         <span class="sched-crs">${course.crs}cr</span>
-        ${unlocks&&st!=='passed'&&st!=='enrolled'?`<span style="font-size:9px;color:var(--accent);margin-left:3px">→${unlocks}</span>`:''}
+        ${unlocks&&st!=='passed'&&st!=='enrolled'?`<span style="font-size:9px;color:#0f172a;margin-left:3px">→${unlocks}</span>`:''}
         ${cls==='sc-enrolled'?'<span style="font-size:9px;margin-left:3px">📖</span>':''}
         ${cls==='sc-failed'?'<span style="font-size:9px;margin-left:3px">⚠</span>':''}`;
       list.appendChild(row);
