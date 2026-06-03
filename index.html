@@ -3,183 +3,577 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pensum Planner</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,300;1,9..144,600&display=swap" rel="stylesheet">
+<title>Pensum Planner — República Dominicana</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg:#0a0a0f;--surface:#13131a;--surface2:#1a1a24;--border:#252535;
-    --text:#edeaf8;--muted:#6a6880;--accent:#7c6af7;--accent2:#f7a26a;
-    --grad1:#7c6af7;--grad2:#f7a26a;
-  }
-  *{margin:0;padding:0;box-sizing:border-box;}
-  html,body{min-height:100vh;}
-  body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;font-size:13px;overflow-x:hidden;}
+:root {
+  --cream:#faf7f2;
+  --ivory:#f2ede4;
+  --parchment:#e8dfd0;
+  --navy:#0d1b2e;
+  --navy2:#152235;
+  --navy3:#1e3050;
+  --gold:#c9a84c;
+  --gold2:#e8c97a;
+  --ink:#1a1410;
+  --ink2:#3d342a;
+  --muted:#8a7f72;
+  --rule:#d4c9b8;
+  --red:#8b2020;
+  --green:#1a4a2e;
+  --accent:var(--navy);
+  --radius:4px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{min-height:100vh;}
+body{
+  background:var(--cream);
+  color:var(--ink);
+  font-family:'Source Serif 4',serif;
+  font-size:15px;
+  line-height:1.6;
+  overflow-x:hidden;
+}
 
-  /* animated background */
-  .bg-orbs{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
-  .orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:.18;animation:float 12s ease-in-out infinite;}
-  .orb1{width:600px;height:600px;background:var(--grad1);top:-200px;left:-200px;animation-delay:0s;}
-  .orb2{width:500px;height:500px;background:var(--grad2);bottom:-150px;right:-150px;animation-delay:-5s;}
-  .orb3{width:300px;height:300px;background:#e879f9;top:50%;left:50%;transform:translate(-50%,-50%);animation-delay:-8s;}
-  @keyframes float{0%,100%{transform:translate(0,0) scale(1);}33%{transform:translate(30px,-20px) scale(1.05);}66%{transform:translate(-20px,30px) scale(.95);}}
+/* ── TEXTURE OVERLAY ── */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:0;opacity:.6;
+}
 
-  .page{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;}
+.page{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;}
 
-  /* NAV */
-  nav{padding:20px 48px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.05);}
-  .logo{font-family:'Fraunces',serif;font-size:18px;font-weight:700;letter-spacing:-0.5px;}
-  .logo span{color:var(--accent);font-style:italic;}
-  .nav-tag{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;}
+/* ── MASTHEAD ── */
+.masthead{
+  background:var(--navy);
+  color:var(--cream);
+  padding:0 60px;
+  display:flex;
+  align-items:stretch;
+  border-bottom:3px solid var(--gold);
+  position:relative;
+  overflow:hidden;
+}
+.masthead::before{
+  content:'';
+  position:absolute;inset:0;
+  background:repeating-linear-gradient(
+    90deg,
+    transparent 0px,
+    transparent 59px,
+    rgba(255,255,255,.03) 60px,
+    rgba(255,255,255,.03) 61px
+  );
+  pointer-events:none;
+}
+.masthead-left{
+  display:flex;align-items:center;
+  padding:18px 0;
+  border-right:1px solid rgba(255,255,255,.1);
+  padding-right:32px;
+  margin-right:32px;
+  gap:14px;
+}
+.masthead-crest{
+  width:42px;height:42px;
+  border:2px solid var(--gold);
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;
+  font-size:18px;font-weight:900;
+  color:var(--gold);
+  flex-shrink:0;
+}
+.masthead-wordmark{
+  font-family:'Playfair Display',serif;
+  font-size:22px;font-weight:700;
+  letter-spacing:-.3px;
+  line-height:1;
+}
+.masthead-wordmark em{font-style:italic;color:var(--gold2);}
+.masthead-subtitle{font-size:10px;color:rgba(255,255,255,.45);letter-spacing:.15em;text-transform:uppercase;margin-top:3px;font-family:'JetBrains Mono',monospace;}
 
-  /* HERO */
-  .hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 48px 40px;text-align:center;}
-  .hero-eyebrow{font-size:10px;color:var(--accent);text-transform:uppercase;letter-spacing:3px;margin-bottom:20px;opacity:.8;}
-  .hero-title{font-family:'Fraunces',serif;font-size:clamp(36px,6vw,72px);font-weight:700;line-height:1.05;letter-spacing:-2px;margin-bottom:16px;}
-  .hero-title em{font-style:italic;background:linear-gradient(135deg,var(--grad1),var(--grad2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-  .hero-sub{font-size:13px;color:var(--muted);max-width:480px;line-height:1.8;margin-bottom:52px;}
+.masthead-right{
+  display:flex;align-items:center;
+  margin-left:auto;
+  gap:24px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  color:rgba(255,255,255,.4);
+  letter-spacing:.1em;
+  text-transform:uppercase;
+}
+.masthead-tag{
+  display:flex;align-items:center;gap:6px;
+}
+.masthead-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);opacity:.7;}
 
-  /* SELECTOR */
-  .selector-wrap{width:100%;max-width:680px;}
-  .selector-step{margin-bottom:28px;}
-  .step-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
-  .step-num{width:18px;height:18px;background:var(--accent);border-radius:50%;font-size:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:500;}
+/* ── BANNER ── */
+.banner{
+  background:var(--navy2);
+  color:var(--cream);
+  padding:72px 60px 60px;
+  position:relative;
+  overflow:hidden;
+}
+.banner::after{
+  content:'';
+  position:absolute;
+  bottom:0;left:0;right:0;
+  height:4px;
+  background:repeating-linear-gradient(90deg,var(--gold) 0px,var(--gold) 20px,transparent 20px,transparent 28px);
+  opacity:.4;
+}
+.banner-grid{
+  display:grid;
+  grid-template-columns:1fr 380px;
+  gap:60px;
+  max-width:1100px;
+  margin:0 auto;
+  align-items:center;
+}
+.banner-eyebrow{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;color:var(--gold);
+  letter-spacing:.2em;text-transform:uppercase;
+  margin-bottom:20px;
+  display:flex;align-items:center;gap:10px;
+}
+.banner-eyebrow::before{content:'';width:24px;height:1px;background:var(--gold);}
+.banner-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(34px,4.5vw,58px);
+  font-weight:900;
+  line-height:1.06;
+  letter-spacing:-1.5px;
+  margin-bottom:18px;
+}
+.banner-title em{font-style:italic;color:var(--gold2);}
+.banner-desc{
+  font-size:15px;
+  color:rgba(255,255,255,.55);
+  line-height:1.75;
+  max-width:480px;
+  font-weight:300;
+}
+.banner-stats{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:1px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:4px;
+  overflow:hidden;
+  align-self:start;
+  margin-top:8px;
+}
+.b-stat{
+  background:var(--navy3);
+  padding:20px 18px;
+  text-align:center;
+  transition:background .2s;
+}
+.b-stat:hover{background:#243d5a;}
+.b-stat-num{
+  font-family:'Playfair Display',serif;
+  font-size:28px;font-weight:700;
+  color:var(--gold2);
+  line-height:1;
+  margin-bottom:4px;
+}
+.b-stat-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.12em;}
 
-  .university-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;}
-  .uni-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;cursor:pointer;transition:all .2s;text-align:left;}
-  .uni-card:hover{border-color:var(--accent);background:var(--surface2);transform:translateY(-2px);}
-  .uni-card.selected{border-color:var(--accent);background:#1a1730;box-shadow:0 0 0 1px var(--accent);}
-  .uni-name{font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px;}
-  .uni-location{font-size:10px;color:var(--muted);}
-  .uni-count{font-size:9px;color:var(--accent);margin-top:6px;}
+/* ── CONTENT AREA ── */
+.content{flex:1;padding:52px 60px;max-width:1100px;width:100%;margin:0 auto;}
 
-  .career-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;}
-  .career-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;transition:all .2s;text-align:left;display:flex;flex-direction:column;gap:6px;}
-  .career-card:hover{border-color:var(--accent2);background:var(--surface2);transform:translateY(-2px);}
-  .career-card.selected{border-color:var(--accent2);background:#1e1a10;box-shadow:0 0 0 1px var(--accent2);}
-  .career-name{font-size:12px;color:var(--text);line-height:1.4;}
-  .career-meta{font-size:9px;color:var(--muted);display:flex;gap:10px;}
-  .career-badge{font-size:9px;padding:2px 7px;border-radius:3px;background:#1f1730;color:#a78bfa;border:1px solid #3a2a5d;align-self:flex-start;}
+/* ── AUTH SECTION ── */
+.auth-row{
+  display:flex;align-items:center;gap:16px;
+  padding:18px 24px;
+  background:var(--navy);
+  border-radius:var(--radius);
+  margin-bottom:40px;
+  border-left:3px solid var(--gold);
+}
+.auth-row-text{
+  flex:1;
+  font-size:12px;color:rgba(255,255,255,.5);
+  font-family:'JetBrains Mono',monospace;
+  letter-spacing:.05em;
+}
+.auth-row-text strong{color:rgba(255,255,255,.8);font-weight:500;}
+.auth-inline-btn{
+  display:inline-flex;align-items:center;gap:7px;
+  background:var(--gold);
+  color:var(--navy);
+  border:none;border-radius:var(--radius);
+  padding:9px 18px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;font-weight:500;
+  cursor:pointer;letter-spacing:.08em;text-transform:uppercase;
+  transition:all .15s;flex-shrink:0;
+}
+.auth-inline-btn:hover{background:var(--gold2);}
+.auth-user-row{display:flex;align-items:center;gap:10px;}
+.auth-user-name{color:var(--gold2);font-size:11px;font-family:'JetBrains Mono',monospace;}
+.auth-logout{font-size:10px;color:rgba(255,255,255,.35);cursor:pointer;text-decoration:underline;font-family:'JetBrains Mono',monospace;}
+.auth-logout:hover{color:rgba(255,255,255,.6);}
 
-  .go-btn{display:block;width:100%;padding:14px;background:linear-gradient(135deg,var(--grad1),#9f5af7);border:none;border-radius:10px;color:#fff;font-family:'DM Mono',monospace;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;letter-spacing:.5px;margin-top:8px;opacity:.4;pointer-events:none;}
-  .go-btn.ready{opacity:1;pointer-events:all;}
-  .go-btn.ready:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(124,106,247,.4);}
+/* ── SECTION HEADERS ── */
+.section-head{
+  display:flex;align-items:baseline;gap:14px;
+  margin-bottom:18px;
+}
+.section-num{
+  font-family:'Playfair Display',serif;
+  font-size:13px;font-style:italic;
+  color:var(--gold);
+}
+.section-title{
+  font-family:'Playfair Display',serif;
+  font-size:18px;font-weight:700;
+  color:var(--navy);
+  letter-spacing:-.3px;
+}
+.section-rule{flex:1;height:1px;background:var(--rule);margin-left:8px;}
 
-  /* empty state */
-  .empty-careers{padding:20px;text-align:center;color:var(--muted);font-size:11px;border:1px dashed var(--border);border-radius:10px;}
+/* ── SEARCH ── */
+.search-field{
+  width:100%;
+  background:white;
+  border:1px solid var(--rule);
+  border-radius:var(--radius);
+  padding:10px 16px;
+  font-family:'Source Serif 4',serif;
+  font-size:14px;
+  color:var(--ink);
+  outline:none;
+  margin-bottom:14px;
+  transition:border-color .15s;
+  box-shadow:inset 0 1px 3px rgba(0,0,0,.04);
+}
+.search-field:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(13,27,46,.08),inset 0 1px 3px rgba(0,0,0,.04);}
+.search-field::placeholder{color:var(--muted);}
 
-  /* AUTH */
-  .auth-section{text-align:center;margin-bottom:28px;}
-  .auth-section-label{font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;}
-  .auth-big-btn{display:inline-flex;align-items:center;gap:8px;padding:13px 28px;border-radius:10px;font-family:'DM Mono',monospace;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;letter-spacing:.3px;border:none;}
-  .auth-big-btn.signin{background:linear-gradient(135deg,var(--grad1),#9f5af7);color:#fff;box-shadow:0 4px 18px rgba(124,106,247,.35);}
-  .auth-big-btn.signin:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(124,106,247,.5);}
-  .auth-big-btn.user{background:var(--surface2);color:var(--text);border:1px solid var(--border);}
-  .auth-big-btn.user:hover{border-color:var(--accent);color:var(--accent);}
-  .auth-divider{display:flex;align-items:center;gap:12px;margin-bottom:24px;color:var(--muted);font-size:10px;}
-  .auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border);}
-  .auth-logout-link{font-size:10px;color:var(--muted);cursor:pointer;text-decoration:underline;margin-left:12px;}
-  .auth-logout-link:hover{color:var(--accent);}
+/* ── UNIVERSITY GRID ── */
+.uni-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:36px;}
+.uni-card{
+  background:white;
+  border:1px solid var(--rule);
+  border-radius:var(--radius);
+  padding:18px 20px;
+  cursor:pointer;
+  transition:all .2s;
+  position:relative;
+  overflow:hidden;
+}
+.uni-card::before{
+  content:'';
+  position:absolute;top:0;left:0;right:0;
+  height:3px;
+  background:var(--navy);
+  transform:scaleX(0);
+  transform-origin:left;
+  transition:transform .2s;
+}
+.uni-card:hover{border-color:var(--navy);box-shadow:0 4px 16px rgba(13,27,46,.1);transform:translateY(-2px);}
+.uni-card:hover::before{transform:scaleX(1);}
+.uni-card.selected{border-color:var(--navy);background:#f0f4fa;box-shadow:0 4px 16px rgba(13,27,46,.12);}
+.uni-card.selected::before{transform:scaleX(1);background:var(--gold);}
+.uni-abbr{
+  font-family:'Playfair Display',serif;
+  font-size:22px;font-weight:900;
+  color:var(--navy);
+  margin-bottom:4px;letter-spacing:-1px;
+}
+.uni-fullname{font-size:11px;color:var(--ink2);line-height:1.4;margin-bottom:8px;}
+.uni-location{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;}
+.uni-badge{
+  display:inline-block;
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;color:var(--navy);
+  background:var(--ivory);
+  border:1px solid var(--parchment);
+  padding:2px 7px;border-radius:2px;
+  margin-top:10px;
+  letter-spacing:.08em;
+}
 
-  /* AUTH MODAL */
-  .auth-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;align-items:center;justify-content:center;}
-  .auth-overlay.open{display:flex;}
-  .auth-box{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:32px;width:360px;max-width:92vw;display:flex;flex-direction:column;gap:14px;}
-  .auth-box-title{font-family:'Fraunces',serif;font-size:20px;font-weight:700;display:flex;justify-content:space-between;align-items:center;}
-  .auth-close{background:none;border:none;color:var(--muted);cursor:pointer;font-size:20px;line-height:1;padding:0;}
-  .auth-tabs{display:flex;gap:3px;background:var(--surface2);border-radius:8px;padding:3px;}
-  .auth-tab{flex:1;padding:7px;border:none;border-radius:6px;cursor:pointer;font-family:'DM Mono',monospace;font-size:11px;transition:all .15s;background:none;color:var(--muted);}
-  .auth-tab.active{background:var(--surface);color:var(--text);}
-  .auth-input{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:11px 13px;border-radius:8px;font-family:'DM Mono',monospace;font-size:12px;outline:none;width:100%;box-sizing:border-box;}
-  .auth-input:focus{border-color:var(--accent);}
-  .auth-submit{background:linear-gradient(135deg,var(--grad1),#9f5af7);border:none;color:#fff;padding:12px;border-radius:8px;cursor:pointer;font-family:'DM Mono',monospace;font-size:12px;font-weight:500;width:100%;transition:all .15s;}
-  .auth-submit:hover{opacity:.9;}
-  .auth-submit:disabled{opacity:.5;cursor:default;}
-  .auth-err{color:#ff6b6b;font-size:11px;min-height:14px;text-align:center;}
-  .auth-switch{font-size:10px;color:var(--muted);text-align:center;}
-  .auth-switch a{color:var(--accent);cursor:pointer;text-decoration:underline;}
+/* ── CAREER GRID ── */
+.career-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;}
+.career-card{
+  background:white;
+  border:1px solid var(--rule);
+  border-radius:var(--radius);
+  padding:14px 16px;
+  cursor:pointer;
+  transition:all .15s;
+  display:flex;flex-direction:column;gap:8px;
+  position:relative;
+}
+.career-card:hover{border-color:var(--gold);box-shadow:0 2px 10px rgba(0,0,0,.08);}
+.career-card.selected{border-color:var(--gold);background:#fefbf3;box-shadow:0 2px 10px rgba(201,168,76,.15);}
+.career-shortcode{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;font-weight:500;
+  color:var(--gold);
+  letter-spacing:.15em;text-transform:uppercase;
+  background:var(--navy);
+  padding:2px 7px;border-radius:2px;
+  align-self:flex-start;
+}
+.career-card.selected .career-shortcode{background:var(--gold);color:var(--navy);}
+.career-title{font-size:12px;color:var(--ink);line-height:1.45;font-weight:400;}
+.career-meta{
+  display:flex;gap:12px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.08em;
+  padding-top:4px;
+  border-top:1px solid var(--ivory);
+}
 
-  /* FOOTER */
-  footer{padding:20px 48px;border-top:1px solid rgba(255,255,255,.05);display:flex;justify-content:space-between;align-items:center;}
-  .footer-text{font-size:10px;color:var(--muted);}
-  .footer-link{color:var(--accent);text-decoration:none;font-size:10px;}
-  .footer-link:hover{text-decoration:underline;}
+/* ── DIVIDER ── */
+.selector-divider{
+  display:flex;align-items:center;gap:16px;
+  margin:32px 0 28px;
+  color:var(--muted);
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;letter-spacing:.2em;text-transform:uppercase;
+}
+.selector-divider::before,.selector-divider::after{
+  content:'';flex:1;height:1px;background:var(--rule);
+}
 
-  /* SEARCH */
-  .search-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 14px;color:var(--text);font-family:'DM Mono',monospace;font-size:12px;margin-bottom:10px;transition:border-color .2s;outline:none;}
-  .search-input:focus{border-color:var(--accent);}
-  .search-input::placeholder{color:var(--muted);}
+/* ── GO BUTTON ── */
+.go-btn{
+  display:block;width:100%;
+  padding:15px;
+  background:var(--navy);
+  border:2px solid var(--navy);
+  border-radius:var(--radius);
+  color:var(--cream);
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;font-weight:500;
+  cursor:pointer;
+  transition:all .2s;
+  letter-spacing:.12em;text-transform:uppercase;
+  margin-top:20px;
+  opacity:.35;pointer-events:none;
+  position:relative;overflow:hidden;
+}
+.go-btn::after{
+  content:'→';
+  position:absolute;right:20px;top:50%;transform:translateY(-50%);
+  transition:transform .2s;
+}
+.go-btn.ready{opacity:1;pointer-events:all;}
+.go-btn.ready:hover{background:var(--gold);border-color:var(--gold);color:var(--navy);}
+.go-btn.ready:hover::after{transform:translateY(-50%) translateX(4px);}
 
-  @media(max-width:600px){
-    nav,footer{padding:16px 20px;}
-    .hero{padding:40px 20px 30px;}
-    .university-grid{grid-template-columns:1fr 1fr;}
-    .career-grid{grid-template-columns:1fr;}
-  }
+/* ── NO RESULTS ── */
+.no-results{
+  padding:24px;text-align:center;
+  color:var(--muted);font-size:12px;
+  border:1px dashed var(--parchment);
+  border-radius:var(--radius);
+  font-style:italic;
+}
+
+/* ── AUTH MODAL ── */
+.auth-overlay{display:none;position:fixed;inset:0;background:rgba(13,27,46,.7);backdrop-filter:blur(4px);z-index:1000;align-items:center;justify-content:center;}
+.auth-overlay.open{display:flex;}
+.auth-box{
+  background:var(--cream);
+  border:1px solid var(--rule);
+  border-radius:var(--radius);
+  width:400px;max-width:92vw;
+  overflow:hidden;
+  box-shadow:0 24px 64px rgba(0,0,0,.2);
+}
+.auth-box-head{
+  background:var(--navy);
+  padding:24px 28px;
+  display:flex;justify-content:space-between;align-items:center;
+  border-bottom:3px solid var(--gold);
+}
+.auth-box-title{
+  font-family:'Playfair Display',serif;
+  font-size:18px;font-weight:700;
+  color:var(--cream);
+}
+.auth-box-title em{font-style:italic;color:var(--gold2);}
+.auth-close-btn{background:none;border:none;color:rgba(255,255,255,.4);cursor:pointer;font-size:20px;line-height:1;padding:0;transition:color .15s;}
+.auth-close-btn:hover{color:var(--cream);}
+.auth-box-body{padding:24px 28px;display:flex;flex-direction:column;gap:14px;}
+.auth-tabs{display:flex;gap:0;border:1px solid var(--rule);border-radius:var(--radius);overflow:hidden;margin-bottom:4px;}
+.auth-tab{flex:1;padding:9px;border:none;background:var(--ivory);color:var(--muted);cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;transition:all .15s;}
+.auth-tab.active{background:var(--navy);color:var(--cream);}
+.auth-err{color:var(--red);font-size:11px;min-height:14px;text-align:center;font-style:italic;}
+.auth-input{
+  width:100%;background:white;
+  border:1px solid var(--rule);
+  border-radius:var(--radius);
+  padding:11px 14px;
+  font-family:'Source Serif 4',serif;
+  font-size:14px;color:var(--ink);
+  outline:none;transition:border-color .15s;
+}
+.auth-input:focus{border-color:var(--navy);}
+.auth-input::placeholder{color:var(--muted);}
+.auth-submit{
+  background:var(--navy);border:2px solid var(--navy);
+  color:var(--cream);padding:12px;
+  border-radius:var(--radius);cursor:pointer;
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;font-weight:500;
+  width:100%;transition:all .15s;
+  letter-spacing:.1em;text-transform:uppercase;
+}
+.auth-submit:hover{background:var(--gold);border-color:var(--gold);color:var(--navy);}
+.auth-submit:disabled{opacity:.4;cursor:default;}
+.auth-switch{font-size:11px;color:var(--muted);text-align:center;font-style:italic;}
+.auth-switch a{color:var(--navy);cursor:pointer;text-decoration:underline;}
+
+/* ── FOOTER ── */
+footer{
+  background:var(--navy);
+  color:rgba(255,255,255,.3);
+  padding:18px 60px;
+  display:flex;justify-content:space-between;align-items:center;
+  border-top:3px solid var(--gold);
+  margin-top:auto;
+}
+.footer-text{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;}
+.footer-rule{width:1px;height:16px;background:rgba(255,255,255,.1);}
+
+@media(max-width:700px){
+  .masthead,.banner,.content,footer{padding-left:20px;padding-right:20px;}
+  .banner-grid{grid-template-columns:1fr;}
+  .banner-stats{display:none;}
+  .uni-grid{grid-template-columns:1fr 1fr;}
+  .career-grid{grid-template-columns:1fr;}
+  .auth-row{flex-direction:column;align-items:flex-start;}
+}
 </style>
 </head>
 <body>
-<div class="bg-orbs">
-  <div class="orb orb1"></div>
-  <div class="orb orb2"></div>
-  <div class="orb orb3"></div>
-</div>
-
 <div class="page">
-  <nav>
-    <div class="logo">Pensum <span>Planner</span></div>
-    <div class="nav-tag">República Dominicana</div>
-  </nav>
 
-  <div class="hero">
-    <div class="hero-eyebrow">Planificador de carrera universitaria</div>
-    <h1 class="hero-title">Planifica tu<br><em>pensum</em> académico</h1>
-    <p class="hero-sub">Selecciona tu universidad y carrera para ver todas tus materias, prerequisitos y el camino óptimo hacia tu graduación.</p>
-
-    <!-- AUTH SECTION -->
-    <div class="auth-section" id="auth-section">
-      <div class="auth-section-label">Tu progreso, en todos tus dispositivos</div>
-      <div id="auth-guest-view">
-        <button class="auth-big-btn signin" onclick="openAuthModal('login')">
-          ⚡ Iniciar sesión o crear cuenta
-        </button>
-      </div>
-      <div id="auth-user-view" style="display:none;">
-        <button class="auth-big-btn user" onclick="openAuthModal('profile')">
-          ✓ <span id="auth-user-name"></span>
-        </button>
-        <a class="auth-logout-link" onclick="doLogout()">Cerrar sesión</a>
+  <!-- MASTHEAD -->
+  <header class="masthead">
+    <div class="masthead-left">
+      <div class="masthead-crest">PP</div>
+      <div>
+        <div class="masthead-wordmark">Pensum <em>Planner</em></div>
+        <div class="masthead-subtitle">Planificador Académico</div>
       </div>
     </div>
+    <div class="masthead-right">
+      <div class="masthead-tag"><div class="masthead-dot"></div>República Dominicana</div>
+    </div>
+  </header>
 
-    <div class="auth-divider">o continúa sin cuenta</div>
-
-    <div class="selector-wrap">
-
-      <!-- STEP 1: University -->
-      <div class="selector-step">
-        <div class="step-label"><span class="step-num">1</span>Selecciona tu universidad</div>
-        <input class="search-input" id="uni-search" placeholder="Buscar universidad…" oninput="filterUniversities()" autocomplete="off">
-        <div class="university-grid" id="uni-grid"></div>
+  <!-- BANNER -->
+  <div class="banner">
+    <div class="banner-grid">
+      <div>
+        <div class="banner-eyebrow">Planificador de carrera universitaria</div>
+        <h1 class="banner-title">Planifica tu<br>trayecto <em>académico</em></h1>
+        <p class="banner-desc">Visualiza tu pensum completo, rastrea prerequisitos y traza el camino óptimo hacia tu graduación.</p>
       </div>
-
-      <!-- STEP 2: Career -->
-      <div class="selector-step" id="career-step" style="display:none;">
-        <div class="step-label"><span class="step-num">2</span>Selecciona tu carrera</div>
-        <input class="search-input" id="career-search" placeholder="Buscar carrera…" oninput="filterCareers()" autocomplete="off" style="margin-bottom:10px;">
-        <div class="career-grid" id="career-grid"></div>
-        <div id="career-no-results" style="display:none;padding:20px;text-align:center;color:var(--muted);font-size:11px;border:1px dashed var(--border);border-radius:10px;">No se encontraron carreras para "<span id="career-search-term"></span>"</div>
+      <div class="banner-stats" id="banner-stats">
+        <div class="b-stat"><div class="b-stat-num">3</div><div class="b-stat-label">Universidades</div></div>
+        <div class="b-stat"><div class="b-stat-num" id="stat-careers">—</div><div class="b-stat-label">Carreras</div></div>
+        <div class="b-stat"><div class="b-stat-num" id="stat-courses">—</div><div class="b-stat-label">Materias</div></div>
       </div>
-
-      <!-- GO -->
-      <button class="go-btn" id="go-btn" onclick="goToPlanner()">Abrir planificador →</button>
     </div>
   </div>
 
-  <footer>
-    <div class="footer-text">Pensum Planner · República Dominicana</div>
+  <main class="content">
 
+    <!-- AUTH ROW -->
+    <div class="auth-row">
+      <div class="auth-row-text">
+        <strong>Guarda tu progreso</strong> — inicia sesión para sincronizar tu pensum en todos tus dispositivos.
+      </div>
+      <div id="auth-guest-view">
+        <button class="auth-inline-btn" onclick="openAuthModal('login')">Iniciar sesión →</button>
+      </div>
+      <div id="auth-user-view" style="display:none;" class="auth-user-row">
+        <span class="auth-user-name">✓ <span id="auth-user-name"></span></span>
+        <a class="auth-logout" onclick="doLogout()">Cerrar sesión</a>
+      </div>
+    </div>
+
+    <!-- STEP 1 -->
+    <div class="selector-step">
+      <div class="section-head">
+        <span class="section-num">I.</span>
+        <span class="section-title">Selecciona tu universidad</span>
+        <div class="section-rule"></div>
+      </div>
+      <input class="search-field" id="uni-search" placeholder="Buscar universidad…" oninput="filterUniversities()" autocomplete="off">
+      <div class="uni-grid" id="uni-grid"></div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="selector-step" id="career-step" style="display:none;">
+      <div class="section-head">
+        <span class="section-num">II.</span>
+        <span class="section-title">Selecciona tu carrera</span>
+        <div class="section-rule"></div>
+      </div>
+      <input class="search-field" id="career-search" placeholder="Buscar carrera…" oninput="filterCareers()" autocomplete="off">
+      <div class="career-grid" id="career-grid"></div>
+      <div id="career-no-results" class="no-results" style="display:none;">
+        No se encontraron carreras para "<span id="career-search-term"></span>"
+      </div>
+    </div>
+
+    <button class="go-btn" id="go-btn" onclick="goToPlanner()">Abrir planificador</button>
+
+  </main>
+
+  <footer>
+    <div class="footer-text">Pensum Planner &nbsp;·&nbsp; República Dominicana</div>
+    <div class="footer-rule"></div>
+    <div class="footer-text">Uso académico</div>
   </footer>
+
 </div>
+
+<!-- AUTH MODAL -->
+<div class="auth-overlay" id="auth-overlay" onclick="handleOverlayClick(event)">
+  <div class="auth-box">
+    <div class="auth-box-head">
+      <div class="auth-box-title">Pensum <em>Planner</em></div>
+      <button class="auth-close-btn" onclick="closeAuthModal()">×</button>
+    </div>
+    <div class="auth-box-body">
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="idx-tab-login"    onclick="switchAuthTab('login')">Iniciar sesión</button>
+        <button class="auth-tab"        id="idx-tab-register" onclick="switchAuthTab('register')">Crear cuenta</button>
+      </div>
+      <div class="auth-err" id="idx-auth-err"></div>
+      <div id="idx-form-login" style="display:flex;flex-direction:column;gap:10px;">
+        <input id="idx-login-email"    type="email"    class="auth-input" placeholder="Correo electrónico">
+        <input id="idx-login-password" type="password" class="auth-input" placeholder="Contraseña">
+        <button class="auth-submit" id="idx-login-btn" onclick="doLogin()">Entrar</button>
+        <p class="auth-switch">¿No tienes cuenta? <a onclick="switchAuthTab('register')">Regístrate aquí</a></p>
+      </div>
+      <div id="idx-form-register" style="display:none;flex-direction:column;gap:10px;">
+        <input id="idx-reg-name"     type="text"     class="auth-input" placeholder="Nombre (opcional)">
+        <input id="idx-reg-email"    type="email"    class="auth-input" placeholder="Correo electrónico">
+        <input id="idx-reg-password" type="password" class="auth-input" placeholder="Contraseña (mín. 6 caracteres)">
+        <button class="auth-submit" id="idx-register-btn" onclick="doRegister()">Crear cuenta</button>
+        <p class="auth-switch">¿Ya tienes cuenta? <a onclick="switchAuthTab('login')">Inicia sesión</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <script>
 // ─── UNIVERSITIES & CAREERS REGISTRY ─────────────────────────────────────────
@@ -336,6 +730,7 @@ const REGISTRY = [
 let selectedUni = null;
 let selectedCareer = null;
 
+
 // ─── RENDER UNIVERSITIES ───────────────────────────────────────────────────────
 function renderUniversities(filter=''){
   const grid = document.getElementById('uni-grid');
@@ -389,10 +784,10 @@ function renderCareers(){
     if(noResults) noResults.style.display = 'none';
     grid.innerHTML = filtered.map(c => `
       <div class="career-card ${selectedCareer===c.id?'selected':''}" onclick="selectCareer('${c.id}')">
-        <span class="career-badge">${c.short}</span>
-        <div class="career-name">${c.name}</div>
+        <span class="career-shortcode">${c.short}</span>
+        <div class="career-title">${c.name}</div>
         <div class="career-meta">
-          <span>${c.semesters} semestres</span>
+          <span>${c.semesters} sem</span>
           <span>${c.credits} créditos</span>
         </div>
       </div>
@@ -422,142 +817,20 @@ function goToPlanner(){
 }
 
 // ─── INIT ──────────────────────────────────────────────────────────────────────
-renderUniversities();
+renderUniversities(); updateBannerStats();
+
+// Update stats in banner
+function updateBannerStats() {
+  const totalCareers = REGISTRY.reduce((a,u) => a + u.careers.length, 0);
+  const el = document.getElementById('stat-careers');
+  if (el) el.textContent = totalCareers;
+}
+
 </script>
-<!-- AUTH MODAL -->
-<div class="auth-overlay" id="auth-overlay" onclick="handleOverlayClick(event)">
-  <div class="auth-box">
-    <div class="auth-box-title">
-      <span>Pensum <em style="color:var(--accent);font-style:italic;">Planner</em></span>
-      <button class="auth-close" onclick="closeAuthModal()">×</button>
-    </div>
-    <div class="auth-tabs">
-      <button class="auth-tab active" id="idx-tab-login"    onclick="switchAuthTab('login')">Iniciar sesión</button>
-      <button class="auth-tab"        id="idx-tab-register" onclick="switchAuthTab('register')">Crear cuenta</button>
-    </div>
-    <div class="auth-err" id="idx-auth-err"></div>
 
-    <!-- LOGIN -->
-    <div id="idx-form-login" style="display:flex;flex-direction:column;gap:10px;">
-      <input id="idx-login-email"    type="email"    class="auth-input" placeholder="Correo electrónico">
-      <input id="idx-login-password" type="password" class="auth-input" placeholder="Contraseña">
-      <button class="auth-submit" id="idx-login-btn" onclick="doLogin()">Entrar</button>
-      <p class="auth-switch">¿No tienes cuenta? <a onclick="switchAuthTab('register')">Regístrate</a></p>
-    </div>
+</body>
+</html>
 
-    <!-- REGISTER -->
-    <div id="idx-form-register" style="display:none;flex-direction:column;gap:10px;">
-      <input id="idx-reg-name"     type="text"     class="auth-input" placeholder="Nombre (opcional)">
-      <input id="idx-reg-email"    type="email"    class="auth-input" placeholder="Correo electrónico">
-      <input id="idx-reg-password" type="password" class="auth-input" placeholder="Contraseña (mín. 6 caracteres)">
-      <button class="auth-submit" id="idx-register-btn" onclick="doRegister()">Crear cuenta</button>
-      <p class="auth-switch">¿Ya tienes cuenta? <a onclick="switchAuthTab('login')">Inicia sesión</a></p>
-    </div>
-  </div>
-</div>
 
-<script>
-// ── Auth state ───────────────────────────────────────────────────────────────
-const API = '/api';
-let authToken = localStorage.getItem('pp_token') || null;
-let authUser  = null;
-
-async function apiCall(method, path, body){
-  const opts = { method, headers: { 'Content-Type': 'application/json' } };
-  if (authToken) opts.headers['Authorization'] = 'Bearer ' + authToken;
-  if (body) opts.body = JSON.stringify(body);
-  try {
-    const r = await fetch(API + path, opts);
-    return { ok: r.ok, data: await r.json() };
-  } catch(e) { return { ok: false, data: { error: 'Sin conexión con el servidor' } }; }
-}
-
-function updateUserUI(){
-  const guest = document.getElementById('auth-guest-view');
-  const user  = document.getElementById('auth-user-view');
-  const name  = document.getElementById('auth-user-name');
-  if (authUser) {
-    guest.style.display = 'none';
-    user.style.display  = 'block';
-    name.textContent    = authUser.name || authUser.email;
-  } else {
-    guest.style.display = 'block';
-    user.style.display  = 'none';
-  }
-}
-
-function openAuthModal(tab){
-  document.getElementById('auth-overlay').classList.add('open');
-  switchAuthTab(tab === 'profile' ? 'login' : (tab || 'login'));
-  document.getElementById('idx-auth-err').textContent = '';
-}
-function closeAuthModal(){ document.getElementById('auth-overlay').classList.remove('open'); }
-function handleOverlayClick(e){ if(e.target === document.getElementById('auth-overlay')) closeAuthModal(); }
-
-function switchAuthTab(tab){
-  const isLogin = tab === 'login';
-  document.getElementById('idx-tab-login').classList.toggle('active', isLogin);
-  document.getElementById('idx-tab-register').classList.toggle('active', !isLogin);
-  document.getElementById('idx-form-login').style.display    = isLogin ? 'flex' : 'none';
-  document.getElementById('idx-form-register').style.display = isLogin ? 'none' : 'flex';
-  document.getElementById('idx-auth-err').textContent = '';
-}
-
-async function doLogin(){
-  const email    = document.getElementById('idx-login-email').value.trim();
-  const password = document.getElementById('idx-login-password').value;
-  const errEl    = document.getElementById('idx-auth-err');
-  if (!email || !password){ errEl.textContent = 'Completa todos los campos.'; return; }
-  const btn = document.getElementById('idx-login-btn');
-  btn.disabled = true; btn.textContent = 'Entrando…';
-  const { ok, data } = await apiCall('POST', '/login', { email, password });
-  btn.disabled = false; btn.textContent = 'Entrar';
-  if (!ok){ errEl.textContent = data.error || 'Error al iniciar sesión.'; return; }
-  authToken = data.token; authUser = data.user;
-  localStorage.setItem('pp_token', authToken);
-  closeAuthModal(); updateUserUI();
-}
-
-async function doRegister(){
-  const name     = document.getElementById('idx-reg-name').value.trim();
-  const email    = document.getElementById('idx-reg-email').value.trim();
-  const password = document.getElementById('idx-reg-password').value;
-  const errEl    = document.getElementById('idx-auth-err');
-  if (!email || !password){ errEl.textContent = 'Email y contraseña son requeridos.'; return; }
-  if (password.length < 6){ errEl.textContent = 'La contraseña debe tener al menos 6 caracteres.'; return; }
-  const btn = document.getElementById('idx-register-btn');
-  btn.disabled = true; btn.textContent = 'Creando cuenta…';
-  const { ok, data } = await apiCall('POST', '/register', { name, email, password });
-  btn.disabled = false; btn.textContent = 'Crear cuenta';
-  if (!ok){ errEl.textContent = data.error || 'Error al registrarse.'; return; }
-  authToken = data.token; authUser = data.user;
-  localStorage.setItem('pp_token', authToken);
-  closeAuthModal(); updateUserUI();
-}
-
-async function doLogout(){
-  await apiCall('POST', '/logout');
-  authToken = null; authUser = null;
-  localStorage.removeItem('pp_token');
-  updateUserUI();
-}
-
-// Restore session on load (with 3s timeout)
-(async () => {
-  if (!authToken) return;
-  try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 3000);
-    const r = await fetch(API + '/me', {
-      headers: { 'Authorization': 'Bearer ' + authToken },
-      signal: controller.signal
-    });
-    clearTimeout(timeout);
-    if (r.ok) { const d = await r.json(); authUser = d.user; }
-    else { authToken = null; localStorage.removeItem('pp_token'); }
-  } catch(e) { authToken = null; localStorage.removeItem('pp_token'); }
-  updateUserUI();
-})();
-</script>
 </body>
 </html>
