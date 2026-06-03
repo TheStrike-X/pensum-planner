@@ -1099,7 +1099,7 @@ function renderCourses(){
       const btnLabel=st==='passed'?`✓ Aprobada${gradeSuffix}`:st==='enrolled'?'Cursando':st==='failed'?`✗ Reprobada${gradeSuffix}`:'Marcar…';
       const card=document.createElement('div');
       card.className=`course-card ${status}`;
-      if(!isLocked) card.onclick = ()=>cycleState(course.code);
+      if(!isLocked) card.onclick = (e)=>cycleState(course.code, e);
       if(!isLocked) card.style.cursor='pointer';
       card.innerHTML=`
         <div class="course-code">${course.code}</div>
