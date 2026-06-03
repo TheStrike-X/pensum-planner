@@ -422,13 +422,7 @@
         <div class="grade-letter" id="grade-letter">—</div>
       </div>
       <div class="grade-result" id="grade-result">Escribe tu calificación (0–100)</div>
-      <div class="grade-scale" id="grade-scale">
-        <div class="grade-scale-item">A · 90–100</div>
-        <div class="grade-scale-item">B · 80–89</div>
-        <div class="grade-scale-item">C · 70–79</div>
-        <div class="grade-scale-item">D · 60–69</div>
-        <div class="grade-scale-item">F · 0–59</div>
-      </div>
+      <div class="grade-scale" id="grade-scale"></div>
       <div class="grade-btns">
         <button class="grade-btn grade-btn-cancel" onclick="closeGradeModal()">Cancelar</button>
         <button class="grade-btn grade-btn-confirm" id="grade-confirm-btn" onclick="confirmGrade()" disabled>Confirmar</button>
@@ -772,25 +766,59 @@ function closeGradeModal(){
 }
 
 function updateGradeScale(grade, threshold){
-  const items = document.querySelectorAll('.grade-scale-item');
-  const labels = [
-    {label:'A · 90–100', min:90},
-    {label:'B · 80–89',  min:80},
-    {label:'C · 70–79',  min:70},
-    {label:`D · 60–69`,  min:60},
-    {label:'F · 0–59',   min:0}
+  // Build scale buckets dynamically based on threshold
+  // Always: A=90-100, B=80-89. Then split around threshold for C/D/F.
+  const buckets = [
+    { label: 'A', min: 90,        max: 100 },
+    { label: 'B', min: 80,        max: 89  },
+    { label: 'C', min: threshold, max: 79  }, // top of C depends on threshold
+    { label: 'D', min: 60,        max: threshold - 1 },
+    { label: 'F', min: 0,         max: 59  },
   ];
-  items.forEach((el, i)=>{
-    const isPass = labels[i].min >= threshold;
-    el.className = 'grade-scale-item';
-    if(grade !== null){
-      const inRange = grade >= labels[i].min && (i===0 ? grade<=100 : grade < labels[i-1].min + (i===1?1:0) + 10);
-      // simpler: check if this is the active bucket
-    }
-    el.textContent = labels[i].label + (isPass ? ' ✓' : ' ✗');
-    el.style.color = isPass ? 'var(--passed-text)' : 'var(--failed-text)';
-    el.style.background = isPass ? 'var(--passed-bg)' : 'var(--failed-bg)';
-  });
+
+  // For threshold=70: C=70-79, D=60-69 (fails), F=0-59
+  // For threshold=65: C=65-79, D=60-64 (fails), F=0-59
+  // If threshold is 70+, D bucket is entirely fail; if 65, D splits
+  // Simplify: show 5 tiles based on threshold
+  let tiles;
+  if(threshold <= 60){
+    tiles = [
+      {label:'A · 90–100', passes:true},
+      {label:'B · 80–89',  passes:true},
+      {label:'C · 70–79',  passes:true},
+      {label:`D · ${threshold}–69`, passes:true},
+      {label:`F · 0–${threshold-1}`, passes:false},
+    ];
+  } else if(threshold === 65){
+    tiles = [
+      {label:'A · 90–100', passes:true},
+      {label:'B · 80–89',  passes:true},
+      {label:'C · 65–79',  passes:true},
+      {label:'D · 60–64',  passes:false},
+      {label:'F · 0–59',   passes:false},
+    ];
+  } else {
+    // threshold = 70 (default)
+    tiles = [
+      {label:'A · 90–100', passes:true},
+      {label:'B · 80–89',  passes:true},
+      {label:'C · 70–79',  passes:true},
+      {label:'D · 60–69',  passes:false},
+      {label:'F · 0–59',   passes:false},
+    ];
+  }
+
+  const container = document.getElementById('grade-scale');
+  container.innerHTML = tiles.map(t => `
+    <div class="grade-scale-item" style="
+      background:${t.passes ? 'var(--passed-bg)' : 'var(--failed-bg)'};
+      color:${t.passes ? 'var(--passed-text)' : 'var(--failed-text)'};
+      padding:5px 3px;border-radius:2px;font-size:9px;text-align:center;
+      font-family:'JetBrains Mono',monospace;letter-spacing:.03em;line-height:1.4;
+    ">
+      ${t.label}<br><span style="opacity:.7;">${t.passes ? '✓ Aprueba' : '✗ Reprueba'}</span>
+    </div>
+  `).join('');
 }
 
 function onGradeInput(){
