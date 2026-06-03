@@ -1898,6 +1898,8 @@ function renderGPA(){
   const cfg = getGPAConfig();
   const grades = window._grades || {};
   const graded = COURSES.filter(c=>grades[c.code] && courseStates[c.code]!=='enrolled' && courseStates[c.code]!==null);
+  // Exonerated courses are shown in the list but excluded from GPA calculation
+  const gradedForGPA = graded.filter(c=>courseStates[c.code]!=='exonerated');
 
   if(!graded.length){
     container.innerHTML='<div class="gpa-empty">Aún no has calificado ninguna materia.<br><small style="font-size:12px;">Marca tus materias como aprobadas o reprobadas e ingresa tus notas para ver tu índice.</small></div>';
@@ -1905,12 +1907,12 @@ function renderGPA(){
   }
 
   let totalPts=0, totalCrs=0;
-  graded.forEach(c=>{ totalPts+=cfg.toPoints(grades[c.code].score)*c.crs; totalCrs+=c.crs; });
+  gradedForGPA.forEach(c=>{ totalPts+=cfg.toPoints(grades[c.code].score)*c.crs; totalCrs+=c.crs; });
   const overall = totalCrs>0 ? totalPts/totalCrs : 0;
   const maxVal = cfg.scale==='4.0' ? 4.0 : 100;
   const barPct = Math.min(100, Math.round((overall/maxVal)*100));
   const honor = cfg.honorThresholds.find(h=>overall>=h.min);
-  const passedCrs = graded.filter(c=>courseStates[c.code]==='passed').reduce((s,c)=>s+c.crs,0);
+  const passedCrs = graded.filter(c=>courseStates[c.code]==='passed'||courseStates[c.code]==='exonerated').reduce((s,c)=>s+c.crs,0);
   const failedCount = graded.filter(c=>courseStates[c.code]==='failed').length;
   const totalCareerCrs = COURSES.reduce((s,c)=>s+c.crs,0);
   const progPct = Math.round(passedCrs/totalCareerCrs*100);
@@ -1918,7 +1920,7 @@ function renderGPA(){
   const semGroups={};
   graded.forEach(c=>{ if(!semGroups[c.sem]) semGroups[c.sem]=[]; semGroups[c.sem].push(c); });
   const semGPAs = Object.entries(semGroups).sort((a,b)=>+a[0]-+b[0]).map(([sem,cs])=>{
-    let p=0,cr=0; cs.forEach(c=>{p+=cfg.toPoints(grades[c.code].score)*c.crs;cr+=c.crs;});
+    let p=0,cr=0; cs.filter(c=>courseStates[c.code]!=='exonerated').forEach(c=>{p+=cfg.toPoints(grades[c.code].score)*c.crs;cr+=c.crs;});
     return {sem:+sem,gpa:cr?p/cr:0,credits:cr,courses:cs};
   });
 
@@ -1927,7 +1929,7 @@ function renderGPA(){
   container.innerHTML = `
     <div style="margin-bottom:22px;">
       <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#94a3b8;text-transform:uppercase;letter-spacing:.15em;margin-bottom:8px;">${cfg.name} · Escala ${cfg.scale} · Nota mínima: ${cfg.pass}</div>
-      <div class="gpa-formula"><strong style="color:#ca8a04;">Fórmula:</strong> ${cfg.scale==='4.0'?'Σ(puntos_GPA × créditos) / Σ(créditos) · A=4.0 B=3.0 C=2.0 D=1.0 F=0.0':'Σ(calificación × créditos) / Σ(créditos) · Promedio ponderado en escala 0–100'}</div>
+      <div class="gpa-formula"><strong style="color:#ca8a04;">Fórmula:</strong> ${cfg.scale==='4.0'?'Σ(puntos_GPA × créditos) / Σ(créditos) · A=4.0 B=3.0 C=2.0 D=1.0 F=0.0':'Σ(calificación × créditos) / Σ(créditos) · Promedio ponderado en escala 0–100'} · <span style="color:var(--exonerated-text)">Exoneradas (S) no cuentan en el índice</span></div>
     </div>
     <div class="gpa-header">
       <div class="gpa-card highlight">
@@ -1936,7 +1938,7 @@ function renderGPA(){
         <div class="gpa-bar-wrap" style="margin-top:8px;"><div class="gpa-bar-fill" style="width:${barPct}%;background:${gpaColor(overall)};"></div></div>
         ${honor?`<div class="gpa-card-sub" style="color:#ca8a04;margin-top:6px;">🏅 ${honor.label}</div>`:''}
       </div>
-      <div class="gpa-card"><div class="gpa-card-num">${graded.filter(c=>courseStates[c.code]==='passed').length}</div><div class="gpa-card-label">Aprobadas</div><div class="gpa-card-sub">${passedCrs} créditos</div></div>
+      <div class="gpa-card"><div class="gpa-card-num">${graded.filter(c=>courseStates[c.code]==='passed'||courseStates[c.code]==='exonerated').length}</div><div class="gpa-card-label">Aprobadas</div><div class="gpa-card-sub">${passedCrs} créditos</div></div>
       <div class="gpa-card"><div class="gpa-card-num" style="color:${failedCount>0?'#dc2626':'inherit'}">${failedCount}</div><div class="gpa-card-label">Reprobadas</div></div>
       <div class="gpa-card"><div class="gpa-card-num">${progPct}%</div><div class="gpa-card-label">Progreso</div><div class="gpa-bar-wrap" style="margin-top:8px;"><div class="gpa-bar-fill" style="width:${progPct}%;background:#0f172a;"></div></div><div class="gpa-card-sub">${passedCrs}/${totalCareerCrs} créditos</div></div>
     </div>
@@ -1952,9 +1954,12 @@ function renderGPA(){
     </div>
     <table class="gpa-table"><thead><tr><th>Código</th><th>Materia</th><th>Cr</th><th>Nota</th><th>Letra</th>${cfg.scale==='4.0'?'<th>GPA</th>':''}<th>Sem</th><th>Estado</th></tr></thead><tbody>
     ${sortGraded(graded,grades).map(c=>{
-      const g=grades[c.code];const ok=courseStates[c.code]==='passed';
-      const bg=ok?'var(--passed-bg)':'var(--failed-bg)';const tc=ok?'var(--passed-text)':'var(--failed-text)';
-      return`<tr style="background:${bg};"><td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:${tc};">${c.code}</td><td style="font-family:'Crimson Text',serif;">${c.name}</td><td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${c.crs}</td><td><strong style="font-family:'EB Garamond',serif;font-size:16px;color:${tc};">${g.score}</strong></td><td><strong style="font-family:'EB Garamond',serif;font-size:16px;color:${tc};">${g.letter}</strong></td>${cfg.scale==='4.0'?`<td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${cfg.toPoints(g.score).toFixed(1)}</td>`:''}<td style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#94a3b8;">${c.sem}</td><td><span class="gpa-grade-pill" style="background:${bg};color:${tc};">${ok?'✓ Aprobada':'✗ Reprobada'}</span></td></tr>`;
+      const g=grades[c.code];
+      const st=courseStates[c.code];
+      const ok=st==='passed';const ex=st==='exonerated';
+      const bg=ok?'var(--passed-bg)':ex?'var(--exonerated-bg)':'var(--failed-bg)';
+      const tc=ok?'var(--passed-text)':ex?'var(--exonerated-text)':'var(--failed-text)';
+      return`<tr style="background:${bg};"><td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:${tc};">${c.code}</td><td style="font-family:'Crimson Text',serif;">${c.name}</td><td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${c.crs}</td><td><strong style="font-family:'EB Garamond',serif;font-size:16px;color:${tc};">${g.score}</strong></td><td><strong style="font-family:'EB Garamond',serif;font-size:16px;color:${tc};">${g.letter}</strong></td>${cfg.scale==='4.0'?`<td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${cfg.toPoints(g.score).toFixed(1)}</td>`:''}<td style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#94a3b8;">${c.sem}</td><td><span class="gpa-grade-pill" style="background:${bg};color:${tc};">${ok?'✓ Aprobada':ex?'S Exonerada':'✗ Reprobada'}</span></td></tr>`;
     }).join('')}
     </tbody></table>
   `;
